@@ -17,12 +17,12 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Controllers\" />
+    <ProjectReference Include="..\DoggetTelegramBot.Application\DoggetTelegramBot.Application.csproj" />
+    <ProjectReference Include="..\DoggetTelegramBot.Infrastructure\DoggetTelegramBot.Infrastructure.csproj" />
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\DoggetTelegramBot.Application\DoggetTelegramBot.Application.csproj" />
-    <ProjectReference Include="..\DoggetTelegramBot.Infrastructure\DoggetTelegramBot.Infrastructure.csproj" />
+    <Folder Include="Controllers\" />
   </ItemGroup>
 
 </Project>

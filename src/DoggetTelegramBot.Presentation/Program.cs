@@ -1,15 +1,19 @@
 using DoggetTelegramBot.Presentation;
 using DoggetTelegramBot.Application;
 using DoggetTelegramBot.Infrastructure;
+using DoggetTelegramBot.Infrastructure.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Services
     .AddPresentation()
     .AddApplication()
-    .AddInfrastructure();
+    .AddInfrastructure(builder.Configuration);
 
 var app = builder.Build();
+
+var bot = app.Services.GetRequiredService<TelegramBotInitializer>();
+await bot.InitializeAndRunAsync();
 
 if (app.Environment.IsDevelopment())
 {
@@ -18,7 +22,6 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
-
 app.MapControllers();
 
 app.Run();
