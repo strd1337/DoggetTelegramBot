@@ -7,10 +7,6 @@
         {
             services.AddControllers();
 
-            services.AddEndpointsApiExplorer();
-
-            services.AddSwaggerGen();
-
             return services;
         }
     }

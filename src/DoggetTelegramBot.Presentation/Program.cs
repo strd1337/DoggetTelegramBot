@@ -12,16 +12,27 @@ builder.Services
 
 var app = builder.Build();
 
-var bot = app.Services.GetRequiredService<TelegramBotInitializer>();
-await bot.InitializeAndRunAsync();
-
-if (app.Environment.IsDevelopment())
+if (!app.Environment.IsDevelopment())
 {
-    app.UseSwagger();
-    app.UseSwaggerUI();
+    app.UseExceptionHandler("/error");
+    app.UseHsts();
+}
+else
+{
+    app.UseDeveloperExceptionPage();
 }
 
 app.UseHttpsRedirection();
-app.MapControllers();
+app.UseStaticFiles();
+app.UseRouting();
+
+app.UseAuthorization();
+
+app.MapControllerRoute(
+    name: "default",
+    pattern: "{controller=Home}/{action=Index}/{id?}");
+
+var bot = app.Services.GetRequiredService<TelegramBotInitializer>();
+await bot.InitializeAndRunAsync();
 
 app.Run();
