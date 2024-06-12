@@ -1,4 +1,6 @@
-﻿using DoggetTelegramBot.Infrastructure.Configs;
+﻿using DoggetTelegramBot.Application.Common.Services;
+using DoggetTelegramBot.Domain.Common.Constants;
+using DoggetTelegramBot.Infrastructure.Configs;
 using DoggetTelegramBot.Infrastructure.Services;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -14,6 +16,10 @@ namespace DoggetTelegramBot.Infrastructure
         {
             services.AddTelegramBot(configuration);
 
+            services.AddSingleton<IDateTimeProvider, DateTimeProvider>();
+
+            NLogConfigurate.Configurate();
+
             return services;
         }
 
@@ -24,9 +30,10 @@ namespace DoggetTelegramBot.Infrastructure
             services.AddBotHandlers();
 
             services.AddOptions();
-            services.Configure<TelegramBotConfig>(configuration.GetSection(TelegramBotConfig.OptionKey));
+            services.Configure<TelegramBotConfig>(configuration.GetSection(Constants.TelegramBotConfig.OptionKey));
 
             services.AddSingleton<TelegramBotInitializer>();
+            services.AddSingleton<TelegramLogger>();
 
             return services;
         }
