@@ -9,13 +9,13 @@ namespace DoggetTelegramBot.Infrastructure.Configs
 {
     public static class NLogConfigurate
     {
-        private readonly static string BaseDir =
+        private static readonly string BaseDir =
             Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location) ??
             throw new InvalidOperationException("Unable to determine base directory.");
 
         public static void Configurate()
         {
-            var configuration = new LoggingConfiguration();
+            LoggingConfiguration configuration = new();
 
             var logsType = Enum.GetValues(typeof(TelegramEvents));
 
@@ -23,19 +23,19 @@ namespace DoggetTelegramBot.Infrastructure.Configs
             {
                 var type = logType.ToString();
 
-                var logfile = new FileTarget(type) 
-                { 
-                    FileName = BaseDir + "/logs/" + type + "/log-${date:format=\\dd.\\MM.\\yyyy}.txt" 
+                FileTarget logfile = new(type)
+                {
+                    FileName = BaseDir + "/logs/" + type + "/log-${date:format=\\dd.\\MM.\\yyyy}.txt"
                 };
 
                 configuration.AddRule(LogLevel.Trace, LogLevel.Fatal, logfile, type);
             }
 
-            var logError = new FileTarget(Constants.Logger.ErrorName) 
-            { 
-                FileName = BaseDir + "/logs/" + Constants.Logger.ErrorName + "/log-${date:format=\\dd.\\MM.\\yyyy}.txt" 
+            FileTarget logError = new(Constants.Logger.ErrorName)
+            {
+                FileName = BaseDir + "/logs/" + Constants.Logger.ErrorName + "/log-${date:format=\\dd.\\MM.\\yyyy}.txt"
             };
-            
+
             configuration.AddRule(LogLevel.Trace, LogLevel.Fatal, logError, Constants.Logger.ErrorName);
 
             LogManager.Configuration = configuration;

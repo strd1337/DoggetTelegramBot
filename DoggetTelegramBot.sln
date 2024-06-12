@@ -3,15 +3,20 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.8.34525.116
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DoggetTelegramBot.Presentation", "src\DoggetTelegramBot.Presentation\DoggetTelegramBot.Presentation.csproj", "{EFB1B8B1-6969-4D9E-BDFF-C200F134D6CC}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DoggetTelegramBot.Presentation", "src\DoggetTelegramBot.Presentation\DoggetTelegramBot.Presentation.csproj", "{EFB1B8B1-6969-4D9E-BDFF-C200F134D6CC}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{6C55B5EB-2618-4AD9-AD95-5C28C41BCFB8}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DoggetTelegramBot.Application", "src\DoggetTelegramBot.Application\DoggetTelegramBot.Application.csproj", "{7A371784-DABC-49C2-B689-BFD0BDBB21B4}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DoggetTelegramBot.Application", "src\DoggetTelegramBot.Application\DoggetTelegramBot.Application.csproj", "{7A371784-DABC-49C2-B689-BFD0BDBB21B4}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DoggetTelegramBot.Infrastructure", "src\DoggetTelegramBot.Infrastructure\DoggetTelegramBot.Infrastructure.csproj", "{0DF5D379-B780-4B6D-A06E-DC312CB4A2C8}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DoggetTelegramBot.Infrastructure", "src\DoggetTelegramBot.Infrastructure\DoggetTelegramBot.Infrastructure.csproj", "{0DF5D379-B780-4B6D-A06E-DC312CB4A2C8}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DoggetTelegramBot.Domain", "src\DoggetTelegramBot.Domain\DoggetTelegramBot.Domain.csproj", "{A686790E-8434-4A48-80A0-6E1FD5ACD13C}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DoggetTelegramBot.Domain", "src\DoggetTelegramBot.Domain\DoggetTelegramBot.Domain.csproj", "{A686790E-8434-4A48-80A0-6E1FD5ACD13C}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution items", "Solution items", "{9701C3A2-9BCA-4964-B865-C02FBF0B3E5D}"
+	ProjectSection(SolutionItems) = preProject
+		.editorconfig = .editorconfig
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
