@@ -13,7 +13,7 @@ namespace DoggetTelegramBot.Infrastructure.Services
 
         public Task<PRBot> InitializeAndRunAsync()
         {
-            var telegramBot = new PRBot(options =>
+            PRBot telegramBot = new(options =>
             {
                 options.Token = config.Token;
                 options.ClearUpdatesOnStart = config.ClearUpdatesOnStart;
