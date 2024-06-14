@@ -1,4 +1,4 @@
-﻿namespace DoggetTelegramBot.Presentation
+namespace DoggetTelegramBot.Presentation
 {
     public static class DependencyInjection
     {

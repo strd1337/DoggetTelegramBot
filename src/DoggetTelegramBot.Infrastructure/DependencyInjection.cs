@@ -1,7 +1,9 @@
-﻿using DoggetTelegramBot.Application.Common.Services;
+using DoggetTelegramBot.Application.Common.Services;
 using DoggetTelegramBot.Domain.Common.Constants;
 using DoggetTelegramBot.Infrastructure.Configs;
+using DoggetTelegramBot.Infrastructure.Persistance;
 using DoggetTelegramBot.Infrastructure.Services;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using PRTelegramBot.Extensions;
@@ -20,6 +22,8 @@ namespace DoggetTelegramBot.Infrastructure
 
             NLogConfigurate.Configurate();
 
+            services.AddDbContext(configuration);
+
             return services;
         }
 
@@ -34,6 +38,18 @@ namespace DoggetTelegramBot.Infrastructure
 
             services.AddSingleton<TelegramBotInitializer>();
             services.AddSingleton<TelegramLogger>();
+
+            return services;
+        }
+
+        public static IServiceCollection AddDbContext(
+            this IServiceCollection services,
+            IConfiguration configuration)
+        {
+            string connectionString = configuration.GetConnectionString(Constants.ConnectionString)
+                ?? throw new InvalidOperationException($"{Constants.ConnectionString} connection string is not configured.");
+
+            services.AddDbContext<BotDbContext>((options) => options.UseNpgsql(connectionString));
 
             return services;
         }
