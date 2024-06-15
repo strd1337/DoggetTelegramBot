@@ -24,6 +24,8 @@ namespace DoggetTelegramBot.Infrastructure
 
             services.AddDbContext(configuration);
 
+            services.AddCaching();
+
             return services;
         }
 
@@ -50,6 +52,16 @@ namespace DoggetTelegramBot.Infrastructure
                 ?? throw new InvalidOperationException($"{Constants.ConnectionString} connection string is not configured.");
 
             services.AddDbContext<BotDbContext>((options) => options.UseNpgsql(connectionString));
+
+            return services;
+        }
+
+        public static IServiceCollection AddCaching(
+            this IServiceCollection services)
+        {
+            services.AddMemoryCache();
+
+            services.AddSingleton<ICacheService, MemoryCacheService>();
 
             return services;
         }

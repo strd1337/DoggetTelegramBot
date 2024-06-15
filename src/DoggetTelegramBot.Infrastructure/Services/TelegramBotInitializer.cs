@@ -1,4 +1,4 @@
-﻿using DoggetTelegramBot.Infrastructure.Configs;
+using DoggetTelegramBot.Infrastructure.Configs;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using PRTelegramBot.Core;
