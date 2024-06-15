@@ -11,21 +11,20 @@ namespace DoggetTelegramBot.Infrastructure.Services
     {
         private readonly TelegramBotConfig config = options.Value;
 
-        public Task<PRBot> InitializeAndRunAsync()
+        public async Task InitializeAndRunAsync(IServiceProvider serviceProvider)
         {
             PRBot telegramBot = new(options =>
             {
                 options.Token = config.Token;
                 options.ClearUpdatesOnStart = config.ClearUpdatesOnStart;
                 options.BotId = config.BotId;
-            });
+            },
+            serviceProvider);
 
             telegramBot.OnLogCommon += telegramLogger.LogCommon;
             telegramBot.OnLogError += telegramLogger.LogError;
 
-            telegramBot.Start();
-
-            return Task.FromResult(telegramBot);
+            await telegramBot.Start();
         }
     }
 }

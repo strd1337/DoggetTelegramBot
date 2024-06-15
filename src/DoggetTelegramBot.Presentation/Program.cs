@@ -33,6 +33,6 @@ app.MapControllerRoute(
     pattern: "{controller=Home}/{action=Index}/{id?}");
 
 var bot = app.Services.GetRequiredService<TelegramBotInitializer>();
-await bot.InitializeAndRunAsync();
+await bot.InitializeAndRunAsync(app.Services.GetService<IServiceProvider>()!);
 
 app.Run();
