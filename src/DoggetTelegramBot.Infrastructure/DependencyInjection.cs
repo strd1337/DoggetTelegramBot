@@ -1,7 +1,10 @@
+using DoggetTelegramBot.Application.Common.Interfaces;
 using DoggetTelegramBot.Application.Common.Services;
 using DoggetTelegramBot.Domain.Common.Constants;
+using DoggetTelegramBot.Domain.Common.Entities;
 using DoggetTelegramBot.Infrastructure.Configs;
 using DoggetTelegramBot.Infrastructure.Persistance;
+using DoggetTelegramBot.Infrastructure.Persistance.Repositories;
 using DoggetTelegramBot.Infrastructure.Services;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
@@ -27,6 +30,8 @@ namespace DoggetTelegramBot.Infrastructure
             services.AddCaching();
 
             services.AddScoped<IScopedMediatorService, ScopedMediatorService>();
+
+            services.AddPersistance();
 
             return services;
         }
@@ -67,5 +72,26 @@ namespace DoggetTelegramBot.Infrastructure
 
             return services;
         }
+
+        public static IServiceCollection AddPersistance(
+           this IServiceCollection services)
+        {
+            services.AddScoped<IUnitOfWork, UnitOfWork>();
+
+            return services;
+        }
+
+        public static IServiceCollection AddCustomRepository<TEntity, TId, TRepository>(
+            this IServiceCollection services)
+               where TEntity : Entity<TId>
+               where TId : ValueObject
+               where TRepository : class, IGenericRepository<TEntity, TId>
+
+        {
+            services.AddScoped<IGenericRepository<TEntity, TId>, TRepository>();
+
+            return services;
+        }
+
     }
 }
