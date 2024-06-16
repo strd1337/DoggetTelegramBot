@@ -1,3 +1,5 @@
+using DoggetTelegramBot.Presentation.Common.ErrorHandling;
+
 namespace DoggetTelegramBot.Presentation
 {
     public static class DependencyInjection
@@ -6,6 +8,17 @@ namespace DoggetTelegramBot.Presentation
             this IServiceCollection services)
         {
             services.AddControllers();
+
+            services.AddGlobalExceptionHandler();
+
+            return services;
+        }
+
+        public static IServiceCollection AddGlobalExceptionHandler(
+            this IServiceCollection services)
+        {
+            services.AddExceptionHandler<GlobalExceptionHandler>();
+            services.AddProblemDetails();
 
             return services;
         }
