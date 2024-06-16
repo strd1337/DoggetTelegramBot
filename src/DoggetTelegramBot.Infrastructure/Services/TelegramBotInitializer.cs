@@ -1,4 +1,5 @@
-﻿using DoggetTelegramBot.Infrastructure.Configs;
+using DoggetTelegramBot.Application.Common.Services;
+using DoggetTelegramBot.Infrastructure.Configs;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using PRTelegramBot.Core;
@@ -7,7 +8,7 @@ namespace DoggetTelegramBot.Infrastructure.Services
 {
     public sealed class TelegramBotInitializer(
         IOptions<TelegramBotConfig> options,
-        TelegramLogger telegramLogger)
+        ITelegramLogger telegramLogger)
     {
         private readonly TelegramBotConfig config = options.Value;
 

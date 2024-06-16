@@ -1,7 +1,10 @@
+using DoggetTelegramBot.Application.Common.Interfaces;
 using DoggetTelegramBot.Application.Common.Services;
 using DoggetTelegramBot.Domain.Common.Constants;
+using DoggetTelegramBot.Domain.Common.Entities;
 using DoggetTelegramBot.Infrastructure.Configs;
 using DoggetTelegramBot.Infrastructure.Persistance;
+using DoggetTelegramBot.Infrastructure.Persistance.Repositories;
 using DoggetTelegramBot.Infrastructure.Services;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
@@ -24,6 +27,12 @@ namespace DoggetTelegramBot.Infrastructure
 
             services.AddDbContext(configuration);
 
+            services.AddCaching();
+
+            services.AddScoped<IScopedMediatorService, ScopedMediatorService>();
+
+            services.AddPersistance();
+
             return services;
         }
 
@@ -37,7 +46,7 @@ namespace DoggetTelegramBot.Infrastructure
             services.Configure<TelegramBotConfig>(configuration.GetSection(Constants.TelegramBotConfig.OptionKey));
 
             services.AddSingleton<TelegramBotInitializer>();
-            services.AddSingleton<TelegramLogger>();
+            services.AddSingleton<ITelegramLogger, TelegramLogger>();
 
             return services;
         }
@@ -53,5 +62,36 @@ namespace DoggetTelegramBot.Infrastructure
 
             return services;
         }
+
+        public static IServiceCollection AddCaching(
+            this IServiceCollection services)
+        {
+            services.AddMemoryCache();
+
+            services.AddSingleton<ICacheService, MemoryCacheService>();
+
+            return services;
+        }
+
+        public static IServiceCollection AddPersistance(
+           this IServiceCollection services)
+        {
+            services.AddScoped<IUnitOfWork, UnitOfWork>();
+
+            return services;
+        }
+
+        public static IServiceCollection AddCustomRepository<TEntity, TId, TRepository>(
+            this IServiceCollection services)
+               where TEntity : Entity<TId>
+               where TId : ValueObject
+               where TRepository : class, IGenericRepository<TEntity, TId>
+
+        {
+            services.AddScoped<IGenericRepository<TEntity, TId>, TRepository>();
+
+            return services;
+        }
+
     }
 }

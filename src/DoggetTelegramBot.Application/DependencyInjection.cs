@@ -1,4 +1,4 @@
-using MediatR;
+using DoggetTelegramBot.Application.Common.Behaviors;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace DoggetTelegramBot.Application
@@ -8,7 +8,12 @@ namespace DoggetTelegramBot.Application
         public static IServiceCollection AddApplication(
             this IServiceCollection services)
         {
-            services.AddMediatR(typeof(DependencyInjection).Assembly);
+            services.AddMediatR(config =>
+            {
+                config.RegisterServicesFromAssembly(typeof(DependencyInjection).Assembly);
+
+                config.AddOpenBehavior(typeof(QueryCachingPipelineBehavior<,>));
+            });
 
             return services;
         }
