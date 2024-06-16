@@ -26,6 +26,8 @@ namespace DoggetTelegramBot.Infrastructure
 
             services.AddCaching();
 
+            services.AddScoped<IScopedMediatorService, ScopedMediatorService>();
+
             return services;
         }
 
@@ -39,7 +41,7 @@ namespace DoggetTelegramBot.Infrastructure
             services.Configure<TelegramBotConfig>(configuration.GetSection(Constants.TelegramBotConfig.OptionKey));
 
             services.AddSingleton<TelegramBotInitializer>();
-            services.AddSingleton<TelegramLogger>();
+            services.AddSingleton<ITelegramLogger, TelegramLogger>();
 
             return services;
         }

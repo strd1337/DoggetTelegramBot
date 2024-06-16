@@ -9,7 +9,7 @@ using System.Globalization;
 
 namespace DoggetTelegramBot.Infrastructure.Services
 {
-    public class TelegramLogger(IDateTimeProvider dateTimeProvider)
+    public class TelegramLogger(IDateTimeProvider dateTimeProvider) : ITelegramLogger
     {
         private readonly Dictionary<string, Logger> loggersContainer = [];
 
