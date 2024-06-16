@@ -25,6 +25,8 @@ app.UseAuthorization();
 
 app.UseExceptionHandler();
 
+app.UseRateLimiter();
+
 app.MapControllers();
 app.MapControllerRoute(
     name: "default",
