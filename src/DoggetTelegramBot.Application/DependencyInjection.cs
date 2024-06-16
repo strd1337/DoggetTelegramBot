@@ -12,6 +12,7 @@ namespace DoggetTelegramBot.Application
             {
                 config.RegisterServicesFromAssembly(typeof(DependencyInjection).Assembly);
 
+                config.AddOpenBehavior(typeof(ValidationBehavior<,>));
                 config.AddOpenBehavior(typeof(QueryCachingPipelineBehavior<,>));
             });
 
