@@ -6,6 +6,8 @@ using PRTelegramBot.Extensions;
 using System.Text;
 using Telegram.Bot.Exceptions;
 using System.Globalization;
+using Telegram.Bot.Types;
+using Telegram.Bot.Types.Enums;
 
 namespace DoggetTelegramBot.Infrastructure.Services
 {
@@ -13,9 +15,22 @@ namespace DoggetTelegramBot.Infrastructure.Services
     {
         private readonly Dictionary<string, Logger> loggersContainer = [];
 
-        public void LogCommon(string message, Enum? eventType, ConsoleColor color = ConsoleColor.Blue)
+        public void LogCommon(
+            string message,
+            Enum? eventType,
+            ConsoleColor color = ConsoleColor.Blue)
         {
             string commonMessage = $"{dateTimeProvider.UtcNow} {message}";
+            LogToConsole(commonMessage, color);
+            LogToFile(commonMessage, eventType);
+        }
+
+        public void LogCommon(
+            Update update,
+            Enum? eventType,
+            ConsoleColor color = ConsoleColor.Blue)
+        {
+            string commonMessage = CreateLogMessage(update);
             LogToConsole(commonMessage, color);
             LogToFile(commonMessage, eventType);
         }
@@ -30,10 +45,29 @@ namespace DoggetTelegramBot.Infrastructure.Services
             }
 
             LogErrorMessage(errorMessage);
+            LogToConsole(errorMessage, ConsoleColor.Red);
+        }
 
-            Console.ForegroundColor = ConsoleColor.Red;
-            Console.WriteLine(errorMessage);
-            Console.ResetColor();
+        private static string CreateLogMessage(Update update)
+        {
+            var message = update.Message;
+            var from = message?.From;
+
+            StringBuilder sb = new();
+            sb.Append(message?.Date);
+            sb.Append(string.Create(CultureInfo.InvariantCulture, $" User sent a message. "));
+            sb.Append(string.Create(CultureInfo.InvariantCulture, $"TelegramId: {from?.Id ?? -1}, "));
+            sb.Append(string.Create(CultureInfo.InvariantCulture, $"Username: {from?.Username ?? "None"}, "));
+            sb.Append(string.Create(CultureInfo.InvariantCulture, $"FirstName: {from?.FirstName ?? "None"}, "));
+            sb.Append(string.Create(CultureInfo.InvariantCulture, $"LastName: {from?.LastName ?? "None"} "));
+            sb.Append(string.Create(CultureInfo.InvariantCulture, $"MessageType: {message?.Type}"));
+
+            if (message?.Type == MessageType.Text)
+            {
+                sb.Append(string.Create(CultureInfo.InvariantCulture, $", Text: {message?.Text ?? "None"}"));
+            }
+
+            return sb.ToString();
         }
 
         private static void LogToConsole(string message, ConsoleColor color)
@@ -45,7 +79,8 @@ namespace DoggetTelegramBot.Infrastructure.Services
 
         private void LogToFile(string message, Enum? eventType)
         {
-            string loggerName = eventType?.GetDescription() ?? TelegramEvents.None.GetDescription();
+            string loggerName = eventType?.GetDescription() ??
+                TelegramEvents.All.GetDescription();
 
             if (!loggersContainer.TryGetValue(loggerName, out var logger))
             {

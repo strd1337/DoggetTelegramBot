@@ -14,7 +14,7 @@ namespace DoggetTelegramBot.Presentation.BotControllers.Common
         {
             if (errors.Count == 0)
             {
-                logger.LogCommon("No errors provided", TelegramEvents.None, ConsoleColor.Red);
+                logger.LogCommon("No errors provided", TelegramEvents.Message, ConsoleColor.Red);
                 return string.Empty;
             }
 
@@ -34,7 +34,7 @@ namespace DoggetTelegramBot.Presentation.BotControllers.Common
                 validationErrorDetails.AppendLine($" Error Code: {error.Code}, Description: {error.Description}");
             }
 
-            logger.LogCommon(validationErrorDetails.ToString(), TelegramEvents.Server, ConsoleColor.Yellow);
+            logger.LogCommon(validationErrorDetails.ToString(), TelegramEvents.Message, ConsoleColor.Yellow);
 
             return validationErrorMessage.ToString();
         }
@@ -56,7 +56,7 @@ namespace DoggetTelegramBot.Presentation.BotControllers.Common
 
             logger.LogCommon(
                 $" Error Code: {error.Code}, Description: {error.Description}",
-                TelegramEvents.Server,
+                TelegramEvents.Message,
                 ConsoleColor.Red);
 
             return errorMessage;
