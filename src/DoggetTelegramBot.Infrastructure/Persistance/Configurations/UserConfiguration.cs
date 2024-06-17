@@ -22,12 +22,24 @@ namespace DoggetTelegramBot.Infrastructure.Persistance.Configurations
             builder.Property(u => u.Nickname)
                 .HasMaxLength(100);
 
+            builder.Property(u => u.FirstName)
+                .HasMaxLength(100);
+
+            builder.Property(u => u.LastName)
+                .HasMaxLength(100);
+
+            builder.Property(u => u.RegisteredDate);
+
             builder.Property(u => u.InventoryId)
                 .HasConversion(
                     id => id.Value,
                     value => InventoryId.Create(value));
 
             builder.Property(u => u.MaritalStatus)
+                .HasConversion<string>()
+                .HasMaxLength(50);
+
+            builder.Property(u => u.Privilege)
                 .HasConversion<string>()
                 .HasMaxLength(50);
         }
