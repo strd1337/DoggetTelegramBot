@@ -21,6 +21,8 @@ namespace DoggetTelegramBot.Infrastructure.Services
                 options.Token = config.Token;
                 options.ClearUpdatesOnStart = config.ClearUpdatesOnStart;
                 options.BotId = config.BotId;
+                options.Admins = config.Admins;
+                options.WhiteListUsers = config.WhiteListUsers;
             },
             serviceProvider);
 
