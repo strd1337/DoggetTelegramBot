@@ -12,6 +12,7 @@ namespace DoggetTelegramBot.Domain.Models.UserEntity
         public string LastName { get; private set; }
         public DateTime RegisteredDate { get; private set; }
         public MaritalStatus MaritalStatus { get; private set; }
+        public UserPrivilege Privilege { get; private set; }
         public InventoryId InventoryId { get; private set; }
 
         private User(
@@ -22,7 +23,8 @@ namespace DoggetTelegramBot.Domain.Models.UserEntity
             string lastName,
             DateTime registeredDate,
             InventoryId inventoryId,
-            MaritalStatus maritalStatus) : base(userId)
+            MaritalStatus maritalStatus,
+            UserPrivilege privilege) : base(userId)
         {
             TelegramId = telegramId;
             Nickname = nickname;
@@ -31,6 +33,7 @@ namespace DoggetTelegramBot.Domain.Models.UserEntity
             RegisteredDate = registeredDate;
             InventoryId = inventoryId;
             MaritalStatus = maritalStatus;
+            Privilege = privilege;
         }
 
         public static User Create(
@@ -40,7 +43,8 @@ namespace DoggetTelegramBot.Domain.Models.UserEntity
             string lastName,
             DateTime registeredDate,
             InventoryId inventoryId,
-            MaritalStatus maritalStatus) => new(
+            MaritalStatus maritalStatus,
+            UserPrivilege privilege) => new(
                 UserId.CreateUnique(),
                 telegramId,
                 nickname,
@@ -48,7 +52,8 @@ namespace DoggetTelegramBot.Domain.Models.UserEntity
                 lastName,
                 registeredDate,
                 inventoryId,
-                maritalStatus);
+                maritalStatus,
+                privilege);
 
 #pragma warning disable CS8618
         private User()
