@@ -1,14 +1,16 @@
 using DoggetTelegramBot.Application.Common.Services;
+using DoggetTelegramBot.Domain.Common.Enums;
 using DoggetTelegramBot.Infrastructure.Configs;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using PRTelegramBot.Core;
+using Telegram.Bot;
 
 namespace DoggetTelegramBot.Infrastructure.Services
 {
     public sealed class TelegramBotInitializer(
         IOptions<TelegramBotConfig> options,
-        ITelegramLogger telegramLogger)
+        ITelegramLogger logger)
     {
         private readonly TelegramBotConfig config = options.Value;
 
@@ -22,10 +24,15 @@ namespace DoggetTelegramBot.Infrastructure.Services
             },
             serviceProvider);
 
-            telegramBot.OnLogCommon += telegramLogger.LogCommon;
-            telegramBot.OnLogError += telegramLogger.LogError;
+            telegramBot.OnLogError += logger.LogError;
 
             await telegramBot.Start();
+
+            string? botName = (await telegramBot.botClient.GetMeAsync())?.Username;
+            logger.LogCommon(
+                $"Bot {botName} is running.",
+                TelegramEvents.Initialization,
+                ConsoleColor.Green);
         }
     }
 }

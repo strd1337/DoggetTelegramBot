@@ -1,11 +1,11 @@
-﻿using System.ComponentModel;
+using System.ComponentModel;
 
 namespace DoggetTelegramBot.Domain.Common.Enums
 {
     public enum TelegramEvents
     {
-        [Description(nameof(None))]
-        None,
+        [Description(nameof(All))]
+        All,
         [Description(nameof(Initialization))]
         Initialization,
         [Description(nameof(Register))]
