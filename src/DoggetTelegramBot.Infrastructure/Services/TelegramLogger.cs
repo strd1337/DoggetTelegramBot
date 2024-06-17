@@ -55,16 +55,36 @@ namespace DoggetTelegramBot.Infrastructure.Services
 
             StringBuilder sb = new();
             sb.Append(message?.Date);
-            sb.Append(string.Create(CultureInfo.InvariantCulture, $" User sent a message. "));
-            sb.Append(string.Create(CultureInfo.InvariantCulture, $"TelegramId: {from?.Id ?? -1}, "));
-            sb.Append(string.Create(CultureInfo.InvariantCulture, $"Username: {from?.Username ?? "None"}, "));
+            sb.Append(string.Create(CultureInfo.InvariantCulture, $" The user named, "));
+            sb.Append(string.Create(CultureInfo.InvariantCulture, $"UserName: {from?.Username ?? "None"}, "));
             sb.Append(string.Create(CultureInfo.InvariantCulture, $"FirstName: {from?.FirstName ?? "None"}, "));
-            sb.Append(string.Create(CultureInfo.InvariantCulture, $"LastName: {from?.LastName ?? "None"} "));
-            sb.Append(string.Create(CultureInfo.InvariantCulture, $"MessageType: {message?.Type}"));
+            sb.Append(string.Create(CultureInfo.InvariantCulture, $"LastName: {from?.LastName ?? "None"}, "));
 
             if (message?.Type == MessageType.Text)
             {
-                sb.Append(string.Create(CultureInfo.InvariantCulture, $", Text: {message?.Text ?? "None"}"));
+                sb.Append(string.Create(CultureInfo.InvariantCulture, $"sent message {message?.MessageId ?? -1} "));
+                sb.Append(string.Create(CultureInfo.InvariantCulture, $"to chat {message?.Chat.Id ?? -1}. "));
+
+                if (message?.ReplyToMessage is not null)
+                {
+                    sb.Append(string.Create(
+                        CultureInfo.InvariantCulture,
+                        $"It is a reply to message {message?.ReplyToMessage?.MessageId ?? -1} "));
+
+                    sb.Append(string.Create(
+                        CultureInfo.InvariantCulture,
+                        $"and has {message?.Entities?.Length ?? -1} message entities. "));
+                }
+
+                sb.Append(string.Create(CultureInfo.InvariantCulture, $"Text: {message?.Text ?? "None"}"));
+            }
+            else
+            {
+                sb.Append(string.Create(
+                    CultureInfo.InvariantCulture,
+                    $"sent the command {message?.Text ?? update.Message!.Type.ToString()} "));
+
+                sb.Append(string.Create(CultureInfo.InvariantCulture, $"to chat {message?.Chat.Id ?? -1}. "));
             }
 
             return sb.ToString();

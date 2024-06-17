@@ -1,10 +1,9 @@
 using DoggetTelegramBot.Application.Common.Services;
-using DoggetTelegramBot.Domain.Common.Enums;
 using DoggetTelegramBot.Infrastructure.Configs;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using PRTelegramBot.Core;
-using Telegram.Bot;
+using Telegram.Bot.Polling;
 
 namespace DoggetTelegramBot.Infrastructure.Services
 {
@@ -21,18 +20,21 @@ namespace DoggetTelegramBot.Infrastructure.Services
                 options.Token = config.Token;
                 options.ClearUpdatesOnStart = config.ClearUpdatesOnStart;
                 options.BotId = config.BotId;
+                options.Admins = config.Admins;
+                options.WhiteListUsers = config.WhiteListUsers;
+            },
+            new ReceiverOptions
+            {
+                Limit = 5,
+                AllowedUpdates = [],
+                ThrowPendingUpdates = true
             },
             serviceProvider);
 
+            telegramBot.OnLogCommon += logger.LogCommon;
             telegramBot.OnLogError += logger.LogError;
 
             await telegramBot.Start();
-
-            string? botName = (await telegramBot.botClient.GetMeAsync())?.Username;
-            logger.LogCommon(
-                $"Bot {botName} is running.",
-                TelegramEvents.Initialization,
-                ConsoleColor.Green);
         }
     }
 }
