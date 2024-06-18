@@ -5,11 +5,12 @@ using Microsoft.Extensions.Options;
 using PRTelegramBot.Core;
 using Telegram.Bot.Polling;
 
-namespace DoggetTelegramBot.Infrastructure.Services
+namespace DoggetTelegramBot.Infrastructure.BotManagement
 {
-    public sealed class TelegramBotInitializer(
+    public sealed class BotInitializer(
         IOptions<TelegramBotConfig> options,
-        ITelegramLogger logger)
+        IBotLogger logger,
+        BotEventDispatcher dispatcher)
     {
         private readonly TelegramBotConfig config = options.Value;
 
@@ -33,6 +34,10 @@ namespace DoggetTelegramBot.Infrastructure.Services
 
             telegramBot.OnLogCommon += logger.LogCommon;
             telegramBot.OnLogError += logger.LogError;
+
+            telegramBot.Handler.OnPreUpdate += dispatcher.OnCheckUserExistance;
+
+            telegramBot.Handler.Router.OnCheckPrivilege += dispatcher.OnCheckPrivilege;
 
             await telegramBot.Start();
         }

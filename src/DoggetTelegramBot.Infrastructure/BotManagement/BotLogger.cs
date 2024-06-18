@@ -9,9 +9,9 @@ using System.Globalization;
 using Telegram.Bot.Types;
 using Telegram.Bot.Types.Enums;
 
-namespace DoggetTelegramBot.Infrastructure.Services
+namespace DoggetTelegramBot.Infrastructure.BotManagement
 {
-    public class TelegramLogger(IDateTimeProvider dateTimeProvider) : ITelegramLogger
+    public class BotLogger(IDateTimeProvider dateTimeProvider) : IBotLogger
     {
         private readonly Dictionary<string, Logger> loggersContainer = [];
 

@@ -2,7 +2,7 @@ using Telegram.Bot.Types;
 
 namespace DoggetTelegramBot.Application.Common.Services
 {
-    public interface ITelegramLogger
+    public interface IBotLogger
     {
         void LogCommon(
             string message,

@@ -4,8 +4,8 @@ using Microsoft.Extensions.DependencyInjection;
 
 namespace DoggetTelegramBot.Infrastructure.Services
 {
-    public class ScopedMediatorService(IServiceScopeFactory serviceScopeFactory)
-        : IScopedMediatorService
+    public class ScopeService(IServiceScopeFactory serviceScopeFactory)
+        : IScopeService
     {
         public async Task<TResponse> Send<TResponse>(IRequest<TResponse> request)
         {

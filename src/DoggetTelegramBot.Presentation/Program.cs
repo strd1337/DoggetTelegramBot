@@ -1,7 +1,7 @@
 using DoggetTelegramBot.Presentation;
 using DoggetTelegramBot.Application;
 using DoggetTelegramBot.Infrastructure;
-using DoggetTelegramBot.Infrastructure.Services;
+using DoggetTelegramBot.Infrastructure.BotManagement;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -32,7 +32,7 @@ app.MapControllerRoute(
     name: "default",
     pattern: "{controller=Home}/{action=Index}/{id?}");
 
-var bot = app.Services.GetRequiredService<TelegramBotInitializer>();
+var bot = app.Services.GetRequiredService<BotInitializer>();
 await bot.InitializeAndRunAsync(app.Services.GetService<IServiceProvider>()!);
 
 app.Run();

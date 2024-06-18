@@ -5,7 +5,7 @@ using Microsoft.AspNetCore.Mvc;
 namespace DoggetTelegramBot.Presentation.Common.ErrorHandling
 {
     public class GlobalExceptionHandler(
-        ITelegramLogger logger) : IExceptionHandler
+        IBotLogger logger) : IExceptionHandler
     {
         public async ValueTask<bool> TryHandleAsync(
             HttpContext httpContext,
