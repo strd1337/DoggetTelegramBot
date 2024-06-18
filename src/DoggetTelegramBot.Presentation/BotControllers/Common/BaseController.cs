@@ -6,9 +6,9 @@ using DoggetTelegramBot.Domain.Common.Constants;
 
 namespace DoggetTelegramBot.Presentation.BotControllers.Common
 {
-    public abstract class BaseController(ITelegramLogger logger)
+    public abstract class BaseController(IBotLogger logger)
     {
-        private readonly ITelegramLogger logger = logger;
+        private readonly IBotLogger logger = logger;
 
         protected string Problem(List<Error> errors)
         {

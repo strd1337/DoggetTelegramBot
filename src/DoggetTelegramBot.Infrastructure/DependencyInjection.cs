@@ -2,6 +2,7 @@ using DoggetTelegramBot.Application.Common.Interfaces;
 using DoggetTelegramBot.Application.Common.Services;
 using DoggetTelegramBot.Domain.Common.Constants;
 using DoggetTelegramBot.Domain.Common.Entities;
+using DoggetTelegramBot.Infrastructure.BotManagement;
 using DoggetTelegramBot.Infrastructure.Configs;
 using DoggetTelegramBot.Infrastructure.Persistance;
 using DoggetTelegramBot.Infrastructure.Persistance.Repositories;
@@ -29,7 +30,7 @@ namespace DoggetTelegramBot.Infrastructure
 
             services.AddCaching();
 
-            services.AddScoped<IScopedMediatorService, ScopedMediatorService>();
+            services.AddTransient<IScopeService, ScopeService>();
 
             services.AddPersistance();
 
@@ -45,8 +46,9 @@ namespace DoggetTelegramBot.Infrastructure
             services.AddOptions();
             services.Configure<TelegramBotConfig>(configuration.GetSection(Constants.TelegramBotConfig.OptionKey));
 
-            services.AddSingleton<TelegramBotInitializer>();
-            services.AddSingleton<ITelegramLogger, TelegramLogger>();
+            services.AddSingleton<BotInitializer>();
+            services.AddSingleton<IBotLogger, BotLogger>();
+            services.AddTransient<BotEvents>();
 
             return services;
         }
@@ -92,6 +94,5 @@ namespace DoggetTelegramBot.Infrastructure
 
             return services;
         }
-
     }
 }

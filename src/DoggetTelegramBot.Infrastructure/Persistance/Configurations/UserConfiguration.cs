@@ -1,6 +1,8 @@
 using DoggetTelegramBot.Domain.Models.InventoryEntity;
 using DoggetTelegramBot.Domain.Models.UserEntity;
+using DoggetTelegramBot.Domain.Models.UserEntity.Enums;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.ChangeTracking;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace DoggetTelegramBot.Infrastructure.Persistance.Configurations
@@ -39,9 +41,14 @@ namespace DoggetTelegramBot.Infrastructure.Persistance.Configurations
                 .HasConversion<string>()
                 .HasMaxLength(50);
 
-            builder.Property(u => u.Privilege)
-                .HasConversion<string>()
-                .HasMaxLength(50);
+            builder.Property(u => u.Privileges)
+                .HasConversion(
+                    v => v.Select(p => (int)p).ToArray(),
+                    v => v.Select(p => (UserPrivilege)p).ToList())
+                .Metadata.SetValueComparer(new ValueComparer<IReadOnlyList<UserPrivilege>>(
+                   (c1, c2) => c1!.SequenceEqual(c2!),
+                   c => c.Aggregate(0, (a, v) => HashCode.Combine(a, v.GetHashCode())),
+                   c => c.ToList()));
         }
     }
 }
