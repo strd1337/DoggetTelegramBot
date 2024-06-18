@@ -1,9 +1,13 @@
 using DoggetTelegramBot.Application.Common.Services;
+using DoggetTelegramBot.Domain.Common.Constants;
+using DoggetTelegramBot.Domain.Common.Enums;
 using Microsoft.Extensions.Caching.Memory;
 
 namespace DoggetTelegramBot.Infrastructure.Services
 {
-    public class MemoryCacheService(IMemoryCache memoryCache) : ICacheService
+    public class MemoryCacheService(
+        IMemoryCache memoryCache,
+        IBotLogger logger) : ICacheService
     {
         private readonly TimeSpan defaultExpiration = TimeSpan.FromMinutes(5);
 
@@ -20,6 +24,10 @@ namespace DoggetTelegramBot.Infrastructure.Services
                     entry.SetAbsoluteExpiration(expiration ?? defaultExpiration);
                     return factory(cancellationToken);
                 });
+
+            logger.LogCommon(
+                Constants.Cache.StoreOrRetrieveMessage,
+                TelegramEvents.Message);
 
             return result!;
         }

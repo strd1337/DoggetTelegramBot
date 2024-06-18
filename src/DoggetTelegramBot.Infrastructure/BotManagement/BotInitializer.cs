@@ -10,7 +10,7 @@ namespace DoggetTelegramBot.Infrastructure.BotManagement
     public sealed class BotInitializer(
         IOptions<TelegramBotConfig> options,
         IBotLogger logger,
-        BotEvents botEvents)
+        BotEventDispatcher dispatcher)
     {
         private readonly TelegramBotConfig config = options.Value;
 
@@ -35,7 +35,9 @@ namespace DoggetTelegramBot.Infrastructure.BotManagement
             telegramBot.OnLogCommon += logger.LogCommon;
             telegramBot.OnLogError += logger.LogError;
 
-            telegramBot.Handler.Router.OnCheckPrivilege += botEvents.OnCheckPrivilege;
+            telegramBot.Handler.OnPreUpdate += dispatcher.OnCheckUserExistance;
+
+            telegramBot.Handler.Router.OnCheckPrivilege += dispatcher.OnCheckPrivilege;
 
             await telegramBot.Start();
         }

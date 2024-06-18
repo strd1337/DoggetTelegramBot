@@ -17,7 +17,7 @@ namespace DoggetTelegramBot.Domain.Common.Constants
             public const string Generic = "An error occurred. Please try again.";
 
             public const string NotAllowedFunction = "You are not allowed to use this function.";
-            public const string MissingPrivilegeInformation = "Missing required information to check privileges.";
+            public const string MissingInformation = "Missing required information to check the data.";
         }
     }
 }

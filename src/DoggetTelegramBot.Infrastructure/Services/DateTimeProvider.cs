@@ -1,9 +1,9 @@
-﻿using DoggetTelegramBot.Application.Common.Services;
+using DoggetTelegramBot.Application.Common.Services;
 
 namespace DoggetTelegramBot.Infrastructure.Services
 {
     public class DateTimeProvider : IDateTimeProvider
     {
-        public DateTime UtcNow => DateTime.Now;
+        public DateTime UtcNow => DateTime.UtcNow;
     }
 }

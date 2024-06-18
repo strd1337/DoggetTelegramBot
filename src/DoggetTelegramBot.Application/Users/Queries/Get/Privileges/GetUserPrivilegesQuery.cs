@@ -1,7 +1,7 @@
 using DoggetTelegramBot.Application.Common.Caching;
-using DoggetTelegramBot.Application.Users.Queries.Common;
+using DoggetTelegramBot.Application.Users.Common;
 
-namespace DoggetTelegramBot.Application.Users.Queries.Get
+namespace DoggetTelegramBot.Application.Users.Queries.Get.Privileges
 {
     public record GetUserPrivilegesQuery(long TelegramId) :
         ICachedQuery<GetUserPrivilegesResult>

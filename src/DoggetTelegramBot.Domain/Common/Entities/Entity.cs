@@ -5,8 +5,8 @@ namespace DoggetTelegramBot.Domain.Common.Entities
     {
         public TId Id { get; protected set; }
         public bool IsDeleted { get; protected set; }
-        public DateTime CreatedDate { get; protected set; } = DateTime.Now;
-        public DateTime ModifiedDate { get; protected set; } = DateTime.Now;
+        public DateTime CreatedDate { get; protected set; } = DateTime.UtcNow;
+        public DateTime ModifiedDate { get; protected set; } = DateTime.UtcNow;
 
         protected Entity(TId id) => Id = id;
 

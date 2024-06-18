@@ -3,6 +3,7 @@ using DoggetTelegramBot.Application.Common.Services;
 using DoggetTelegramBot.Domain.Common.Constants;
 using DoggetTelegramBot.Domain.Common.Entities;
 using DoggetTelegramBot.Infrastructure.BotManagement;
+using DoggetTelegramBot.Infrastructure.BotManagement.Events;
 using DoggetTelegramBot.Infrastructure.Configs;
 using DoggetTelegramBot.Infrastructure.Persistance;
 using DoggetTelegramBot.Infrastructure.Persistance.Repositories;
@@ -48,7 +49,17 @@ namespace DoggetTelegramBot.Infrastructure
 
             services.AddSingleton<BotInitializer>();
             services.AddSingleton<IBotLogger, BotLogger>();
-            services.AddTransient<BotEvents>();
+            services.AddBotEvents();
+
+            return services;
+        }
+
+        public static IServiceCollection AddBotEvents(
+            this IServiceCollection services)
+        {
+            services.AddTransient<BotEventDispatcher>();
+
+            services.AddTransient<UserEventsHandler>();
 
             return services;
         }
