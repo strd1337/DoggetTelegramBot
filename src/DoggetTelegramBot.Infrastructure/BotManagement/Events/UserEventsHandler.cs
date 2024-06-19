@@ -22,7 +22,7 @@ namespace DoggetTelegramBot.Infrastructure.BotManagement.Events
             int? flags = null)
         {
             logger.LogCommon(
-                Constants.User.Messages.StartCheckingPrivilege,
+                Constants.User.Messages.CheckPrivilegeRequest(),
                 TelegramEvents.Message);
 
             long? telegramId = update.Message?.From?.Id;
@@ -75,6 +75,10 @@ namespace DoggetTelegramBot.Infrastructure.BotManagement.Events
                     update,
                     Constants.ErrorMessage.NotAllowedFunction);
             }
+
+            logger.LogCommon(
+                Constants.User.Messages.CheckPrivilegeRequest(false),
+                TelegramEvents.Message);
         }
 
         public async Task<ResultUpdate> HandleCheckUserExistance(
@@ -82,7 +86,7 @@ namespace DoggetTelegramBot.Infrastructure.BotManagement.Events
             Update update)
         {
             logger.LogCommon(
-                Constants.User.Messages.StartCheckingExistence,
+                Constants.User.Messages.CheckExistenceRequest(),
                 TelegramEvents.Message);
 
             if (update.Message?.From is null)
@@ -109,6 +113,10 @@ namespace DoggetTelegramBot.Infrastructure.BotManagement.Events
 
             logger.LogCommon(
                 Constants.User.Messages.SuccessExistence(update.Message.From.Id),
+                TelegramEvents.Message);
+
+            logger.LogCommon(
+                Constants.User.Messages.CheckExistenceRequest(false),
                 TelegramEvents.Message);
 
             return result.Value;

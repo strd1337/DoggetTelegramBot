@@ -6,11 +6,20 @@ namespace DoggetTelegramBot.Domain.Common.Constants
         {
             public static class Messages
             {
-                public const string StartCheckingPrivilege =
-                "Check user privilege request started.";
+                public static string CheckPrivilegeRequest(bool isStarted = true) =>
+                    isStarted ?
+                    $"Check user privilege request started." :
+                    $"Check user privilege request ended.";
 
-                public const string StartCheckingExistence =
-                    "Check user existence request started.";
+                public static string CheckExistenceRequest(bool isStarted = true) =>
+                    isStarted ?
+                    $"Check user existence request started." :
+                    $"Check user existence request ended.";
+
+                public static string GetInformationRequest(bool isStarted = true) =>
+                    isStarted ?
+                    $"Get user information request started." :
+                    $"Get user information request ended.";
 
                 public static string Registered(long telegramId) =>
                     $"User {telegramId} was registered.";
@@ -29,6 +38,11 @@ namespace DoggetTelegramBot.Domain.Common.Constants
 
                 public static string SuccessExistence(long telegramId) =>
                     $"User {telegramId} exists.";
+            }
+
+            public static class ReplyKeys
+            {
+                public const string GetMyInfo = "who am i";
             }
         }
     }
