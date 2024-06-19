@@ -37,9 +37,7 @@ namespace DoggetTelegramBot.Application.Users.Queries.Get.Information
                 TelegramEvents.Message);
 
             return new GetUserInfoResult(
-                user.Nickname,
-                user.FirstName,
-                user.LastName,
+                user.Username,
                 user.RegisteredDate,
                 user.MaritalStatus,
                 [.. user.Privileges]);

@@ -9,9 +9,7 @@ namespace DoggetTelegramBot.Domain.Models.UserEntity
         private readonly List<UserPrivilege> privileges = [];
 
         public long TelegramId { get; private set; }
-        public string? Nickname { get; private set; }
-        public string? FirstName { get; private set; }
-        public string? LastName { get; private set; }
+        public string? Username { get; private set; }
         public DateTime RegisteredDate { get; private set; }
         public MaritalStatus MaritalStatus { get; private set; }
         public InventoryId InventoryId { get; private set; }
@@ -22,17 +20,13 @@ namespace DoggetTelegramBot.Domain.Models.UserEntity
         private User(
             UserId userId,
             long telegramId,
-            string? nickname,
-            string? firstName,
-            string? lastName,
+            string? username,
             DateTime registeredDate,
             InventoryId inventoryId,
             MaritalStatus maritalStatus) : base(userId)
         {
             TelegramId = telegramId;
-            Nickname = nickname;
-            FirstName = firstName;
-            LastName = lastName;
+            Username = username;
             RegisteredDate = registeredDate;
             InventoryId = inventoryId;
             MaritalStatus = maritalStatus;
@@ -40,17 +34,13 @@ namespace DoggetTelegramBot.Domain.Models.UserEntity
 
         public static User Create(
             long telegramId,
-            string? nickname,
-            string? firstName,
-            string? lastName,
+            string? username,
             DateTime registeredDate,
             InventoryId inventoryId,
             MaritalStatus maritalStatus) => new(
                 UserId.CreateUnique(),
                 telegramId,
-                nickname,
-                firstName,
-                lastName,
+                username,
                 registeredDate,
                 inventoryId,
                 maritalStatus);

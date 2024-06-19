@@ -33,9 +33,7 @@ namespace DoggetTelegramBot.Application.Users.Queries.Get.Existence
 
                 RegisterUserCommand command = new(
                     request.TelegramId,
-                    request.Username,
-                    request.FirstName,
-                    request.LastName);
+                    request.Username);
 
                 var result = await mediator.Send(command, cancellationToken);
             }
