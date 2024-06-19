@@ -20,10 +20,14 @@ namespace DoggetTelegramBot.Application.Users.Queries.Get.Existence
             CheckUserExistenceQuery request,
             CancellationToken cancellationToken)
         {
-            var user = await unitOfWork.GetRepository<User, UserId>()
-                .FirstOrDefaultAsync(
-                    u => u.TelegramId == request.TelegramId,
-                    cancellationToken);
+            var user = unitOfWork.GetRepository<User, UserId>()
+                .GetWhere(u => u.TelegramId == request.TelegramId)
+                .Select(u => new
+                {
+                    u.TelegramId,
+                    u.Username,
+                })
+                .FirstOrDefault();
 
             if (user is null)
             {
@@ -35,7 +39,7 @@ namespace DoggetTelegramBot.Application.Users.Queries.Get.Existence
                     request.TelegramId,
                     request.Username);
 
-                var result = await mediator.Send(command, cancellationToken);
+                _ = await mediator.Send(command, cancellationToken);
             }
             else
             {

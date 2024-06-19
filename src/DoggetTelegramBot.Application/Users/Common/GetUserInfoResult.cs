@@ -1,3 +1,4 @@
+using DoggetTelegramBot.Application.Marriages.Common;
 using DoggetTelegramBot.Domain.Models.UserEntity.Enums;
 
 namespace DoggetTelegramBot.Application.Users.Common
@@ -6,5 +7,6 @@ namespace DoggetTelegramBot.Application.Users.Common
         string? Username,
         DateTime RegisteredDate,
         MaritalStatus MaritalStatus,
-        List<UserPrivilege> Privileges);
+        List<UserPrivilege> Privileges,
+        MarriageDto? Marriage);
 }
