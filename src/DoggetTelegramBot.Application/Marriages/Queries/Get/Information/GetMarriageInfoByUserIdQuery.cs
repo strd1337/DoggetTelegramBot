@@ -4,7 +4,8 @@ using DoggetTelegramBot.Domain.Models.UserEntity;
 
 namespace DoggetTelegramBot.Application.Marriages.Queries.Get.Information
 {
-    public record GetMarriageInfoQuery(UserId UserId) : ICachedQuery<GetMarriageInfoResult>
+    public record GetMarriageInfoByUserIdQuery(UserId UserId) :
+        ICachedQuery<GetMarriageInfoResult>
     {
         public string CachedKey => $"get-marriage-info-with-userId-{UserId.Value}";
 

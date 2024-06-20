@@ -3,7 +3,7 @@ using PRTelegramBot.Models.Enums;
 
 namespace DoggetTelegramBot.Application.Users.Queries.Get.Existence
 {
-    public record CheckUserExistenceQuery(
+    public record CheckUserExistenceByTelegramIdQuery(
         long TelegramId,
         string? Username) : ICachedQuery<ResultUpdate>
     {

@@ -11,13 +11,13 @@ using PRTelegramBot.Models.Enums;
 
 namespace DoggetTelegramBot.Application.Users.Queries.Get.Existence
 {
-    public sealed class CheckUserExistenceQueryHandler(
+    public sealed class CheckUserExistenceByTelegramIdQueryHandler(
         IUnitOfWork unitOfWork,
         IMediator mediator,
-        IBotLogger logger) : IQueryHandler<CheckUserExistenceQuery, ResultUpdate>
+        IBotLogger logger) : IQueryHandler<CheckUserExistenceByTelegramIdQuery, ResultUpdate>
     {
         public async Task<ErrorOr<ResultUpdate>> Handle(
-            CheckUserExistenceQuery request,
+            CheckUserExistenceByTelegramIdQuery request,
             CancellationToken cancellationToken)
         {
             var user = unitOfWork.GetRepository<User, UserId>()

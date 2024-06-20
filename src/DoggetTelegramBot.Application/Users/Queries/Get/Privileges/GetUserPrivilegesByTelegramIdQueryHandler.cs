@@ -10,12 +10,12 @@ using DoggetTelegramBot.Domain.Common.Constants;
 
 namespace DoggetTelegramBot.Application.Users.Queries.Get.Privileges
 {
-    public sealed class GetUserPrivilegesQueryHandler(
+    public sealed class GetUserPrivilegesByTelegramIdQueryHandler(
         IUnitOfWork unitOfWork,
-        IBotLogger logger) : IQueryHandler<GetUserPrivilegesQuery, GetUserPrivilegesResult>
+        IBotLogger logger) : IQueryHandler<GetUserPrivilegesByTelegramIdQuery, GetUserPrivilegesResult>
     {
         public Task<ErrorOr<GetUserPrivilegesResult>> Handle(
-            GetUserPrivilegesQuery request,
+            GetUserPrivilegesByTelegramIdQuery request,
             CancellationToken cancellationToken)
         {
             var user = unitOfWork.GetRepository<User, UserId>()

@@ -41,7 +41,7 @@ namespace DoggetTelegramBot.Infrastructure.BotManagement.Events
                 return;
             }
 
-            GetUserPrivilegesQuery query = new(telegramId.Value);
+            GetUserPrivilegesByTelegramIdQuery query = new(telegramId.Value);
             var result = await service.Send(query);
 
             if (!result.IsError)
@@ -103,7 +103,7 @@ namespace DoggetTelegramBot.Infrastructure.BotManagement.Events
                 return ResultUpdate.Stop;
             }
 
-            CheckUserExistenceQuery query = new(
+            CheckUserExistenceByTelegramIdQuery query = new(
                 update.Message.From.Id,
                 update.Message.From.Username);
 

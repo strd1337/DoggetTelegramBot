@@ -11,12 +11,12 @@ using ErrorOr;
 
 namespace DoggetTelegramBot.Application.Marriages.Queries.Get.Information
 {
-    public sealed class GetMarriageInfoQueryHandler(
+    public sealed class GetMarriageInfoByUserIdQueryHandler(
         IUnitOfWork unitOfWork,
-        IBotLogger logger) : IQueryHandler<GetMarriageInfoQuery, GetMarriageInfoResult>
+        IBotLogger logger) : IQueryHandler<GetMarriageInfoByUserIdQuery, GetMarriageInfoResult>
     {
         public Task<ErrorOr<GetMarriageInfoResult>> Handle(
-            GetMarriageInfoQuery request,
+            GetMarriageInfoByUserIdQuery request,
             CancellationToken cancellationToken)
         {
             var marriage = unitOfWork.GetRepository<Marriage, MarriageId>()

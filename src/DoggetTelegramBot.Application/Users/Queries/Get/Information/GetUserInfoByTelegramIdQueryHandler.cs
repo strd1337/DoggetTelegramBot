@@ -13,15 +13,15 @@ using MediatR;
 
 namespace DoggetTelegramBot.Application.Users.Queries.Get.Information
 {
-    public sealed class GetUserInfoQueryHandler(
+    public sealed class GetUserInfoByTelegramIdQueryHandler(
         IUnitOfWork unitOfWork,
         IBotLogger logger,
-        IMediator mediator) : IQueryHandler<GetUserInfoQuery, GetUserInfoResult>
+        IMediator mediator) : IQueryHandler<GetUserInfoByTelegramIdQuery, GetUserInfoResult>
     {
         private readonly IBotLogger logger = logger;
 
         public async Task<ErrorOr<GetUserInfoResult>> Handle(
-            GetUserInfoQuery request,
+            GetUserInfoByTelegramIdQuery request,
             CancellationToken cancellationToken)
         {
             var user = unitOfWork.GetRepository<User, UserId>()
@@ -69,7 +69,7 @@ namespace DoggetTelegramBot.Application.Users.Queries.Get.Information
                Constants.Marriage.Messages.GetInformationRequest(),
                TelegramEvents.Message);
 
-            GetMarriageInfoQuery query = new(userId);
+            GetMarriageInfoByUserIdQuery query = new(userId);
             var result = await mediator.Send(query, cancellationToken);
 
             MarriageDto? marriage = null;

@@ -26,7 +26,7 @@ namespace DoggetTelegramBot.Presentation.BotControllers
                 Constants.User.Messages.GetInformationRequest(),
                 TelegramEvents.Message);
 
-            GetUserInfoQuery query = new(update.Message!.From!.Id);
+            GetUserInfoByTelegramIdQuery query = new(update.Message!.From!.Id);
             var result = await service.Send(query);
 
             var response = result.Match(mapper.Map<Response>, Problem);
