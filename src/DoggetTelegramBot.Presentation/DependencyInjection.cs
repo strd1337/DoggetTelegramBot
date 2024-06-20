@@ -1,6 +1,9 @@
+using System.Reflection;
 using System.Threading.RateLimiting;
 using DoggetTelegramBot.Domain.Common.Constants;
 using DoggetTelegramBot.Presentation.Common.ErrorHandling;
+using Mapster;
+using MapsterMapper;
 using Microsoft.AspNetCore.RateLimiting;
 
 namespace DoggetTelegramBot.Presentation
@@ -15,6 +18,8 @@ namespace DoggetTelegramBot.Presentation
             services.AddGlobalExceptionHandler();
 
             services.AddRateLimiter();
+
+            services.AddMappings();
 
             return services;
         }
@@ -71,6 +76,19 @@ namespace DoggetTelegramBot.Presentation
                         options.AutoReplenishment = true;
                     });
             });
+
+            return services;
+        }
+
+        public static IServiceCollection AddMappings(
+            this IServiceCollection services)
+        {
+            var config = TypeAdapterConfig.GlobalSettings;
+            config.Scan(Assembly.GetExecutingAssembly());
+
+            services.AddSingleton(config);
+
+            services.AddScoped<IMapper, ServiceMapper>();
 
             return services;
         }

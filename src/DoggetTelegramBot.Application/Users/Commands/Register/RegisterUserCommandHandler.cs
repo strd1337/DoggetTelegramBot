@@ -28,8 +28,6 @@ namespace DoggetTelegramBot.Application.Users.Commands.Register
             User user = User.Create(
                 request.TelegramId,
                 request.Username,
-                request.FirstName,
-                request.LastName,
                 dateTimeProvider.UtcNow,
                 result.Value.InventoryId,
                 MaritalStatus.NotMarried);

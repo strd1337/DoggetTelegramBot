@@ -10,18 +10,21 @@ using DoggetTelegramBot.Domain.Common.Constants;
 
 namespace DoggetTelegramBot.Application.Users.Queries.Get.Privileges
 {
-    public sealed class GetUserPrivilegesQueryHandler(
+    public sealed class GetUserPrivilegesByTelegramIdQueryHandler(
         IUnitOfWork unitOfWork,
-        IBotLogger logger) : IQueryHandler<GetUserPrivilegesQuery, GetUserPrivilegesResult>
+        IBotLogger logger) : IQueryHandler<GetUserPrivilegesByTelegramIdQuery, GetUserPrivilegesResult>
     {
-        public async Task<ErrorOr<GetUserPrivilegesResult>> Handle(
-            GetUserPrivilegesQuery request,
+        public Task<ErrorOr<GetUserPrivilegesResult>> Handle(
+            GetUserPrivilegesByTelegramIdQuery request,
             CancellationToken cancellationToken)
         {
-            var user = await unitOfWork.GetRepository<User, UserId>()
-                .FirstOrDefaultAsync(
-                    u => u.TelegramId == request.TelegramId,
-                    cancellationToken);
+            var user = unitOfWork.GetRepository<User, UserId>()
+                .GetWhere(u => u.TelegramId == request.TelegramId)
+                .Select(u => new
+                {
+                    u.Privileges
+                })
+                .FirstOrDefault();
 
             if (user is null)
             {
@@ -29,7 +32,8 @@ namespace DoggetTelegramBot.Application.Users.Queries.Get.Privileges
                     Constants.User.Messages.NotFoundRetrieved(request.TelegramId),
                     TelegramEvents.Message);
 
-                return Errors.User.NotFound;
+                return Task.FromResult<ErrorOr<GetUserPrivilegesResult>>(
+                    Errors.User.NotFound);
             }
             else
             {
@@ -37,7 +41,8 @@ namespace DoggetTelegramBot.Application.Users.Queries.Get.Privileges
                     Constants.User.Messages.Retrieved(request.TelegramId),
                     TelegramEvents.Message);
 
-                return new GetUserPrivilegesResult([.. user.Privileges]);
+                return Task.FromResult<ErrorOr<GetUserPrivilegesResult>>(
+                    new GetUserPrivilegesResult([.. user.Privileges]));
             }
         }
     }

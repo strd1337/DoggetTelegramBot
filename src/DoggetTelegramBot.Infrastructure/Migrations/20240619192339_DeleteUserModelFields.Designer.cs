@@ -3,6 +3,7 @@ using System;
 using DoggetTelegramBot.Infrastructure.Persistance;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
@@ -11,9 +12,11 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace DoggetTelegramBot.Infrastructure.Migrations
 {
     [DbContext(typeof(BotDbContext))]
-    partial class BotDbContextModelSnapshot : ModelSnapshot
+    [Migration("20240619192339_DeleteUserModelFields")]
+    partial class DeleteUserModelFields
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -211,7 +214,7 @@ namespace DoggetTelegramBot.Infrastructure.Migrations
 
             modelBuilder.Entity("DoggetTelegramBot.Domain.Models.FamilyEntity.Family", b =>
                 {
-                    b.OwnsMany("DoggetTelegramBot.Domain.Models.FamilyEntity.FamilyMember", "Members", b1 =>
+                    b.OwnsMany("DoggetTelegramBot.Domain.Models.FamilyEntity.FamilyMember", "FamilyMembers", b1 =>
                         {
                             b1.Property<Guid>("Id")
                                 .HasColumnType("uuid")
@@ -247,7 +250,7 @@ namespace DoggetTelegramBot.Infrastructure.Migrations
                                 .HasForeignKey("FamilyId");
                         });
 
-                    b.Navigation("Members");
+                    b.Navigation("FamilyMembers");
                 });
 
             modelBuilder.Entity("DoggetTelegramBot.Domain.Models.InventoryEntity.Inventory", b =>

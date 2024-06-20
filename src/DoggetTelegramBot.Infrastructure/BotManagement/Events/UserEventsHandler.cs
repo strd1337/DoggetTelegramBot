@@ -22,7 +22,7 @@ namespace DoggetTelegramBot.Infrastructure.BotManagement.Events
             int? flags = null)
         {
             logger.LogCommon(
-                Constants.User.Messages.StartCheckingPrivilege,
+                Constants.User.Messages.CheckPrivilegeRequest(),
                 TelegramEvents.Message);
 
             long? telegramId = update.Message?.From?.Id;
@@ -41,7 +41,7 @@ namespace DoggetTelegramBot.Infrastructure.BotManagement.Events
                 return;
             }
 
-            GetUserPrivilegesQuery query = new(telegramId.Value);
+            GetUserPrivilegesByTelegramIdQuery query = new(telegramId.Value);
             var result = await service.Send(query);
 
             if (!result.IsError)
@@ -75,6 +75,10 @@ namespace DoggetTelegramBot.Infrastructure.BotManagement.Events
                     update,
                     Constants.ErrorMessage.NotAllowedFunction);
             }
+
+            logger.LogCommon(
+                Constants.User.Messages.CheckPrivilegeRequest(false),
+                TelegramEvents.Message);
         }
 
         public async Task<ResultUpdate> HandleCheckUserExistance(
@@ -82,7 +86,7 @@ namespace DoggetTelegramBot.Infrastructure.BotManagement.Events
             Update update)
         {
             logger.LogCommon(
-                Constants.User.Messages.StartCheckingExistence,
+                Constants.User.Messages.CheckExistenceRequest(),
                 TelegramEvents.Message);
 
             if (update.Message?.From is null)
@@ -99,16 +103,18 @@ namespace DoggetTelegramBot.Infrastructure.BotManagement.Events
                 return ResultUpdate.Stop;
             }
 
-            CheckUserExistenceQuery query = new(
+            CheckUserExistenceByTelegramIdQuery query = new(
                 update.Message.From.Id,
-                update.Message.From.Username,
-                update.Message.From.FirstName,
-                update.Message.From.LastName);
+                update.Message.From.Username);
 
             var result = await service.Send(query);
 
             logger.LogCommon(
                 Constants.User.Messages.SuccessExistence(update.Message.From.Id),
+                TelegramEvents.Message);
+
+            logger.LogCommon(
+                Constants.User.Messages.CheckExistenceRequest(false),
                 TelegramEvents.Message);
 
             return result.Value;

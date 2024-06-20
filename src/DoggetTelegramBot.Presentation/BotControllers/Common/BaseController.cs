@@ -3,6 +3,7 @@ using ErrorOr;
 using System.Text;
 using DoggetTelegramBot.Domain.Common.Enums;
 using DoggetTelegramBot.Domain.Common.Constants;
+using DoggetTelegramBot.Presentation.Common.Mapping;
 
 namespace DoggetTelegramBot.Presentation.BotControllers.Common
 {
@@ -10,12 +11,12 @@ namespace DoggetTelegramBot.Presentation.BotControllers.Common
     {
         private readonly IBotLogger logger = logger;
 
-        protected string Problem(List<Error> errors)
+        protected Response Problem(List<Error> errors)
         {
             if (errors.Count == 0)
             {
                 logger.LogCommon("No errors provided", TelegramEvents.Message, ConsoleColor.Red);
-                return string.Empty;
+                return new Response();
             }
 
             return errors.All(error => error.Type == ErrorType.Validation) ?
@@ -23,7 +24,7 @@ namespace DoggetTelegramBot.Presentation.BotControllers.Common
                 Problem(errors[0]);
         }
 
-        private string ValidationProblem(List<Error> errors)
+        private Response ValidationProblem(List<Error> errors)
         {
             StringBuilder validationErrorMessage = new("Validation errors occurred:");
             StringBuilder validationErrorDetails = new(validationErrorMessage.ToString());
@@ -36,10 +37,10 @@ namespace DoggetTelegramBot.Presentation.BotControllers.Common
 
             logger.LogCommon(validationErrorDetails.ToString(), TelegramEvents.Message, ConsoleColor.Yellow);
 
-            return validationErrorMessage.ToString();
+            return new Response { Message = validationErrorMessage.ToString() };
         }
 
-        private string Problem(Error error)
+        private Response Problem(Error error)
         {
             int statusCode = GetStatusCode(error.Type);
 
@@ -59,7 +60,7 @@ namespace DoggetTelegramBot.Presentation.BotControllers.Common
                 TelegramEvents.Message,
                 ConsoleColor.Red);
 
-            return errorMessage;
+            return new Response { Message = errorMessage };
         }
 
         private static int GetStatusCode(ErrorType errorType) => errorType switch

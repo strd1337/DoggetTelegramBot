@@ -11,19 +11,23 @@ using PRTelegramBot.Models.Enums;
 
 namespace DoggetTelegramBot.Application.Users.Queries.Get.Existence
 {
-    public sealed class CheckUserExistenceQueryHandler(
+    public sealed class CheckUserExistenceByTelegramIdQueryHandler(
         IUnitOfWork unitOfWork,
         IMediator mediator,
-        IBotLogger logger) : IQueryHandler<CheckUserExistenceQuery, ResultUpdate>
+        IBotLogger logger) : IQueryHandler<CheckUserExistenceByTelegramIdQuery, ResultUpdate>
     {
         public async Task<ErrorOr<ResultUpdate>> Handle(
-            CheckUserExistenceQuery request,
+            CheckUserExistenceByTelegramIdQuery request,
             CancellationToken cancellationToken)
         {
-            var user = await unitOfWork.GetRepository<User, UserId>()
-                .FirstOrDefaultAsync(
-                    u => u.TelegramId == request.TelegramId,
-                    cancellationToken);
+            var user = unitOfWork.GetRepository<User, UserId>()
+                .GetWhere(u => u.TelegramId == request.TelegramId)
+                .Select(u => new
+                {
+                    u.TelegramId,
+                    u.Username,
+                })
+                .FirstOrDefault();
 
             if (user is null)
             {
@@ -33,11 +37,9 @@ namespace DoggetTelegramBot.Application.Users.Queries.Get.Existence
 
                 RegisterUserCommand command = new(
                     request.TelegramId,
-                    request.Username,
-                    request.FirstName,
-                    request.LastName);
+                    request.Username);
 
-                var result = await mediator.Send(command, cancellationToken);
+                _ = await mediator.Send(command, cancellationToken);
             }
             else
             {

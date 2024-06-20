@@ -5,7 +5,5 @@ namespace DoggetTelegramBot.Application.Users.Commands.Register
 {
     public record RegisterUserCommand(
         long TelegramId,
-        string? Username,
-        string? FirstName,
-        string? LastName) : ICommand<ResultUpdate>;
+        string? Username) : ICommand<ResultUpdate>;
 }
