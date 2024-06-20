@@ -1,5 +1,5 @@
 using System.Text;
-using DoggetTelegramBot.Application.Marriages.Common;
+using DoggetTelegramBot.Application.DTOs;
 using DoggetTelegramBot.Application.Users.Common;
 using DoggetTelegramBot.Domain.Models.UserEntity.Enums;
 using Mapster;
@@ -16,14 +16,16 @@ namespace DoggetTelegramBot.Presentation.Common.Mapping.Users
                     src.RegisteredDate,
                     src.MaritalStatus,
                     src.Privileges,
-                    src.Marriage));
+                    src.Marriage,
+                    src.Family));
 
         private static string FormatUserInfoMessage(
             string? username,
             DateTime registeredDate,
             MaritalStatus maritalStatus,
             List<UserPrivilege> privileges,
-            MarriageDto? marriage)
+            MarriageDto? marriage,
+            FamilyDto? family)
         {
             StringBuilder sb = new("User information:\n");
             sb.AppendLine($"Username: {username ?? "none"}");
@@ -34,6 +36,11 @@ namespace DoggetTelegramBot.Presentation.Common.Mapping.Users
             if (marriage is not null)
             {
                 FormatMarriageInfo(ref sb, marriage);
+            }
+
+            if (family is not null)
+            {
+                FormatFamilyInfo(ref sb, family);
             }
 
             return sb.ToString();
@@ -58,6 +65,18 @@ namespace DoggetTelegramBot.Presentation.Common.Mapping.Users
 
             sb.AppendLine($"Type: {marriage.Type.GetDescription()}");
             sb.AppendLine($"Status: {marriage.Status.GetDescription()}");
+        }
+
+        private static void FormatFamilyInfo(
+            ref StringBuilder sb,
+            FamilyDto family)
+        {
+            sb.AppendLine("\nFamily information:");
+            sb.AppendLine($"Members:");
+            foreach (var member in family.Members)
+            {
+                sb.AppendLine($" Username: {member.Username}\n Role: {member.Role.GetDescription()}");
+            }
         }
     }
 }

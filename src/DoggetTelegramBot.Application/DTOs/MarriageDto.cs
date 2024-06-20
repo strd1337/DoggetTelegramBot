@@ -1,7 +1,6 @@
-using DoggetTelegramBot.Application.Users.Common;
 using DoggetTelegramBot.Domain.Models.MarriageEntity.Enums;
 
-namespace DoggetTelegramBot.Application.Marriages.Common
+namespace DoggetTelegramBot.Application.DTOs
 {
     public record MarriageDto(
         List<SpouseDto> Spouses,

@@ -1,7 +1,8 @@
 using DoggetTelegramBot.Application.Common.CQRS;
 using DoggetTelegramBot.Application.Common.Interfaces;
 using DoggetTelegramBot.Application.Common.Services;
-using DoggetTelegramBot.Application.Marriages.Common;
+using DoggetTelegramBot.Application.DTOs;
+using DoggetTelegramBot.Application.Families.Queries.Get.Information;
 using DoggetTelegramBot.Application.Marriages.Queries.Get.Information;
 using DoggetTelegramBot.Application.Users.Common;
 using DoggetTelegramBot.Domain.Common.Constants;
@@ -53,12 +54,17 @@ namespace DoggetTelegramBot.Application.Users.Queries.Get.Information
                 user.UserId,
                 cancellationToken);
 
+            var family = await GetUserFamilyInfoAsync(
+                user.UserId,
+                cancellationToken);
+
             return new GetUserInfoResult(
                 user.Username,
                 user.RegisteredDate,
                 user.MaritalStatus,
                 [.. user.Privileges],
-                marriage);
+                marriage,
+                family);
         }
 
         private async Task<MarriageDto?> GetUserMarriageInfoAsync(
@@ -99,6 +105,56 @@ namespace DoggetTelegramBot.Application.Users.Queries.Get.Information
                 TelegramEvents.Message);
 
             return marriage;
+        }
+
+        private async Task<FamilyDto?> GetUserFamilyInfoAsync(
+           UserId userId,
+           CancellationToken cancellationToken)
+        {
+            logger.LogCommon(
+               Constants.Family.Messages.GetInformationRequest(),
+               TelegramEvents.Message);
+
+            GetFamilyInfoByUserIdQuery query = new(userId);
+            var result = await mediator.Send(query, cancellationToken);
+
+            FamilyDto? family = null;
+
+            if (!result.IsError)
+            {
+                List<UserId> userIds = result.Value.Members
+                    .Select(m => UserId.Create(m.UserId.Value))
+                    .ToList();
+
+                var users = unitOfWork.GetRepository<User, UserId>()
+                    .GetWhere(u => userIds.Contains(u.Id))
+                    .Select(u => new
+                    {
+                        UserId = u.Id.Value,
+                        u.Username
+                    })
+                    .ToList();
+
+                Dictionary<Guid, string?> userDictionary = users
+                    .ToDictionary(u => u.UserId, u => u.Username);
+
+                List<FamilyMemberDto> members = result.Value.Members
+                    .Select(m => new FamilyMemberDto(
+                        Username: userDictionary.TryGetValue(m.UserId.Value, out string? value) ?
+                            value :
+                            null,
+                        m.Role
+                    ))
+                    .ToList();
+
+                family = new(members);
+            }
+
+            logger.LogCommon(
+                Constants.Family.Messages.GetInformationRequest(false),
+                TelegramEvents.Message);
+
+            return family;
         }
     }
 }

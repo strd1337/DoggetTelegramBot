@@ -17,7 +17,7 @@ namespace DoggetTelegramBot.Infrastructure.Persistance.Configurations
                     id => id.Value,
                     value => FamilyId.Create(value));
 
-            builder.OwnsMany(f => f.FamilyMembers, fmb =>
+            builder.OwnsMany(f => f.Members, fmb =>
             {
                 fmb.ToTable("FamilyMembers");
 
@@ -42,7 +42,7 @@ namespace DoggetTelegramBot.Infrastructure.Persistance.Configurations
                     .HasMaxLength(50);
             });
 
-            builder.Metadata.FindNavigation(nameof(Family.FamilyMembers))!
+            builder.Metadata.FindNavigation(nameof(Family.Members))!
                 .SetPropertyAccessMode(PropertyAccessMode.Field);
         }
     }
