@@ -51,7 +51,7 @@ namespace DoggetTelegramBot.Infrastructure.BotManagement.Events
                 if (HasRequiredPrivilege(privileges, (UserPrivilege)flags))
                 {
                     logger.LogCommon(
-                       Constants.User.Messages.SuccessAccess(telegramId.Value),
+                       Constants.User.Messages.AccessedSuccessfully(telegramId.Value),
                        TelegramEvents.Message);
 
                     await callback(botclient, update);

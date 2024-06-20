@@ -48,6 +48,8 @@ namespace DoggetTelegramBot.Domain.Models.UserEntity
         public void AddPrivilege(UserPrivilege privilege)
             => privileges.Add(privilege);
 
+        public void Update(string? username) => Username = username;
+
 #pragma warning disable CS8618
         private User()
         {
