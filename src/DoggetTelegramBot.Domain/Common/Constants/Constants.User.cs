@@ -21,6 +21,11 @@ namespace DoggetTelegramBot.Domain.Common.Constants
                     $"Get user information request started." :
                     $"Get user information request ended.";
 
+                public static string UpdateNicknameRequest(bool isStarted = true) =>
+                    isStarted ?
+                    $"Update nickname request started." :
+                    $"Update nickname request ended.";
+
                 public static string Registered(long telegramId) =>
                     $"User {telegramId} was registered.";
 
@@ -30,19 +35,24 @@ namespace DoggetTelegramBot.Domain.Common.Constants
                 public static string NotFoundRetrieved(long telegramId) =>
                     $"User {telegramId} was not found.";
 
-                public static string SuccessAccess(long telegramId) =>
-                    $"User {telegramId} was granted successfully.";
+                public static string AccessedSuccessfully(long telegramId) =>
+                    $"User {telegramId} was successfully granted.";
 
                 public static string FailedAccess(long telegramId) =>
                     $"User {telegramId} was not granted.";
 
                 public static string SuccessExistence(long telegramId) =>
                     $"User {telegramId} exists.";
+
+                public static string UpdatedSuccessfully(long telegramId) =>
+                   $"User {telegramId} was successfully updated.";
             }
 
             public static class ReplyKeys
             {
                 public const string GetMyInfo = "who am i";
+                public const string UpdateNickname = "+nick";
+                public const string DeleteNickname = "-nick";
             }
         }
     }

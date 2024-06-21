@@ -31,5 +31,23 @@ namespace DoggetTelegramBot.Infrastructure.Services
 
             return result!;
         }
+
+        public Task RemoveAsync(
+            string key,
+            CancellationToken cancellationToken = default)
+        {
+            bool isRetrieved = memoryCache.TryGetValue(key, out _);
+
+            if (isRetrieved)
+            {
+                memoryCache.Remove(key);
+
+                logger.LogCommon(
+                    Constants.Cache.RemoveMessage,
+                    TelegramEvents.Message);
+            }
+
+            return Task.CompletedTask;
+        }
     }
 }

@@ -1,0 +1,13 @@
+{
+  "TextConfig": {
+    "Variables": {
+      "Promo": "Test"
+    },
+    "Messages": {
+      "MSG_MAIN_MENU": "Главное меню"
+    },
+    "Buttons": {
+      "RP_MAIN_MENU": "🏠 Главное меню"
+    }
+  }
+}

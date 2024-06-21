@@ -1,4 +1,5 @@
 using DoggetTelegramBot.Application.Common.Caching;
+using DoggetTelegramBot.Application.Helpers;
 using PRTelegramBot.Models.Enums;
 
 namespace DoggetTelegramBot.Application.Users.Queries.Get.Existence
@@ -7,7 +8,7 @@ namespace DoggetTelegramBot.Application.Users.Queries.Get.Existence
         long TelegramId,
         string? Username) : ICachedQuery<ResultUpdate>
     {
-        public string CachedKey => $"user-exists-with-telegramId-{TelegramId}";
+        public string CachedKey => CacheKeyGenerator.UserExistsWithTelegramId(TelegramId);
 
         public TimeSpan? Expiration => TimeSpan.FromHours(1);
     }

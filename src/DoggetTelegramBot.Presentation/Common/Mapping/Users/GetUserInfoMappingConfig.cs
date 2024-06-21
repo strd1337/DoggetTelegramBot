@@ -13,6 +13,7 @@ namespace DoggetTelegramBot.Presentation.Common.Mapping.Users
             config.NewConfig<GetUserInfoResult, Response>()
                 .Map(dest => dest.Message, src => FormatUserInfoMessage(
                     src.Username,
+                    src.Nickname,
                     src.RegisteredDate,
                     src.MaritalStatus,
                     src.Privileges,
@@ -21,6 +22,7 @@ namespace DoggetTelegramBot.Presentation.Common.Mapping.Users
 
         private static string FormatUserInfoMessage(
             string? username,
+            string? nickname,
             DateTime registeredDate,
             MaritalStatus maritalStatus,
             List<UserPrivilege> privileges,
@@ -28,7 +30,13 @@ namespace DoggetTelegramBot.Presentation.Common.Mapping.Users
             FamilyDto? family)
         {
             StringBuilder sb = new("User information:\n");
-            sb.AppendLine($"Username: {username ?? "none"}");
+
+            sb.AppendLine(nickname is not null ?
+                $"Nickname: {nickname}" :
+                username is not null ?
+                $"Username: {username}" :
+                "none");
+
             sb.AppendLine($"Registered date: {registeredDate:dd-MM-yyyy}");
             sb.AppendLine($"Marital status: {maritalStatus.GetDescription()}");
             sb.AppendLine($"Privileges: {(privileges.Count != 0 ? string.Join(", ", privileges) : "member")}");

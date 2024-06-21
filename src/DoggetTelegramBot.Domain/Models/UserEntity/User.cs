@@ -10,6 +10,7 @@ namespace DoggetTelegramBot.Domain.Models.UserEntity
 
         public long TelegramId { get; private set; }
         public string? Username { get; private set; }
+        public string? Nickname { get; private set; }
         public DateTime RegisteredDate { get; private set; }
         public MaritalStatus MaritalStatus { get; private set; }
         public InventoryId InventoryId { get; private set; }
@@ -47,6 +48,8 @@ namespace DoggetTelegramBot.Domain.Models.UserEntity
 
         public void AddPrivilege(UserPrivilege privilege)
             => privileges.Add(privilege);
+
+        public void Update(string? nickname) => Nickname = nickname;
 
 #pragma warning disable CS8618
         private User()

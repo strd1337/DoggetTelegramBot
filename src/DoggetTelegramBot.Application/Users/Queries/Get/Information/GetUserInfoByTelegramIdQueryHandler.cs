@@ -31,6 +31,7 @@ namespace DoggetTelegramBot.Application.Users.Queries.Get.Information
                 {
                     UserId = UserId.Create(u.Id.Value),
                     u.Username,
+                    u.Nickname,
                     u.RegisteredDate,
                     u.MaritalStatus,
                     u.Privileges
@@ -60,6 +61,7 @@ namespace DoggetTelegramBot.Application.Users.Queries.Get.Information
 
             return new GetUserInfoResult(
                 user.Username,
+                user.Nickname,
                 user.RegisteredDate,
                 user.MaritalStatus,
                 [.. user.Privileges],

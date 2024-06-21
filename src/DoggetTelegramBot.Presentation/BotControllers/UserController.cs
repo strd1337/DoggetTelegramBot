@@ -1,4 +1,5 @@
 using DoggetTelegramBot.Application.Common.Services;
+using DoggetTelegramBot.Application.Users.Commands.Update.Nickname;
 using DoggetTelegramBot.Application.Users.Queries.Get.Information;
 using DoggetTelegramBot.Domain.Common.Constants;
 using DoggetTelegramBot.Domain.Common.Enums;
@@ -20,7 +21,7 @@ namespace DoggetTelegramBot.Presentation.BotControllers
         private readonly IBotLogger logger = logger;
 
         [ReplyMenuHandler(Constants.User.ReplyKeys.GetMyInfo)]
-        public async Task GetMyInfo(ITelegramBotClient botClient, Update update)
+        public async Task GetUserInfo(ITelegramBotClient botClient, Update update)
         {
             logger.LogCommon(
                 Constants.User.Messages.GetInformationRequest(),
@@ -35,6 +36,51 @@ namespace DoggetTelegramBot.Presentation.BotControllers
 
             logger.LogCommon(
                 Constants.User.Messages.GetInformationRequest(false),
+                TelegramEvents.Message);
+        }
+
+        [ReplyMenuHandler(Constants.User.ReplyKeys.UpdateNickname)]
+        public async Task UpdateUserNickname(ITelegramBotClient botClient, Update update)
+        {
+            logger.LogCommon(
+                Constants.User.Messages.UpdateNicknameRequest(),
+                TelegramEvents.Message);
+
+            // TO DO: change nickname
+            UpdateNicknameByTelegramIdCommand command = new(
+                update.Message!.From!.Id,
+                "remove");
+
+            var result = await service.Send(command);
+
+            var response = result.Match(mapper.Map<Response>, Problem);
+
+            await Helpers.Message.Send(botClient, update, response.Message);
+
+            logger.LogCommon(
+                Constants.User.Messages.UpdateNicknameRequest(false),
+                TelegramEvents.Message);
+        }
+
+        [ReplyMenuHandler(Constants.User.ReplyKeys.DeleteNickname)]
+        public async Task DeleteUserNickname(ITelegramBotClient botClient, Update update)
+        {
+            logger.LogCommon(
+               Constants.User.Messages.UpdateNicknameRequest(),
+               TelegramEvents.Message);
+
+            UpdateNicknameByTelegramIdCommand command = new(
+                update.Message!.From!.Id,
+                null);
+
+            var result = await service.Send(command);
+
+            var response = result.Match(mapper.Map<Response>, Problem);
+
+            await Helpers.Message.Send(botClient, update, response.Message);
+
+            logger.LogCommon(
+                Constants.User.Messages.UpdateNicknameRequest(false),
                 TelegramEvents.Message);
         }
     }

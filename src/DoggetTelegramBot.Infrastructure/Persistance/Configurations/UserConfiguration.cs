@@ -24,6 +24,9 @@ namespace DoggetTelegramBot.Infrastructure.Persistance.Configurations
             builder.Property(u => u.Username)
                 .HasMaxLength(100);
 
+            builder.Property(u => u.Nickname)
+                .HasMaxLength(100);
+
             builder.Property(u => u.RegisteredDate);
 
             builder.Property(u => u.InventoryId)
