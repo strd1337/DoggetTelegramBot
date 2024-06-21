@@ -36,7 +36,7 @@ namespace DoggetTelegramBot.Domain.Common.Constants
                     $"User {telegramId} was not found.";
 
                 public static string AccessedSuccessfully(long telegramId) =>
-                    $"User {telegramId} was granted successfully.";
+                    $"User {telegramId} was successfully granted.";
 
                 public static string FailedAccess(long telegramId) =>
                     $"User {telegramId} was not granted.";
@@ -45,7 +45,7 @@ namespace DoggetTelegramBot.Domain.Common.Constants
                     $"User {telegramId} exists.";
 
                 public static string UpdatedSuccessfully(long telegramId) =>
-                   $"User {telegramId} was updated successfully.";
+                   $"User {telegramId} was successfully updated.";
             }
 
             public static class ReplyKeys

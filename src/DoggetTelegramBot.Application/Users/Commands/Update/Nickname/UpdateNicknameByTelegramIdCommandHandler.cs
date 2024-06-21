@@ -1,6 +1,7 @@
 using DoggetTelegramBot.Application.Common.CQRS;
 using DoggetTelegramBot.Application.Common.Interfaces;
 using DoggetTelegramBot.Application.Common.Services;
+using DoggetTelegramBot.Application.Helpers;
 using DoggetTelegramBot.Application.Users.Common;
 using DoggetTelegramBot.Domain.Common.Constants;
 using DoggetTelegramBot.Domain.Common.Enums;
@@ -12,7 +13,8 @@ namespace DoggetTelegramBot.Application.Users.Commands.Update.Nickname
 {
     public sealed class UpdateNicknameByTelegramIdCommandHandler(
         IUnitOfWork unitOfWork,
-        IBotLogger logger) : ICommandHandler<UpdateNicknameByTelegramIdCommand, UpdateNicknameResult>
+        IBotLogger logger,
+        ICacheService cacheService) : ICommandHandler<UpdateNicknameByTelegramIdCommand, UpdateNicknameResult>
     {
         public async Task<ErrorOr<UpdateNicknameResult>> Handle(
             UpdateNicknameByTelegramIdCommand request,
@@ -47,7 +49,17 @@ namespace DoggetTelegramBot.Application.Users.Commands.Update.Nickname
                 Constants.User.Messages.UpdatedSuccessfully(request.TelegramId),
                 TelegramEvents.Message);
 
+            await RemoveKeyFromCacheAsync(user.TelegramId, cancellationToken);
+
             return new UpdateNicknameResult(user.Nickname);
+        }
+
+        private async Task RemoveKeyFromCacheAsync(
+            long telegramId,
+            CancellationToken cancellationToken)
+        {
+            string key = CacheKeyGenerator.GetUserInfoByTelegramId(telegramId);
+            await cacheService.RemoveAsync(key, cancellationToken);
         }
     }
 }
