@@ -5,6 +5,7 @@ namespace DoggetTelegramBot.Application.Users.Common
 {
     public record GetUserInfoResult(
         string? Username,
+        string? Nickname,
         DateTime RegisteredDate,
         MaritalStatus MaritalStatus,
         List<UserPrivilege> Privileges,
