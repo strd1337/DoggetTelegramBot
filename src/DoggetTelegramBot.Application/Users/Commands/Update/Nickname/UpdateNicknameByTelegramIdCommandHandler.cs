@@ -8,14 +8,14 @@ using DoggetTelegramBot.Domain.Common.Errors;
 using DoggetTelegramBot.Domain.Models.UserEntity;
 using ErrorOr;
 
-namespace DoggetTelegramBot.Application.Users.Commands.Update.Username
+namespace DoggetTelegramBot.Application.Users.Commands.Update.Nickname
 {
-    public sealed class UpdateUsernameByTelegramIdCommandHandler(
+    public sealed class UpdateNicknameByTelegramIdCommandHandler(
         IUnitOfWork unitOfWork,
-        IBotLogger logger) : ICommandHandler<UpdateUsernameByTelegramIdCommand, UpdateUsernameResult>
+        IBotLogger logger) : ICommandHandler<UpdateNicknameByTelegramIdCommand, UpdateNicknameResult>
     {
-        public async Task<ErrorOr<UpdateUsernameResult>> Handle(
-            UpdateUsernameByTelegramIdCommand request,
+        public async Task<ErrorOr<UpdateNicknameResult>> Handle(
+            UpdateNicknameByTelegramIdCommand request,
             CancellationToken cancellationToken)
         {
             var userRepository = unitOfWork.GetRepository<User, UserId>();
@@ -37,7 +37,7 @@ namespace DoggetTelegramBot.Application.Users.Commands.Update.Username
                 Constants.User.Messages.Retrieved(request.TelegramId),
                 TelegramEvents.Message);
 
-            user.Update(request.Username);
+            user.Update(request.Nickname);
 
             await userRepository.UpdateAsync(user!);
 
@@ -47,7 +47,7 @@ namespace DoggetTelegramBot.Application.Users.Commands.Update.Username
                 Constants.User.Messages.UpdatedSuccessfully(request.TelegramId),
                 TelegramEvents.Message);
 
-            return new UpdateUsernameResult(request.Username);
+            return new UpdateNicknameResult(user.Nickname);
         }
     }
 }

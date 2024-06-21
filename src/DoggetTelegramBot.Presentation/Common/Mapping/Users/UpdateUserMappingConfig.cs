@@ -7,15 +7,15 @@ namespace DoggetTelegramBot.Presentation.Common.Mapping.Users
     public class UpdateUserMappingConfig : IRegister
     {
         public void Register(TypeAdapterConfig config) =>
-            config.NewConfig<UpdateUsernameResult, Response>()
-                .Map(dest => dest.Message, src => FormatMessage(
-                    src.Username));
+            config.NewConfig<UpdateNicknameResult, Response>()
+                .Map(dest => dest.Message, src => FormatUpdateUserMessage(
+                    src.Nickname));
 
-        private static string FormatMessage(
-            string? username)
+        private static string FormatUpdateUserMessage(
+            string? nickname)
         {
             StringBuilder sb = new();
-            sb.AppendLine($"Your username is {username ?? "none"}");
+            sb.AppendLine($"Your nickname is {nickname ?? "none"}");
 
             return sb.ToString();
         }

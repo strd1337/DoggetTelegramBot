@@ -1,5 +1,5 @@
 using DoggetTelegramBot.Application.Common.Services;
-using DoggetTelegramBot.Application.Users.Commands.Update.Username;
+using DoggetTelegramBot.Application.Users.Commands.Update.Nickname;
 using DoggetTelegramBot.Application.Users.Queries.Get.Information;
 using DoggetTelegramBot.Domain.Common.Constants;
 using DoggetTelegramBot.Domain.Common.Enums;
@@ -39,15 +39,15 @@ namespace DoggetTelegramBot.Presentation.BotControllers
                 TelegramEvents.Message);
         }
 
-        [ReplyMenuHandler(Constants.User.ReplyKeys.ChangeUsername)]
-        public async Task ChangeUserUsername(ITelegramBotClient botClient, Update update)
+        [ReplyMenuHandler(Constants.User.ReplyKeys.ChangeNickname)]
+        public async Task ChangeUserNickname(ITelegramBotClient botClient, Update update)
         {
             logger.LogCommon(
-                Constants.User.Messages.UpdateUsernameRequest(),
+                Constants.User.Messages.UpdateNicknameRequest(),
                 TelegramEvents.Message);
 
-            // TO DO: change username
-            UpdateUsernameByTelegramIdCommand command = new(
+            // TO DO: change nickname
+            UpdateNicknameByTelegramIdCommand command = new(
                 update.Message!.From!.Id,
                 "remove");
 
@@ -58,7 +58,7 @@ namespace DoggetTelegramBot.Presentation.BotControllers
             await Helpers.Message.Send(botClient, update, response.Message);
 
             logger.LogCommon(
-                Constants.User.Messages.UpdateUsernameRequest(false),
+                Constants.User.Messages.UpdateNicknameRequest(false),
                 TelegramEvents.Message);
         }
     }

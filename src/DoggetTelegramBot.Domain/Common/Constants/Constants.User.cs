@@ -21,10 +21,10 @@ namespace DoggetTelegramBot.Domain.Common.Constants
                     $"Get user information request started." :
                     $"Get user information request ended.";
 
-                public static string UpdateUsernameRequest(bool isStarted = true) =>
+                public static string UpdateNicknameRequest(bool isStarted = true) =>
                     isStarted ?
-                    $"Update username request started." :
-                    $"Update username request ended.";
+                    $"Update nickname request started." :
+                    $"Update nickname request ended.";
 
                 public static string Registered(long telegramId) =>
                     $"User {telegramId} was registered.";
@@ -51,7 +51,7 @@ namespace DoggetTelegramBot.Domain.Common.Constants
             public static class ReplyKeys
             {
                 public const string GetMyInfo = "who am i";
-                public const string ChangeUsername = "+nick";
+                public const string ChangeNickname = "+nick";
             }
         }
     }
