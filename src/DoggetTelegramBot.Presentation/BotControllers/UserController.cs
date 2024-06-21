@@ -39,8 +39,8 @@ namespace DoggetTelegramBot.Presentation.BotControllers
                 TelegramEvents.Message);
         }
 
-        [ReplyMenuHandler(Constants.User.ReplyKeys.ChangeNickname)]
-        public async Task ChangeUserNickname(ITelegramBotClient botClient, Update update)
+        [ReplyMenuHandler(Constants.User.ReplyKeys.UpdateNickname)]
+        public async Task UpdateUserNickname(ITelegramBotClient botClient, Update update)
         {
             logger.LogCommon(
                 Constants.User.Messages.UpdateNicknameRequest(),
@@ -50,6 +50,28 @@ namespace DoggetTelegramBot.Presentation.BotControllers
             UpdateNicknameByTelegramIdCommand command = new(
                 update.Message!.From!.Id,
                 "remove");
+
+            var result = await service.Send(command);
+
+            var response = result.Match(mapper.Map<Response>, Problem);
+
+            await Helpers.Message.Send(botClient, update, response.Message);
+
+            logger.LogCommon(
+                Constants.User.Messages.UpdateNicknameRequest(false),
+                TelegramEvents.Message);
+        }
+
+        [ReplyMenuHandler(Constants.User.ReplyKeys.DeleteNickname)]
+        public async Task DeleteUserNickname(ITelegramBotClient botClient, Update update)
+        {
+            logger.LogCommon(
+               Constants.User.Messages.UpdateNicknameRequest(),
+               TelegramEvents.Message);
+
+            UpdateNicknameByTelegramIdCommand command = new(
+                update.Message!.From!.Id,
+                null);
 
             var result = await service.Send(command);
 

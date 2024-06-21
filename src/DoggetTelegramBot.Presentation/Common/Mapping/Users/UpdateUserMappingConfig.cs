@@ -15,7 +15,10 @@ namespace DoggetTelegramBot.Presentation.Common.Mapping.Users
             string? nickname)
         {
             StringBuilder sb = new();
-            sb.AppendLine($"Your nickname is {nickname ?? "none"}");
+
+            sb.AppendLine(nickname is null ?
+                $"You successfully removed your nickname." :
+                $"Your nickname is {nickname ?? "none"}");
 
             return sb.ToString();
         }
