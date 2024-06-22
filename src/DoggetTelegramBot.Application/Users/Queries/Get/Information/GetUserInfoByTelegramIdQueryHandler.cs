@@ -42,14 +42,16 @@ namespace DoggetTelegramBot.Application.Users.Queries.Get.Information
             {
                 logger.LogCommon(
                     Constants.User.Messages.NotFoundRetrieved(request.TelegramId),
-                    TelegramEvents.Message);
+                    TelegramEvents.Message,
+                    Constants.LogColors.Get);
 
                 return Errors.User.NotFound;
             }
 
             logger.LogCommon(
                 Constants.User.Messages.Retrieved(request.TelegramId),
-                TelegramEvents.Message);
+                TelegramEvents.Message,
+                Constants.LogColors.Get);
 
             var marriage = await GetUserMarriageInfoAsync(
                 user.UserId,
@@ -75,7 +77,8 @@ namespace DoggetTelegramBot.Application.Users.Queries.Get.Information
         {
             logger.LogCommon(
                Constants.Marriage.Messages.GetInformationRequest(),
-               TelegramEvents.Message);
+               TelegramEvents.Message,
+               Constants.LogColors.Request);
 
             GetMarriageInfoByUserIdQuery query = new(userId);
             var result = await mediator.Send(query, cancellationToken);
@@ -104,7 +107,8 @@ namespace DoggetTelegramBot.Application.Users.Queries.Get.Information
 
             logger.LogCommon(
                 Constants.Marriage.Messages.GetInformationRequest(false),
-                TelegramEvents.Message);
+                TelegramEvents.Message,
+                Constants.LogColors.Request);
 
             return marriage;
         }
@@ -115,7 +119,8 @@ namespace DoggetTelegramBot.Application.Users.Queries.Get.Information
         {
             logger.LogCommon(
                Constants.Family.Messages.GetInformationRequest(),
-               TelegramEvents.Message);
+               TelegramEvents.Message,
+               Constants.LogColors.Request);
 
             GetFamilyInfoByUserIdQuery query = new(userId);
             var result = await mediator.Send(query, cancellationToken);
@@ -154,7 +159,8 @@ namespace DoggetTelegramBot.Application.Users.Queries.Get.Information
 
             logger.LogCommon(
                 Constants.Family.Messages.GetInformationRequest(false),
-                TelegramEvents.Message);
+                TelegramEvents.Message,
+                Constants.LogColors.Request);
 
             return family;
         }

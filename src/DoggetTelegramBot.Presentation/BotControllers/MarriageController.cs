@@ -7,12 +7,13 @@ using DoggetTelegramBot.Presentation.BotControllers.Common;
 using DoggetTelegramBot.Presentation.Common.Mapping;
 using MapsterMapper;
 using PRTelegramBot.Attributes;
+using PRTelegramBot.Models.Enums;
 using Telegram.Bot;
 using Telegram.Bot.Types;
-using Helpers = PRTelegramBot.Helpers;
 
 namespace DoggetTelegramBot.Presentation.BotControllers
 {
+    [BotHandler]
     public class MarriageController(
         IBotLogger logger,
         IScopeService service,
@@ -20,12 +21,15 @@ namespace DoggetTelegramBot.Presentation.BotControllers
     {
         private readonly IBotLogger logger = logger;
 
-        [ReplyMenuHandler(Constants.Marriage.ReplyKeys.CreateMarriage)]
+        [ReplyMenuHandler(CommandComparison.Contains, StringComparison.OrdinalIgnoreCase, Constants.Marriage.ReplyKeys.CreateMarriage)]
         public async Task Create(ITelegramBotClient botClient, Update update)
         {
+            logger.LogCommon(update);
+
             logger.LogCommon(
-               Constants.Marriage.Messages.CreateMarriageRequest(),
-               TelegramEvents.Message);
+                Constants.Marriage.Messages.CreateMarriageRequest(),
+                TelegramEvents.Message,
+                Constants.LogColors.Request);
 
             // TO DO: change the data
             List<long> spouses = [442632563, 905753288];
@@ -38,11 +42,12 @@ namespace DoggetTelegramBot.Presentation.BotControllers
 
             var response = result.Match(mapper.Map<Response>, Problem);
 
-            await Helpers.Message.Send(botClient, update, response.Message);
+            await SendMessage(botClient, update, response.Message);
 
             logger.LogCommon(
                 Constants.Marriage.Messages.CreateMarriageRequest(false),
-                TelegramEvents.Message);
+                TelegramEvents.Message,
+                Constants.LogColors.Request);
         }
     }
 }

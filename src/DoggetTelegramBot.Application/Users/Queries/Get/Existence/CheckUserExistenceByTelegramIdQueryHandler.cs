@@ -14,9 +14,9 @@ namespace DoggetTelegramBot.Application.Users.Queries.Get.Existence
     public sealed class CheckUserExistenceByTelegramIdQueryHandler(
         IUnitOfWork unitOfWork,
         IMediator mediator,
-        IBotLogger logger) : IQueryHandler<CheckUserExistenceByTelegramIdQuery, ResultUpdate>
+        IBotLogger logger) : IQueryHandler<CheckUserExistenceByTelegramIdQuery, UpdateResult>
     {
-        public async Task<ErrorOr<ResultUpdate>> Handle(
+        public async Task<ErrorOr<UpdateResult>> Handle(
             CheckUserExistenceByTelegramIdQuery request,
             CancellationToken cancellationToken)
         {
@@ -33,7 +33,8 @@ namespace DoggetTelegramBot.Application.Users.Queries.Get.Existence
             {
                 logger.LogCommon(
                     Constants.User.Messages.NotFoundRetrieved(request.TelegramId),
-                    TelegramEvents.Register);
+                    TelegramEvents.Register,
+                    Constants.LogColors.Get);
 
                 RegisterUserCommand command = new(
                     request.TelegramId,
@@ -45,10 +46,11 @@ namespace DoggetTelegramBot.Application.Users.Queries.Get.Existence
             {
                 logger.LogCommon(
                     Constants.User.Messages.Retrieved(request.TelegramId),
-                    TelegramEvents.Register);
+                    TelegramEvents.Register,
+                    Constants.LogColors.Get);
             }
 
-            return ResultUpdate.Continue;
+            return UpdateResult.Continue;
         }
     }
 }

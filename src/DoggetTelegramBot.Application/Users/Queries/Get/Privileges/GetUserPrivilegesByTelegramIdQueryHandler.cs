@@ -30,7 +30,8 @@ namespace DoggetTelegramBot.Application.Users.Queries.Get.Privileges
             {
                 logger.LogCommon(
                     Constants.User.Messages.NotFoundRetrieved(request.TelegramId),
-                    TelegramEvents.Message);
+                    TelegramEvents.Message,
+                    Constants.LogColors.Get);
 
                 return Task.FromResult<ErrorOr<GetUserPrivilegesResult>>(
                     Errors.User.NotFound);
@@ -39,7 +40,8 @@ namespace DoggetTelegramBot.Application.Users.Queries.Get.Privileges
             {
                 logger.LogCommon(
                     Constants.User.Messages.Retrieved(request.TelegramId),
-                    TelegramEvents.Message);
+                    TelegramEvents.Message,
+                    Constants.LogColors.Get);
 
                 return Task.FromResult<ErrorOr<GetUserPrivilegesResult>>(
                     new GetUserPrivilegesResult([.. user.Privileges]));

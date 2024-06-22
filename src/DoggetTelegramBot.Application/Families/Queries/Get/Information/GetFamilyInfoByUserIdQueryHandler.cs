@@ -28,15 +28,17 @@ namespace DoggetTelegramBot.Application.Families.Queries.Get.Information
             {
                 logger.LogCommon(
                     Constants.Family.Messages.NotFoundRetrieved(request.UserId),
-                    TelegramEvents.Message);
+                    TelegramEvents.Message,
+                    Constants.LogColors.Get);
 
                 return Task.FromResult<ErrorOr<GetFamilyInfoResult>>(
                     Errors.Family.NotFound);
             }
 
             logger.LogCommon(
-                    Constants.Family.Messages.Retrieved(FamilyId.Create(family.Id.Value)),
-                    TelegramEvents.Message);
+                Constants.Family.Messages.Retrieved(FamilyId.Create(family.Id.Value)),
+                TelegramEvents.Message,
+                Constants.LogColors.Get);
 
             return Task.FromResult<ErrorOr<GetFamilyInfoResult>>(
                     new GetFamilyInfoResult([.. family.Members]));

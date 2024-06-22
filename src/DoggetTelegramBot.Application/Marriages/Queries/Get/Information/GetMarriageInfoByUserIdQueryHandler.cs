@@ -28,7 +28,8 @@ namespace DoggetTelegramBot.Application.Marriages.Queries.Get.Information
             {
                 logger.LogCommon(
                     Constants.Marriage.Messages.NotFoundRetrieved(request.UserId),
-                    TelegramEvents.Message);
+                    TelegramEvents.Message,
+                    Constants.LogColors.Get);
 
                 return Errors.Marriage.NotFound;
             }
@@ -38,8 +39,9 @@ namespace DoggetTelegramBot.Application.Marriages.Queries.Get.Information
                 .ToList();
 
             logger.LogCommon(
-                    Constants.Marriage.Messages.Retrieved(MarriageId.Create(marriage.Id.Value)),
-                    TelegramEvents.Message);
+                Constants.Marriage.Messages.Retrieved(MarriageId.Create(marriage.Id.Value)),
+                TelegramEvents.Message,
+                Constants.LogColors.Get);
 
             return new GetMarriageInfoResult(
                 userSpouseIds,

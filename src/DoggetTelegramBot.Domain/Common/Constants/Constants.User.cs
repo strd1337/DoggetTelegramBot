@@ -71,9 +71,9 @@ namespace DoggetTelegramBot.Domain.Common.Constants
 
             public static class ReplyKeys
             {
-                public const string GetMyInfo = "who am i";
-                public const string UpdateNickname = "+nick";
-                public const string DeleteNickname = "-nick";
+                public const string GetMyInfo = $"{BotNickname} my stat";
+                public const string UpdateNickname = $"{BotNickname} +nick";
+                public const string DeleteNickname = $"{BotNickname} -nick";
             }
         }
     }

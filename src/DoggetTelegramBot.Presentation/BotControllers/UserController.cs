@@ -7,12 +7,13 @@ using DoggetTelegramBot.Presentation.BotControllers.Common;
 using DoggetTelegramBot.Presentation.Common.Mapping;
 using MapsterMapper;
 using PRTelegramBot.Attributes;
+using PRTelegramBot.Models.Enums;
 using Telegram.Bot;
 using Telegram.Bot.Types;
-using Helpers = PRTelegramBot.Helpers;
 
 namespace DoggetTelegramBot.Presentation.BotControllers
 {
+    [BotHandler]
     public class UserController(
         IBotLogger logger,
         IScopeService service,
@@ -23,51 +24,66 @@ namespace DoggetTelegramBot.Presentation.BotControllers
         [ReplyMenuHandler(Constants.User.ReplyKeys.GetMyInfo)]
         public async Task GetInfo(ITelegramBotClient botClient, Update update)
         {
+            logger.LogCommon(update);
+
             logger.LogCommon(
                 Constants.User.Messages.GetInformationRequest(),
-                TelegramEvents.Message);
+                TelegramEvents.Message,
+                Constants.LogColors.Request);
 
             GetUserInfoByTelegramIdQuery query = new(update.Message!.From!.Id);
             var result = await service.Send(query);
 
             var response = result.Match(mapper.Map<Response>, Problem);
 
-            await Helpers.Message.Send(botClient, update, response.Message);
+            await SendMessage(botClient, update, response.Message);
 
             logger.LogCommon(
                 Constants.User.Messages.GetInformationRequest(false),
-                TelegramEvents.Message);
+                TelegramEvents.Message,
+                Constants.LogColors.Request);
         }
 
-        [ReplyMenuHandler(Constants.User.ReplyKeys.UpdateNickname)]
+        [ReplyMenuHandler(CommandComparison.Contains, StringComparison.OrdinalIgnoreCase, Constants.User.ReplyKeys.UpdateNickname)]
         public async Task UpdateNickname(ITelegramBotClient botClient, Update update)
         {
+            logger.LogCommon(update);
+
             logger.LogCommon(
                 Constants.User.Messages.UpdateNicknameRequest(),
-                TelegramEvents.Message);
+                TelegramEvents.Message,
+                Constants.LogColors.Request);
+
+            string nickname = update.Message!.Text!
+                [Constants.User.ReplyKeys.UpdateNickname.Length..]
+                .Trim();
 
             // TO DO: change nickname
             UpdateNicknameByTelegramIdCommand command = new(
                 update.Message!.From!.Id,
-                "remove");
+                nickname);
 
             var result = await service.Send(command);
 
             var response = result.Match(mapper.Map<Response>, Problem);
 
-            await Helpers.Message.Send(botClient, update, response.Message);
+            await SendMessage(botClient, update, response.Message);
 
             logger.LogCommon(
-                Constants.User.Messages.UpdateNicknameRequest(false),
-                TelegramEvents.Message);
+               Constants.User.Messages.UpdateNicknameRequest(false),
+               TelegramEvents.Message,
+               Constants.LogColors.Request);
         }
 
         [ReplyMenuHandler(Constants.User.ReplyKeys.DeleteNickname)]
         public async Task DeleteNickname(ITelegramBotClient botClient, Update update)
         {
+            logger.LogCommon(update);
+
             logger.LogCommon(
-               Constants.User.Messages.UpdateNicknameRequest(),
-               TelegramEvents.Message);
+                Constants.User.Messages.UpdateNicknameRequest(),
+                TelegramEvents.Message,
+                Constants.LogColors.Request);
 
             UpdateNicknameByTelegramIdCommand command = new(
                 update.Message!.From!.Id,
@@ -77,11 +93,12 @@ namespace DoggetTelegramBot.Presentation.BotControllers
 
             var response = result.Match(mapper.Map<Response>, Problem);
 
-            await Helpers.Message.Send(botClient, update, response.Message);
+            await SendMessage(botClient, update, response.Message);
 
             logger.LogCommon(
                 Constants.User.Messages.UpdateNicknameRequest(false),
-                TelegramEvents.Message);
+                TelegramEvents.Message,
+                Constants.LogColors.Request);
         }
     }
 }

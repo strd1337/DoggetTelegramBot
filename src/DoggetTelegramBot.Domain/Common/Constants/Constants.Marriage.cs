@@ -33,7 +33,7 @@ namespace DoggetTelegramBot.Domain.Common.Constants
 
             public static class ReplyKeys
             {
-                public const string CreateMarriage = "+marriage";
+                public const string CreateMarriage = $"{BotNickname} +marriage";
             }
         }
     }
