@@ -21,7 +21,7 @@ namespace DoggetTelegramBot.Presentation.BotControllers
         private readonly IBotLogger logger = logger;
 
         [ReplyMenuHandler(Constants.User.ReplyKeys.GetMyInfo)]
-        public async Task GetUserInfo(ITelegramBotClient botClient, Update update)
+        public async Task GetInfo(ITelegramBotClient botClient, Update update)
         {
             logger.LogCommon(
                 Constants.User.Messages.GetInformationRequest(),
@@ -40,7 +40,7 @@ namespace DoggetTelegramBot.Presentation.BotControllers
         }
 
         [ReplyMenuHandler(Constants.User.ReplyKeys.UpdateNickname)]
-        public async Task UpdateUserNickname(ITelegramBotClient botClient, Update update)
+        public async Task UpdateNickname(ITelegramBotClient botClient, Update update)
         {
             logger.LogCommon(
                 Constants.User.Messages.UpdateNicknameRequest(),
@@ -63,7 +63,7 @@ namespace DoggetTelegramBot.Presentation.BotControllers
         }
 
         [ReplyMenuHandler(Constants.User.ReplyKeys.DeleteNickname)]
-        public async Task DeleteUserNickname(ITelegramBotClient botClient, Update update)
+        public async Task DeleteNickname(ITelegramBotClient botClient, Update update)
         {
             logger.LogCommon(
                Constants.User.Messages.UpdateNicknameRequest(),

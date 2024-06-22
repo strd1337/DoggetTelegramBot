@@ -21,10 +21,20 @@ namespace DoggetTelegramBot.Domain.Common.Constants
                     $"Get user information request started." :
                     $"Get user information request ended.";
 
+                public static string GetSpousesRequest(bool isStarted = true) =>
+                    isStarted ?
+                    $"Get spouses request started." :
+                    $"Get spouses request ended.";
+
                 public static string UpdateNicknameRequest(bool isStarted = true) =>
                     isStarted ?
                     $"Update nickname request started." :
                     $"Update nickname request ended.";
+
+                public static string UpdateMaritalStatusRequest(bool isStarted = true) =>
+                    isStarted ?
+                    $"Update marital status request started." :
+                    $"Update marital status request ended.";
 
                 public static string Registered(long telegramId) =>
                     $"User {telegramId} was registered.";
@@ -32,8 +42,16 @@ namespace DoggetTelegramBot.Domain.Common.Constants
                 public static string Retrieved(long telegramId) =>
                     $"User {telegramId} was retrieved.";
 
+                public static string Retrieved(List<long> telegramIds) =>
+                   $"Users {string.Join(",", telegramIds.Select(id => id))} were retrieved.";
+
                 public static string NotFoundRetrieved(long telegramId) =>
                     $"User {telegramId} was not found.";
+
+                public static string NotFoundRetrievedWithCause(
+                    List<long> telegramIds,
+                    string cause) =>
+                        $"Users {string.Join(",", telegramIds.Select(id => id))} were not retrieved. {cause}";
 
                 public static string AccessedSuccessfully(long telegramId) =>
                     $"User {telegramId} was successfully granted.";
@@ -46,6 +64,9 @@ namespace DoggetTelegramBot.Domain.Common.Constants
 
                 public static string UpdatedSuccessfully(long telegramId) =>
                    $"User {telegramId} was successfully updated.";
+
+                public static string UpdatedSuccessfully(List<long> telegramIds) =>
+                   $"Users {string.Join(",", telegramIds.Select(id => id))} were successfully updated.";
             }
 
             public static class ReplyKeys

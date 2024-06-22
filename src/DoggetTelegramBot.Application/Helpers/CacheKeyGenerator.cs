@@ -13,6 +13,9 @@ namespace DoggetTelegramBot.Application.Helpers
         public static string GetUserPrivilegesByTelegramId(long telegramId) =>
             $"get-user-privileges-by-telegramId-{telegramId}";
 
+        public static string GetUsersByTelegramIdsQuery(List<long> telegramIds) =>
+           $"get-users-by-telegramIds-{string.Join(",", telegramIds.Select(id => id))}";
+
         public static string GetMarriageInfoByUserId(UserId userId) =>
             $"get-marriage-info-by-userId-{userId.Value}";
 

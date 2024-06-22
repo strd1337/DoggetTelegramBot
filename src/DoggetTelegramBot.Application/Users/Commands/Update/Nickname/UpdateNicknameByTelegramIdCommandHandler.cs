@@ -22,15 +22,16 @@ namespace DoggetTelegramBot.Application.Users.Commands.Update.Nickname
         {
             var userRepository = unitOfWork.GetRepository<User, UserId>();
 
-            var user = userRepository
-                .GetWhere(u => u.TelegramId == request.TelegramId)
-                .FirstOrDefault();
+            var user = await userRepository
+                .FirstOrDefaultAsync(
+                    u => u.TelegramId == request.TelegramId,
+                    cancellationToken);
 
             if (user is null)
             {
                 logger.LogCommon(
                     Constants.User.Messages.NotFoundRetrieved(request.TelegramId),
-                TelegramEvents.Register);
+                    TelegramEvents.Register);
 
                 return Errors.User.NotFound;
             }
@@ -39,7 +40,7 @@ namespace DoggetTelegramBot.Application.Users.Commands.Update.Nickname
                 Constants.User.Messages.Retrieved(request.TelegramId),
                 TelegramEvents.Message);
 
-            user.Update(request.Nickname);
+            user.UpdateNickname(request.Nickname);
 
             await userRepository.UpdateAsync(user!);
 

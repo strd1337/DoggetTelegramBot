@@ -15,13 +15,14 @@ namespace DoggetTelegramBot.Application.Marriages.Queries.Get.Information
         IUnitOfWork unitOfWork,
         IBotLogger logger) : IQueryHandler<GetMarriageInfoByUserIdQuery, GetMarriageInfoResult>
     {
-        public Task<ErrorOr<GetMarriageInfoResult>> Handle(
+        public async Task<ErrorOr<GetMarriageInfoResult>> Handle(
             GetMarriageInfoByUserIdQuery request,
             CancellationToken cancellationToken)
         {
-            var marriage = unitOfWork.GetRepository<Marriage, MarriageId>()
-                .GetWhere(m => m.SpouseIds.Any(id => id.Value == request.UserId.Value))
-                .FirstOrDefault();
+            var marriage = await unitOfWork.GetRepository<Marriage, MarriageId>()
+                .FirstOrDefaultAsync(
+                    m => m.SpouseIds.Any(id => id.Value == request.UserId.Value),
+                    cancellationToken);
 
             if (marriage is null)
             {
@@ -29,8 +30,7 @@ namespace DoggetTelegramBot.Application.Marriages.Queries.Get.Information
                     Constants.Marriage.Messages.NotFoundRetrieved(request.UserId),
                     TelegramEvents.Message);
 
-                return Task.FromResult<ErrorOr<GetMarriageInfoResult>>(
-                    Errors.Marriage.NotFound);
+                return Errors.Marriage.NotFound;
             }
 
             List<UserId> userSpouseIds = marriage.SpouseIds
@@ -41,12 +41,12 @@ namespace DoggetTelegramBot.Application.Marriages.Queries.Get.Information
                     Constants.Marriage.Messages.Retrieved(MarriageId.Create(marriage.Id.Value)),
                     TelegramEvents.Message);
 
-            return Task.FromResult<ErrorOr<GetMarriageInfoResult>>(new GetMarriageInfoResult(
+            return new GetMarriageInfoResult(
                 userSpouseIds,
                 marriage.MarriageDate,
                 marriage.DivorceDate,
                 marriage.Type,
-                marriage.Status));
+                marriage.Status);
         }
     }
 }

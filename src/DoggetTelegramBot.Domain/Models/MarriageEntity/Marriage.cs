@@ -35,6 +35,9 @@ namespace DoggetTelegramBot.Domain.Models.MarriageEntity
                 type,
                 status);
 
+        public void AddSpouses(List<UserId> spouseIds) =>
+            this.spouseIds.AddRange(spouseIds);
+
         public Marriage()
         {
         }
