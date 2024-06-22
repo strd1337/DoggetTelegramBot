@@ -49,7 +49,11 @@ namespace DoggetTelegramBot.Domain.Models.UserEntity
         public void AddPrivilege(UserPrivilege privilege)
             => privileges.Add(privilege);
 
-        public void Update(string? nickname) => Nickname = nickname;
+        public void UpdateNickname(string? nickname) =>
+            Nickname = nickname;
+
+        public void UpdateMaritalStatus(MaritalStatus maritalStatus) =>
+            MaritalStatus = maritalStatus;
 
 #pragma warning disable CS8618
         private User()
