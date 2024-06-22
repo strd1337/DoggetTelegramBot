@@ -86,7 +86,7 @@ namespace DoggetTelegramBot.Infrastructure.BotManagement
             StringBuilder sb = new();
             sb.Append(message?.Date);
             sb.Append(string.Create(CultureInfo.InvariantCulture, $" The user named, "));
-            sb.Append(string.Create(CultureInfo.InvariantCulture, $"UserName: {from?.Username ?? "None"}, "));
+            sb.Append(string.Create(CultureInfo.InvariantCulture, $"Username: {from?.Username ?? "None"}, "));
             sb.Append(string.Create(CultureInfo.InvariantCulture, $"FirstName: {from?.FirstName ?? "None"}, "));
             sb.Append(string.Create(CultureInfo.InvariantCulture, $"LastName: {from?.LastName ?? "None"}, "));
 

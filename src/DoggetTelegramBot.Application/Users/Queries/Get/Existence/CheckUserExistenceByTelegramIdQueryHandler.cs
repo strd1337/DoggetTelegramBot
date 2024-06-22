@@ -2,6 +2,7 @@ using DoggetTelegramBot.Application.Common.CQRS;
 using DoggetTelegramBot.Application.Common.Interfaces;
 using DoggetTelegramBot.Application.Common.Services;
 using DoggetTelegramBot.Application.Users.Commands.Register;
+using DoggetTelegramBot.Application.Users.Commands.Update.Details;
 using DoggetTelegramBot.Domain.Common.Constants;
 using DoggetTelegramBot.Domain.Common.Enums;
 using DoggetTelegramBot.Domain.Models.UserEntity;
@@ -26,6 +27,7 @@ namespace DoggetTelegramBot.Application.Users.Queries.Get.Existence
                 {
                     u.TelegramId,
                     u.Username,
+                    u.FirstName,
                 })
                 .FirstOrDefault();
 
@@ -38,7 +40,8 @@ namespace DoggetTelegramBot.Application.Users.Queries.Get.Existence
 
                 RegisterUserCommand command = new(
                     request.TelegramId,
-                    request.Username);
+                    request.Username,
+                    request.FirstName);
 
                 _ = await mediator.Send(command, cancellationToken);
             }
@@ -48,6 +51,22 @@ namespace DoggetTelegramBot.Application.Users.Queries.Get.Existence
                     Constants.User.Messages.Retrieved(request.TelegramId),
                     TelegramEvents.Register,
                     Constants.LogColors.Get);
+
+                if (user.FirstName != request.FirstName &&
+                    user.Username != request.Username)
+                {
+                    UpdateUserDetailsByTelegramIdCommand command = new(
+                        request.TelegramId,
+                        request.Username,
+                        request.FirstName);
+
+                    _ = await mediator.Send(command, cancellationToken);
+
+                    logger.LogCommon(
+                        Constants.User.Messages.UpdatedSuccessfully(request.TelegramId),
+                        TelegramEvents.Register,
+                        Constants.LogColors.Update);
+                }
             }
 
             return UpdateResult.Continue;

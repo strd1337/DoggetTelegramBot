@@ -35,7 +35,7 @@ namespace DoggetTelegramBot.Presentation.Common.Mapping.Users
                 $"Nickname: {nickname}" :
                 username is not null ?
                 $"Username: {username}" :
-                "none");
+                "Username: none");
 
             sb.AppendLine($"Registered date: {registeredDate:dd-MM-yyyy}");
             sb.AppendLine($"Marital status: {maritalStatus.GetDescription()}");

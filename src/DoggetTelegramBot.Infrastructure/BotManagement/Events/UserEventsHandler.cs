@@ -112,7 +112,8 @@ namespace DoggetTelegramBot.Infrastructure.BotManagement.Events
 
             CheckUserExistenceByTelegramIdQuery query = new(
                 update.Message.From.Id,
-                update.Message.From.Username);
+                update.Message.From.Username,
+                update.Message.From.FirstName);
 
             var result = await service.Send(query);
 

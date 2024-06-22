@@ -47,7 +47,7 @@ namespace DoggetTelegramBot.Infrastructure.Services
                     Constants.Cache.RemoveMessage,
                     TelegramEvents.Message,
                     Constants.LogColors.Cache);
-        }
+            }
 
             return Task.CompletedTask;
         }
