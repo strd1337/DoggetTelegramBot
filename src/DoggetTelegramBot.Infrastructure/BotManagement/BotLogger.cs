@@ -69,7 +69,7 @@ namespace DoggetTelegramBot.Infrastructure.BotManagement
 
             if (args.Exception is ApiRequestException apiEx)
             {
-                errorMessage = HandleApiRequestException(apiEx, args.Update.Message!.From!.Id);
+                errorMessage = HandleApiRequestException(apiEx, args.Update.Message?.From?.Id);
             }
 
             Task.Run(() => LogErrorMessageAsync(errorMessage));

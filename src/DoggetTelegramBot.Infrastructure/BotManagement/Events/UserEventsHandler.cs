@@ -86,9 +86,7 @@ namespace DoggetTelegramBot.Infrastructure.BotManagement.Events
                Constants.LogColors.Request);
         }
 
-        public async Task<UpdateResult> HandleCheckUserExistance(
-            ITelegramBotClient botclient,
-            Update update)
+        public async Task<UpdateResult> HandleCheckUserExistance(Update update)
         {
             logger.LogCommon(
                 Constants.User.Messages.CheckExistenceRequest(),
@@ -102,12 +100,7 @@ namespace DoggetTelegramBot.Infrastructure.BotManagement.Events
                      TelegramEvents.Message,
                      Constants.LogColors.PreUpdate);
 
-                await SendMessage(
-                        botclient,
-                        update,
-                        Constants.ErrorMessage.MissingInformation);
-
-                return UpdateResult.Stop;
+                return UpdateResult.Continue;
             }
 
             CheckUserExistenceByTelegramIdQuery query = new(

@@ -15,6 +15,6 @@ namespace DoggetTelegramBot.Infrastructure.BotManagement
                 args.Mask);
 
         public async Task<UpdateResult> OnCheckUserExistance(BotEventArgs args) =>
-            await userEvents.HandleCheckUserExistance(args.BotClient, args.Update);
+            await userEvents.HandleCheckUserExistance(args.Update);
     }
 }

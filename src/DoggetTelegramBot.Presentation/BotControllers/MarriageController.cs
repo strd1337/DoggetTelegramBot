@@ -5,6 +5,7 @@ using DoggetTelegramBot.Domain.Common.Enums;
 using DoggetTelegramBot.Domain.Models.MarriageEntity.Enums;
 using DoggetTelegramBot.Presentation.BotControllers.Common;
 using DoggetTelegramBot.Presentation.Common.Mapping;
+using DoggetTelegramBot.Presentation.Common.Services;
 using MapsterMapper;
 using PRTelegramBot.Attributes;
 using PRTelegramBot.Models.Enums;
@@ -21,7 +22,7 @@ namespace DoggetTelegramBot.Presentation.BotControllers
     {
         private readonly IBotLogger logger = logger;
 
-        [ReplyMenuHandler(CommandComparison.Contains, StringComparison.OrdinalIgnoreCase, Constants.Marriage.ReplyKeys.CreateMarriage)]
+        [ReplyMenuHandler(CommandComparison.Equals, StringComparison.OrdinalIgnoreCase, Constants.Marriage.ReplyKeys.CreateMarriage)]
         public async Task Create(ITelegramBotClient botClient, Update update)
         {
             logger.LogCommon(update);
@@ -31,23 +32,82 @@ namespace DoggetTelegramBot.Presentation.BotControllers
                 TelegramEvents.Message,
                 Constants.LogColors.Request);
 
-            // TO DO: change the data
-            List<long> spouses = [442632563, 905753288];
+            if (update.Message?.ReplyToMessage is null)
+            {
+                await SendMessage(botClient, update, Constants.Marriage.Messages.NotFoundUserReply);
+                return;
+            }
 
-            CreateMarriageCommand command = new(
-                MarriageType.Civil,
-                spouses);
+            var menu = InlineMenuGenerator.GenerateYesNoMenu(update);
 
-            var result = await service.Send(command);
+            var message = await PRTelegramBot.Helpers.Message.Send(
+                botClient,
+                update,
+                Constants.Marriage.Messages.ComposeMarriageProposal(
+                    update.Message.From!.FirstName,
+                    update.Message.From!.Username,
+                    update.Message.ReplyToMessage.From!.FirstName,
+                    update.Message.ReplyToMessage.From.Username),
+                menu);
 
-            var response = result.Match(mapper.Map<Response>, Problem);
+            _ = HandleUserMarriageRequestAsync(botClient, update, message);
+        }
 
-            await SendMessage(botClient, update, response.Message);
+        private async Task HandleUserMarriageRequestAsync(
+            ITelegramBotClient botClient,
+            Update update,
+            Message message)
+        {
+            bool? userResponse = await UserState.WaitForResponseAsync(update.Message!.From!.Id);
 
-            logger.LogCommon(
-                Constants.Marriage.Messages.CreateMarriageRequest(false),
-                TelegramEvents.Message,
-                Constants.LogColors.Request);
+            if (!userResponse.HasValue)
+            {
+                await EditMessage(
+                    botClient,
+                    message.Chat.Id,
+                    message.MessageId,
+                    message.ReplyToMessage!.MessageId,
+                    Constants.TimeExpired);
+            }
+            else if (userResponse.Value)
+            {
+                List<long> spouses =
+                [
+                    update.Message!.From!.Id,
+                    update.Message!.ReplyToMessage!.From!.Id
+                ];
+
+                CreateMarriageCommand command = new(
+                    MarriageType.Civil,
+                    spouses);
+
+                var result = await service.Send(command);
+
+                var response = result.Match(mapper.Map<Response>, Problem);
+
+                await EditMessage(
+                    botClient,
+                message.Chat.Id,
+                    message.MessageId,
+                    message.ReplyToMessage!.MessageId,
+                    response.Message);
+
+                logger.LogCommon(
+                    Constants.Marriage.Messages.CreateMarriageRequest(false),
+                    TelegramEvents.Message,
+                    Constants.LogColors.Request);
+            }
+            else
+            {
+                await EditMessage(
+                    botClient,
+                    message.Chat.Id,
+                    message.MessageId,
+                    message.ReplyToMessage!.MessageId,
+                    Constants.Marriage.Messages.DenyMarriageRequest(
+                        message.ReplyToMessage.From!.FirstName,
+                        message.ReplyToMessage.From!.Username));
+            }
         }
     }
 }

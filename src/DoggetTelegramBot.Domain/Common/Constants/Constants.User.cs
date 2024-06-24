@@ -36,6 +36,11 @@ namespace DoggetTelegramBot.Domain.Common.Constants
                     $"Update marital status request started." :
                     $"Update marital status request ended.";
 
+                public static string SendChoice(bool isAgreed = true) =>
+                    isAgreed ?
+                    "You have agreed." :
+                    "You have not agreed";
+
                 public static string Registered(long telegramId) =>
                     $"User {telegramId} was registered.";
 

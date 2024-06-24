@@ -21,7 +21,7 @@ namespace DoggetTelegramBot.Presentation.BotControllers
     {
         private readonly IBotLogger logger = logger;
 
-        [ReplyMenuHandler(Constants.User.ReplyKeys.GetMyInfo)]
+        [ReplyMenuHandler(CommandComparison.Equals, StringComparison.OrdinalIgnoreCase, Constants.User.ReplyKeys.GetMyInfo)]
         public async Task GetInfo(ITelegramBotClient botClient, Update update)
         {
             logger.LogCommon(update);
@@ -58,7 +58,6 @@ namespace DoggetTelegramBot.Presentation.BotControllers
                 [Constants.User.ReplyKeys.UpdateNickname.Length..]
                 .Trim();
 
-            // TO DO: change nickname
             UpdateNicknameByTelegramIdCommand command = new(
                 update.Message!.From!.Id,
                 nickname);
@@ -75,7 +74,7 @@ namespace DoggetTelegramBot.Presentation.BotControllers
                Constants.LogColors.Request);
         }
 
-        [ReplyMenuHandler(Constants.User.ReplyKeys.DeleteNickname)]
+        [ReplyMenuHandler(CommandComparison.Equals, StringComparison.OrdinalIgnoreCase, Constants.User.ReplyKeys.DeleteNickname)]
         public async Task DeleteNickname(ITelegramBotClient botClient, Update update)
         {
             logger.LogCommon(update);

@@ -28,6 +28,21 @@ namespace DoggetTelegramBot.Presentation.BotControllers.Common
             return await Helpers.Message.Send(botClient, update, text, options);
         }
 
+        protected async Task<Message> EditMessage(
+            ITelegramBotClient botClient,
+            long chatId,
+            int messageId,
+            int replyToMessageId,
+            string text)
+        {
+            OptionMessage options = new()
+            {
+                ReplyToMessageId = replyToMessageId
+            };
+
+            return await Helpers.Message.Edit(botClient, chatId, messageId, text, options);
+        }
+
         protected Response Problem(List<Error> errors)
         {
             if (errors.Count == 0)

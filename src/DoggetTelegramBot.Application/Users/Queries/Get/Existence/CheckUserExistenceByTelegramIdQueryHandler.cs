@@ -52,7 +52,7 @@ namespace DoggetTelegramBot.Application.Users.Queries.Get.Existence
                     TelegramEvents.Register,
                     Constants.LogColors.Get);
 
-                if (user.FirstName != request.FirstName &&
+                if (user.FirstName != request.FirstName ||
                     user.Username != request.Username)
                 {
                     UpdateUserDetailsByTelegramIdCommand command = new(
