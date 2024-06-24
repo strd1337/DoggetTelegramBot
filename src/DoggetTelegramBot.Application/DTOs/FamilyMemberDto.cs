@@ -4,5 +4,7 @@ namespace DoggetTelegramBot.Application.DTOs
 {
     public record FamilyMemberDto(
         string? Username,
+        string? Nickname,
+        string FirstName,
         FamilyRole Role);
 }

@@ -32,6 +32,7 @@ namespace DoggetTelegramBot.Application.Users.Queries.Get.Information
                     UserId = UserId.Create(u.Id.Value),
                     u.Username,
                     u.Nickname,
+                    u.FirstName,
                     u.RegisteredDate,
                     u.MaritalStatus,
                     u.Privileges
@@ -64,6 +65,7 @@ namespace DoggetTelegramBot.Application.Users.Queries.Get.Information
             return new GetUserInfoResult(
                 user.Username,
                 user.Nickname,
+                user.FirstName,
                 user.RegisteredDate,
                 user.MaritalStatus,
                 [.. user.Privileges],
@@ -93,7 +95,7 @@ namespace DoggetTelegramBot.Application.Users.Queries.Get.Information
                 [
                     .. unitOfWork.GetRepository<User, UserId>()
                         .GetWhere(u => spouseIds.Contains(u.Id))
-                        .Select(u => new SpouseDto(u.Username))
+                        .Select(u => new SpouseDto(u.Username, u.Nickname, u.FirstName))
 ,
                 ];
 
@@ -138,20 +140,27 @@ namespace DoggetTelegramBot.Application.Users.Queries.Get.Information
                     .Select(u => new
                     {
                         UserId = u.Id.Value,
-                        u.Username
+                        u.Username,
+                        u.Nickname,
+                        u.FirstName,
                     })
+                    .OrderBy(u => u.UserId)
                     .ToList();
 
-                Dictionary<Guid, string?> userDictionary = users
-                    .ToDictionary(u => u.UserId, u => u.Username);
+                var membersResult = result.Value.Members.OrderBy(m => m.UserId.Value);
 
-                List<FamilyMemberDto> members = result.Value.Members
-                    .Select(m => new FamilyMemberDto(
-                        Username: userDictionary.TryGetValue(m.UserId.Value, out string? value) ?
-                            value :
-                            null,
-                        m.Role
-                    ))
+                List<FamilyMemberDto> members = membersResult
+                    .Join(
+                        users,
+                        member => member.UserId.Value,
+                        user => user.UserId,
+                        (member, user) => new FamilyMemberDto(
+                            user.Username,
+                            user.Nickname,
+                            user.FirstName,
+                            member.Role
+                        )
+                    )
                     .ToList();
 
                 family = new(members);

@@ -38,7 +38,7 @@ namespace DoggetTelegramBot.Domain.Common.Constants
                     StringBuilder sb = new();
                     sb.Append(string.Create(
                         CultureInfo.InvariantCulture,
-                        $"@{recipientUsername ?? recipientFirstName}, "));
+                        $"{(recipientUsername is not null ? $"@{recipientUsername}" : recipientFirstName)}, "));
 
                     sb.Append(string.Create(
                         CultureInfo.InvariantCulture,
@@ -46,7 +46,7 @@ namespace DoggetTelegramBot.Domain.Common.Constants
 
                     sb.Append(string.Create(
                         CultureInfo.InvariantCulture,
-                        $"{requesterUsername ?? requesterFirstName}? "));
+                        $"{(requesterUsername is not null ? $"@{requesterUsername}" : requesterFirstName)}? "));
 
                     sb.Append("Time is limited.");
 
@@ -54,7 +54,7 @@ namespace DoggetTelegramBot.Domain.Common.Constants
                 }
 
                 public static string DenyMarriageRequest(string firstName, string? username) =>
-                    $"@{username ?? firstName} has denied the marriage request.";
+                    $"{(username is not null ? $"@{username}" : firstName)} has denied the marriage request.";
 
                 public const string NotFoundUserReply =
                    $"Select the user and reply on his message using the command: {ReplyKeys.CreateMarriage}";

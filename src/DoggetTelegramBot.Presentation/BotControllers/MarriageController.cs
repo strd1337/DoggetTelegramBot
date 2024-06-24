@@ -67,7 +67,7 @@ namespace DoggetTelegramBot.Presentation.BotControllers
                     message.Chat.Id,
                     message.MessageId,
                     message.ReplyToMessage!.MessageId,
-                    Constants.TimeExpired);
+                    Constants.Messages.TimeExpired);
             }
             else if (userResponse.Value)
             {

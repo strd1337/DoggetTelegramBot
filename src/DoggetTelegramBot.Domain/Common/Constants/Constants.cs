@@ -5,7 +5,10 @@ namespace DoggetTelegramBot.Domain.Common.Constants
         public const string ConnectionString = "DefaultConnection";
         private const string BotNickname = "dog";
 
-        public const string TimeExpired =
-            $"Time expired.";
+        public static class Messages
+        {
+            public const string TimeExpired = "Time expired.";
+            public const string NotAllowed = $"You are not allowed.";
+        }
     }
 }
