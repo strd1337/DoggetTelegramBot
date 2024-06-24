@@ -16,9 +16,9 @@ namespace DoggetTelegramBot.Application.Users.Commands.Register
         IUnitOfWork unitOfWork,
         IDateTimeProvider dateTimeProvider,
         IMediator mediator,
-        IBotLogger logger) : ICommandHandler<RegisterUserCommand, ResultUpdate>
+        IBotLogger logger) : ICommandHandler<RegisterUserCommand, UpdateResult>
     {
-        public async Task<ErrorOr<ResultUpdate>> Handle(
+        public async Task<ErrorOr<UpdateResult>> Handle(
             RegisterUserCommand request,
             CancellationToken cancellationToken)
         {
@@ -28,6 +28,7 @@ namespace DoggetTelegramBot.Application.Users.Commands.Register
             User user = User.Create(
                 request.TelegramId,
                 request.Username,
+                request.FirstName,
                 dateTimeProvider.UtcNow,
                 result.Value.InventoryId,
                 MaritalStatus.NotMarried);
@@ -40,13 +41,15 @@ namespace DoggetTelegramBot.Application.Users.Commands.Register
 
             logger.LogCommon(
                 Constants.User.Messages.Registered(user.TelegramId),
-                TelegramEvents.Register);
+                TelegramEvents.Register,
+                Constants.LogColors.Register);
 
             logger.LogCommon(
                 Constants.Inventory.Messages.Created(user.InventoryId.Value),
-                TelegramEvents.Register);
+                TelegramEvents.Register,
+                Constants.LogColors.Register);
 
-            return ResultUpdate.Continue;
+            return UpdateResult.Continue;
         }
     }
 }

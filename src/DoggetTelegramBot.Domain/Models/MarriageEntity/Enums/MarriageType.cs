@@ -10,8 +10,6 @@ namespace DoggetTelegramBot.Domain.Models.MarriageEntity.Enums
         Religious,
         [Description("Same-Sex")]
         SameSex,
-        [Description(nameof(Polygamous))]
-        Polygamous,
         [Description("Common-Law")]
         CommonLaw,
     }

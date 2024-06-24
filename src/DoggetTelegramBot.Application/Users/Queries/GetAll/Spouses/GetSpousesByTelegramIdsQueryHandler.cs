@@ -23,8 +23,7 @@ namespace DoggetTelegramBot.Application.Users.Queries.GetAll.Spouses
             [
                 .. await unitOfWork.GetRepository<User, UserId>()
                     .GetWhereAsync(
-                        u => request.TelegramIds.Contains(u.TelegramId) &&
-                            u.MaritalStatus == MaritalStatus.NotMarried,
+                        u => request.TelegramIds.Contains(u.TelegramId) && !u.IsDeleted,
                         cancellationToken)
             ];
 
@@ -38,14 +37,16 @@ namespace DoggetTelegramBot.Application.Users.Queries.GetAll.Spouses
                     Constants.User.Messages.NotFoundRetrievedWithCause(
                         request.TelegramIds,
                         Errors.User.SomeNotFoundOrMarried.Description),
-                    TelegramEvents.Message);
+                    TelegramEvents.Message,
+                    Constants.LogColors.GetAll);
 
                 return Errors.User.SomeNotFoundOrMarried;
             }
 
             logger.LogCommon(
                 Constants.User.Messages.Retrieved(request.TelegramIds),
-                TelegramEvents.Message);
+                TelegramEvents.Message,
+                Constants.LogColors.GetAll);
 
             return new GetSpousesResult(spouses);
         }

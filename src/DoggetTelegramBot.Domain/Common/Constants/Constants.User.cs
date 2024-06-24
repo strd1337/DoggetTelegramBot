@@ -36,6 +36,11 @@ namespace DoggetTelegramBot.Domain.Common.Constants
                     $"Update marital status request started." :
                     $"Update marital status request ended.";
 
+                public static string SendChoice(bool isAgreed = true) =>
+                    isAgreed ?
+                    "You have agreed." :
+                    "You have not agreed";
+
                 public static string Registered(long telegramId) =>
                     $"User {telegramId} was registered.";
 
@@ -71,9 +76,9 @@ namespace DoggetTelegramBot.Domain.Common.Constants
 
             public static class ReplyKeys
             {
-                public const string GetMyInfo = "who am i";
-                public const string UpdateNickname = "+nick";
-                public const string DeleteNickname = "-nick";
+                public const string GetMyInfo = $"{BotNickname} my stat";
+                public const string UpdateNickname = $"{BotNickname} +nick";
+                public const string DeleteNickname = $"{BotNickname} -nick";
             }
         }
     }

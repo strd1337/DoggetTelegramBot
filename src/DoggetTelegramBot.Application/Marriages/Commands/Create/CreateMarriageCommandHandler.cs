@@ -9,8 +9,6 @@ using DoggetTelegramBot.Domain.Common.Enums;
 using ErrorOr;
 using MediatR;
 using DoggetTelegramBot.Domain.Models.MarriageEntity.Enums;
-using DoggetTelegramBot.Domain.Common.Errors;
-using PRTelegramBot.Extensions;
 using DoggetTelegramBot.Domain.Models.MarriageEntity;
 using DoggetTelegramBot.Domain.Models.UserEntity;
 using DoggetTelegramBot.Application.Users.Commands.Update.MaritalStatuses;
@@ -30,11 +28,6 @@ namespace DoggetTelegramBot.Application.Marriages.Commands.Create
             CreateMarriageCommand request,
             CancellationToken cancellationToken)
         {
-            if (request.Spouses.Count > 5)
-            {
-                return Errors.Marriage.TooManySpouses(request.Spouses.Count);
-            }
-
             var result = await GetSpousesByTelegramIds(
                 request.Spouses,
                 cancellationToken);
@@ -45,17 +38,6 @@ namespace DoggetTelegramBot.Application.Marriages.Commands.Create
             }
 
             var spouses = result.Value.Spouses;
-
-            if (spouses.Count > 2 && request.Type != MarriageType.Polygamous)
-            {
-                string typeName = request.Type.GetDescription();
-
-                logger.LogCommon(
-                    Constants.Marriage.Messages.WrongType(typeName),
-                    TelegramEvents.Message);
-
-                return Errors.Marriage.WrongType(typeName);
-            }
 
             Marriage marriage = Marriage.Create(
                 dateTimeProvider.UtcNow,
@@ -86,14 +68,16 @@ namespace DoggetTelegramBot.Application.Marriages.Commands.Create
         {
             logger.LogCommon(
                 Constants.User.Messages.GetSpousesRequest(),
-                TelegramEvents.Message);
+                TelegramEvents.Message,
+                Constants.LogColors.Request);
 
             GetSpousesByTelegramIdsQuery query = new(telegramIds);
             var result = await mediator.Send(query, cancellationToken);
 
             logger.LogCommon(
                 Constants.User.Messages.GetSpousesRequest(false),
-                TelegramEvents.Message);
+                TelegramEvents.Message,
+                Constants.LogColors.Request);
 
             return result;
         }
@@ -104,7 +88,8 @@ namespace DoggetTelegramBot.Application.Marriages.Commands.Create
         {
             logger.LogCommon(
                 Constants.User.Messages.UpdateMaritalStatusRequest(),
-                TelegramEvents.Message);
+                TelegramEvents.Message,
+                Constants.LogColors.Request);
 
             UpdateSpousesMaritalStatusCommand command = new(
                 spouses, MaritalStatus.Married);
@@ -113,7 +98,8 @@ namespace DoggetTelegramBot.Application.Marriages.Commands.Create
 
             logger.LogCommon(
                 Constants.User.Messages.UpdateMaritalStatusRequest(false),
-                TelegramEvents.Message);
+                TelegramEvents.Message,
+                Constants.LogColors.Request);
         }
 
         private async Task RemoveKeyFromCacheAsync(

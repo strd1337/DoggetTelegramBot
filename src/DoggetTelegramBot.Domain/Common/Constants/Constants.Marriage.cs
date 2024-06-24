@@ -1,3 +1,5 @@
+using System.Globalization;
+using System.Text;
 using DoggetTelegramBot.Domain.Models.MarriageEntity;
 using DoggetTelegramBot.Domain.Models.UserEntity;
 
@@ -23,17 +25,44 @@ namespace DoggetTelegramBot.Domain.Common.Constants
                     $"Marriage was not retrieved using user id {userId.Value}.";
 
                 public static string CreateMarriageRequest(bool isStarted = true) =>
-                   isStarted ?
-                   $"Create new marriage request started." :
-                   $"Create new marriage request ended.";
+                    isStarted ?
+                    $"Create new marriage request started." :
+                    $"Create new marriage request ended.";
 
-                public static string WrongType(string typeName) =>
-                   $"{typeName} type needs to have more spouses.";
+                public static string ComposeMarriageProposal(
+                    string requesterFirstName,
+                    string? requesterUsername,
+                    string recipientFirstName,
+                    string? recipientUsername)
+                {
+                    StringBuilder sb = new();
+                    sb.Append(string.Create(
+                        CultureInfo.InvariantCulture,
+                        $"{(recipientUsername is not null ? $"@{recipientUsername}" : recipientFirstName)}, "));
+
+                    sb.Append(string.Create(
+                        CultureInfo.InvariantCulture,
+                        $"do you want to get married to "));
+
+                    sb.Append(string.Create(
+                        CultureInfo.InvariantCulture,
+                        $"{(requesterUsername is not null ? $"@{requesterUsername}" : requesterFirstName)}? "));
+
+                    sb.Append("Time is limited.");
+
+                    return sb.ToString();
+                }
+
+                public static string DenyMarriageRequest(string firstName, string? username) =>
+                    $"{(username is not null ? $"@{username}" : firstName)} has denied the marriage request.";
+
+                public const string NotFoundUserReply =
+                   $"Select the user and reply on his message using the command: {ReplyKeys.CreateMarriage}";
             }
 
             public static class ReplyKeys
             {
-                public const string CreateMarriage = "+marriage";
+                public const string CreateMarriage = $"+marriage";
             }
         }
     }

@@ -1,19 +1,18 @@
+using PRTelegramBot.Core;
+using PRTelegramBot.Models.EventsArgs;
 using Telegram.Bot.Types;
 
 namespace DoggetTelegramBot.Application.Common.Services
 {
     public interface IBotLogger
     {
-        void LogCommon(
-            string message,
-            Enum? eventType,
-            ConsoleColor color = ConsoleColor.Blue);
+        Task OnLogCommonAsync(CommonLogEventArgs args);
+        Task OnLogErrorAsync(ErrorLogEventArgs args);
 
-        void LogError(Exception ex, long? id = null);
+        void LogCommon(string message, Enum type, ConsoleColor color);
+        void LogError(Exception exception, Update? update = null);
+        void LogCommon(Update update, ConsoleColor color = ConsoleColor.Blue);
 
-        void LogCommon(
-            Update update,
-            Enum? eventType,
-            ConsoleColor color = ConsoleColor.Blue);
+        void SetBotInstance(PRBotBase bot);
     }
 }

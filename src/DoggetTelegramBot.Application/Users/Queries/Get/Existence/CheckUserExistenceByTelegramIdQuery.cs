@@ -6,10 +6,11 @@ namespace DoggetTelegramBot.Application.Users.Queries.Get.Existence
 {
     public record CheckUserExistenceByTelegramIdQuery(
         long TelegramId,
-        string? Username) : ICachedQuery<ResultUpdate>
+        string? Username,
+        string FirstName) : ICachedQuery<UpdateResult>
     {
         public string CachedKey => CacheKeyGenerator.UserExistsWithTelegramId(TelegramId);
 
-        public TimeSpan? Expiration => TimeSpan.FromHours(1);
+        public TimeSpan? Expiration => TimeSpan.FromSeconds(10);
     }
 }

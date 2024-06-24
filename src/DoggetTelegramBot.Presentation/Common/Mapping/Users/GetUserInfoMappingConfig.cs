@@ -14,6 +14,7 @@ namespace DoggetTelegramBot.Presentation.Common.Mapping.Users
                 .Map(dest => dest.Message, src => FormatUserInfoMessage(
                     src.Username,
                     src.Nickname,
+                    src.FirstName,
                     src.RegisteredDate,
                     src.MaritalStatus,
                     src.Privileges,
@@ -23,6 +24,7 @@ namespace DoggetTelegramBot.Presentation.Common.Mapping.Users
         private static string FormatUserInfoMessage(
             string? username,
             string? nickname,
+            string firstName,
             DateTime registeredDate,
             MaritalStatus maritalStatus,
             List<UserPrivilege> privileges,
@@ -34,8 +36,8 @@ namespace DoggetTelegramBot.Presentation.Common.Mapping.Users
             sb.AppendLine(nickname is not null ?
                 $"Nickname: {nickname}" :
                 username is not null ?
-                $"Username: {username}" :
-                "none");
+                $"Username: @{username}" :
+                $"First name: {firstName}");
 
             sb.AppendLine($"Registered date: {registeredDate:dd-MM-yyyy}");
             sb.AppendLine($"Marital status: {maritalStatus.GetDescription()}");
@@ -59,10 +61,14 @@ namespace DoggetTelegramBot.Presentation.Common.Mapping.Users
             MarriageDto marriage)
         {
             sb.AppendLine("\nMarriage information:");
-            sb.Append($"Spouse{(marriage.Spouses.Count > 1 ? "s" : string.Empty)}:");
+            sb.Append($"Spouses: ");
             foreach (var spouse in marriage.Spouses)
             {
-                sb.Append($" {spouse.Username}");
+                sb.Append(spouse.Nickname is not null ?
+                    $"{spouse.Nickname}" :
+                    spouse.Username is not null ?
+                    $"@{spouse.Username}" :
+                    $"{spouse.FirstName}");
             }
 
             sb.AppendLine($"\nMarriage date: {marriage.MarriageDate:dd-MM-yyyy}");
@@ -83,7 +89,13 @@ namespace DoggetTelegramBot.Presentation.Common.Mapping.Users
             sb.AppendLine($"Members:");
             foreach (var member in family.Members)
             {
-                sb.AppendLine($" Username: {member.Username}\n Role: {member.Role.GetDescription()}");
+                sb.AppendLine(member.Nickname is not null ?
+                     $" Nickname: {member.Nickname}" :
+                     member.Username is not null ?
+                     $" Username: @{member.Username}" :
+                     $" First name: {member.FirstName}");
+
+                sb.AppendLine($" Role: {member.Role.GetDescription()}");
             }
         }
     }

@@ -1,51 +1,81 @@
 using DoggetTelegramBot.Application.Common.Services;
-using DoggetTelegramBot.Domain.Common.Enums;
 using DoggetTelegramBot.Domain.Common.Constants;
 using NLog;
-using PRTelegramBot.Extensions;
 using System.Text;
 using Telegram.Bot.Exceptions;
 using System.Globalization;
 using Telegram.Bot.Types;
 using Telegram.Bot.Types.Enums;
+using PRTelegramBot.Models.EventsArgs;
+using PRTelegramBot.Core;
+using PRTelegramBot.Extensions;
 
 namespace DoggetTelegramBot.Infrastructure.BotManagement
 {
     public class BotLogger(IDateTimeProvider dateTimeProvider) : IBotLogger
     {
         private readonly Dictionary<string, Logger> loggersContainer = [];
+        private PRBotBase bot = null!;
 
-        public void LogCommon(
-            string message,
-            Enum? eventType,
-            ConsoleColor color = ConsoleColor.Blue)
+        public void SetBotInstance(PRBotBase bot) => this.bot = bot;
+
+        public void LogCommon(string message, Enum type, ConsoleColor color)
         {
-            string commonMessage = $"{dateTimeProvider.UtcNow} {message}";
-            LogToConsole(commonMessage, color);
-            LogToFile(commonMessage, eventType);
+            CommonLogEventArgsCreator argsCreator = new(
+                message,
+                type.GetDescription(),
+                color);
+
+            CommonLogEventArgs eventArgs = new(bot, argsCreator);
+            OnLogCommonAsync(eventArgs);
         }
 
-        public void LogCommon(
-            Update update,
-            Enum? eventType,
-            ConsoleColor color = ConsoleColor.Blue)
+        public void LogCommon(Update update, ConsoleColor color = ConsoleColor.Blue)
         {
-            string commonMessage = CreateLogMessage(update);
-            LogToConsole(commonMessage, color);
-            LogToFile(commonMessage, eventType);
+            CommonLogEventArgsCreator argsCreator = new(
+                string.Empty,
+                string.Empty,
+                color,
+                update);
+
+            CommonLogEventArgs eventArgs = new(bot, argsCreator);
+            OnLogCommonAsync(eventArgs);
         }
 
-        public void LogError(Exception ex, long? id = null)
+        public void LogError(Exception exception, Update? update = null)
         {
-            string errorMessage = $"{dateTimeProvider.UtcNow} : {ex}";
+            ErrorLogEventArgsCreator argsCreator = update is null ?
+                new(exception) :
+                new(exception, update);
 
-            if (ex is ApiRequestException apiEx)
+            ErrorLogEventArgs eventArgs = new(bot, argsCreator);
+            OnLogErrorAsync(eventArgs);
+        }
+
+        public Task OnLogCommonAsync(CommonLogEventArgs args)
+        {
+            string commonMessage = args.Update.Message is null ?
+                $"{dateTimeProvider.UtcNow} {args.Message}" :
+                CreateLogMessage(args.Update);
+
+            LogToConsole(commonMessage, args.Color);
+            Task.Run(() => LogToFileAsync(commonMessage, args.Type));
+            return Task.CompletedTask;
+        }
+
+        public Task OnLogErrorAsync(ErrorLogEventArgs args)
+        {
+            string errorMessage = $"{dateTimeProvider.UtcNow} : {args.Exception}";
+
+            if (args.Exception is ApiRequestException apiEx)
             {
-                errorMessage = HandleApiRequestException(apiEx, id);
+                errorMessage = HandleApiRequestException(apiEx, args.Update.Message?.From?.Id);
             }
 
-            LogErrorMessage(errorMessage);
+            Task.Run(() => LogErrorMessageAsync(errorMessage));
             LogToConsole(errorMessage, ConsoleColor.Red);
+
+            return Task.CompletedTask;
         }
 
         private static string CreateLogMessage(Update update)
@@ -56,7 +86,7 @@ namespace DoggetTelegramBot.Infrastructure.BotManagement
             StringBuilder sb = new();
             sb.Append(message?.Date);
             sb.Append(string.Create(CultureInfo.InvariantCulture, $" The user named, "));
-            sb.Append(string.Create(CultureInfo.InvariantCulture, $"UserName: {from?.Username ?? "None"}, "));
+            sb.Append(string.Create(CultureInfo.InvariantCulture, $"Username: {from?.Username ?? "None"}, "));
             sb.Append(string.Create(CultureInfo.InvariantCulture, $"FirstName: {from?.FirstName ?? "None"}, "));
             sb.Append(string.Create(CultureInfo.InvariantCulture, $"LastName: {from?.LastName ?? "None"}, "));
 
@@ -97,18 +127,15 @@ namespace DoggetTelegramBot.Infrastructure.BotManagement
             Console.ResetColor();
         }
 
-        private void LogToFile(string message, Enum? eventType)
+        private async Task LogToFileAsync(string message, string eventType)
         {
-            string loggerName = eventType?.GetDescription() ??
-                TelegramEvents.All.GetDescription();
-
-            if (!loggersContainer.TryGetValue(loggerName, out var logger))
+            if (!loggersContainer.TryGetValue(eventType, out var logger))
             {
-                logger = LogManager.GetLogger(loggerName);
-                loggersContainer[loggerName] = logger;
+                logger = LogManager.GetLogger(eventType);
+                loggersContainer[eventType] = logger;
             }
 
-            logger.Info(message);
+            await Task.Run(() => logger.Info(message));
         }
 
         private string HandleApiRequestException(ApiRequestException apiEx, long? id)
@@ -140,7 +167,7 @@ namespace DoggetTelegramBot.Infrastructure.BotManagement
             return errorMessage.ToString();
         }
 
-        private void LogErrorMessage(string errorMessage)
+        private async Task LogErrorMessageAsync(string errorMessage)
         {
             if (!loggersContainer.TryGetValue(Constants.Logger.ErrorName, out var logger))
             {
@@ -148,7 +175,7 @@ namespace DoggetTelegramBot.Infrastructure.BotManagement
                 loggersContainer[Constants.Logger.ErrorName] = logger;
             }
 
-            logger.Error(errorMessage);
+            await Task.Run(() => logger.Error(errorMessage));
         }
     }
 }

@@ -1,6 +1,5 @@
 using DoggetTelegramBot.Application.Common.Services;
 using DoggetTelegramBot.Infrastructure.Configs;
-using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using PRTelegramBot.Core;
 using Telegram.Bot.Polling;
@@ -16,30 +15,29 @@ namespace DoggetTelegramBot.Infrastructure.BotManagement
 
         public async Task InitializeAndRunAsync(IServiceProvider serviceProvider)
         {
-            PRBot telegramBot = new(options =>
-            {
-                options.Token = config.Token;
-                options.ClearUpdatesOnStart = config.ClearUpdatesOnStart;
-                options.BotId = config.BotId;
-                options.Admins = config.Admins;
-                options.WhiteListUsers = config.WhiteListUsers;
-            },
-            new ReceiverOptions
-            {
-                Limit = 5,
-                AllowedUpdates = [],
-                ThrowPendingUpdates = true
-            },
-            serviceProvider);
+            var bot = new PRBotBuilder(config.Token)
+                .SetClearUpdatesOnStart(config.ClearUpdatesOnStart)
+                .SetBotId(config.BotId)
+                .AddAdmins(config.Admins)
+                .AddUsersWhiteList(config.WhiteListUsers)
+                .AddRecevingOptions(new ReceiverOptions
+                {
+                    Limit = 5,
+                    AllowedUpdates = [],
+                    ThrowPendingUpdates = true,
+                })
+                .SetServiceProvider(serviceProvider)
+                .Build();
 
-            telegramBot.OnLogCommon += logger.LogCommon;
-            telegramBot.OnLogError += logger.LogError;
+            logger.SetBotInstance(bot);
 
-            telegramBot.Handler.OnPreUpdate += dispatcher.OnCheckUserExistance;
+            bot.Events.OnCommonLog += logger.OnLogCommonAsync;
+            bot.Events.OnErrorLog += logger.OnLogErrorAsync;
 
-            telegramBot.Handler.Router.OnCheckPrivilege += dispatcher.OnCheckPrivilege;
+            bot.Events.OnPreUpdate += dispatcher.OnCheckUserExistance;
+            bot.Events.OnCheckPrivilege += dispatcher.OnCheckPrivilege;
 
-            await telegramBot.Start();
+            await bot.Start();
         }
     }
 }

@@ -1,23 +1,20 @@
 using DoggetTelegramBot.Infrastructure.BotManagement.Events;
 using PRTelegramBot.Models.Enums;
-using Telegram.Bot;
-using Telegram.Bot.Types;
-
+using PRTelegramBot.Models.EventsArgs;
 
 namespace DoggetTelegramBot.Infrastructure.BotManagement
 {
     public sealed class BotEventDispatcher(
         UserEventsHandler userEvents)
     {
-        public async Task OnCheckPrivilege(
-            ITelegramBotClient botclient,
-            Update update,
-            Func<ITelegramBotClient, Update, Task> callback, int? flags = null) =>
-                await userEvents.HandleCheckPrivilege(botclient, update, callback, flags);
+        public async Task OnCheckPrivilege(PrivilegeEventArgs args) =>
+            await userEvents.HandleCheckPrivilege(
+                args.BotClient,
+                args.Update,
+                args.ExecuteMethod,
+                args.Mask);
 
-        public async Task<ResultUpdate> OnCheckUserExistance(
-            ITelegramBotClient botclient,
-            Update update) =>
-                await userEvents.HandleCheckUserExistance(botclient, update);
+        public async Task<UpdateResult> OnCheckUserExistance(BotEventArgs args) =>
+            await userEvents.HandleCheckUserExistance(args.Update);
     }
 }

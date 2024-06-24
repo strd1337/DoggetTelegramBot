@@ -29,7 +29,8 @@ namespace DoggetTelegramBot.Application.Users.Commands.Update.MaritalStatuses
 
             logger.LogCommon(
                Constants.User.Messages.UpdatedSuccessfully(telegramIds),
-               TelegramEvents.Message);
+               TelegramEvents.Message,
+               Constants.LogColors.Update);
 
             return new UpdateSpousesMaritalStatusResult();
         }

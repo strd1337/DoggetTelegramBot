@@ -21,14 +21,15 @@ namespace DoggetTelegramBot.Application.Marriages.Queries.Get.Information
         {
             var marriage = await unitOfWork.GetRepository<Marriage, MarriageId>()
                 .FirstOrDefaultAsync(
-                    m => m.SpouseIds.Any(id => id.Value == request.UserId.Value),
+                    m => m.SpouseIds.Any(id => id.Value == request.UserId.Value) && !m.IsDeleted,
                     cancellationToken);
 
             if (marriage is null)
             {
                 logger.LogCommon(
                     Constants.Marriage.Messages.NotFoundRetrieved(request.UserId),
-                    TelegramEvents.Message);
+                    TelegramEvents.Message,
+                    Constants.LogColors.Get);
 
                 return Errors.Marriage.NotFound;
             }
@@ -38,8 +39,9 @@ namespace DoggetTelegramBot.Application.Marriages.Queries.Get.Information
                 .ToList();
 
             logger.LogCommon(
-                    Constants.Marriage.Messages.Retrieved(MarriageId.Create(marriage.Id.Value)),
-                    TelegramEvents.Message);
+                Constants.Marriage.Messages.Retrieved(MarriageId.Create(marriage.Id.Value)),
+                TelegramEvents.Message,
+                Constants.LogColors.Get);
 
             return new GetMarriageInfoResult(
                 userSpouseIds,

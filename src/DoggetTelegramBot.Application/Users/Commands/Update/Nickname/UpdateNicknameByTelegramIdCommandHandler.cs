@@ -24,21 +24,23 @@ namespace DoggetTelegramBot.Application.Users.Commands.Update.Nickname
 
             var user = await userRepository
                 .FirstOrDefaultAsync(
-                    u => u.TelegramId == request.TelegramId,
+                    u => u.TelegramId == request.TelegramId && !u.IsDeleted,
                     cancellationToken);
 
             if (user is null)
             {
                 logger.LogCommon(
                     Constants.User.Messages.NotFoundRetrieved(request.TelegramId),
-                    TelegramEvents.Register);
+                    TelegramEvents.Register,
+                    Constants.LogColors.Get);
 
                 return Errors.User.NotFound;
             }
 
             logger.LogCommon(
                 Constants.User.Messages.Retrieved(request.TelegramId),
-                TelegramEvents.Message);
+                TelegramEvents.Message,
+                Constants.LogColors.Get);
 
             user.UpdateNickname(request.Nickname);
 
@@ -48,7 +50,8 @@ namespace DoggetTelegramBot.Application.Users.Commands.Update.Nickname
 
             logger.LogCommon(
                 Constants.User.Messages.UpdatedSuccessfully(request.TelegramId),
-                TelegramEvents.Message);
+                TelegramEvents.Message,
+                Constants.LogColors.Update);
 
             await RemoveKeyFromCacheAsync(user.TelegramId, cancellationToken);
 

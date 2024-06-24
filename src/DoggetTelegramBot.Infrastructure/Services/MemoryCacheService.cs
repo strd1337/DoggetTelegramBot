@@ -27,7 +27,8 @@ namespace DoggetTelegramBot.Infrastructure.Services
 
             logger.LogCommon(
                 Constants.Cache.StoreOrRetrieveMessage,
-                TelegramEvents.Message);
+                TelegramEvents.Message,
+                Constants.LogColors.Cache);
 
             return result!;
         }
@@ -44,7 +45,8 @@ namespace DoggetTelegramBot.Infrastructure.Services
 
                 logger.LogCommon(
                     Constants.Cache.RemoveMessage,
-                    TelegramEvents.Message);
+                    TelegramEvents.Message,
+                    Constants.LogColors.Cache);
             }
 
             return Task.CompletedTask;

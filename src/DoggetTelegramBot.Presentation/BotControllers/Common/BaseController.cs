@@ -4,6 +4,10 @@ using System.Text;
 using DoggetTelegramBot.Domain.Common.Enums;
 using DoggetTelegramBot.Domain.Common.Constants;
 using DoggetTelegramBot.Presentation.Common.Mapping;
+using Telegram.Bot.Types;
+using PRTelegramBot.Models;
+using Telegram.Bot;
+using Helpers = PRTelegramBot.Helpers;
 
 namespace DoggetTelegramBot.Presentation.BotControllers.Common
 {
@@ -11,11 +15,43 @@ namespace DoggetTelegramBot.Presentation.BotControllers.Common
     {
         private readonly IBotLogger logger = logger;
 
+        protected async Task<Message> SendMessage(
+            ITelegramBotClient botClient,
+            Update update,
+            string text)
+        {
+            OptionMessage options = new()
+            {
+                ReplyToMessageId = update.Message!.MessageId,
+            };
+
+            return await Helpers.Message.Send(botClient, update, text, options);
+        }
+
+        protected async Task<Message> EditMessage(
+            ITelegramBotClient botClient,
+            long chatId,
+            int messageId,
+            int replyToMessageId,
+            string text)
+        {
+            OptionMessage options = new()
+            {
+                ReplyToMessageId = replyToMessageId
+            };
+
+            return await Helpers.Message.Edit(botClient, chatId, messageId, text, options);
+        }
+
         protected Response Problem(List<Error> errors)
         {
             if (errors.Count == 0)
             {
-                logger.LogCommon("No errors provided", TelegramEvents.Message, ConsoleColor.Red);
+                logger.LogCommon(
+                    "No errors provided",
+                    TelegramEvents.Message,
+                    Constants.LogColors.Problem);
+
                 return new Response();
             }
 
@@ -35,7 +71,10 @@ namespace DoggetTelegramBot.Presentation.BotControllers.Common
                 validationErrorDetails.AppendLine($" Error Code: {error.Code}, Description: {error.Description}");
             }
 
-            logger.LogCommon(validationErrorDetails.ToString(), TelegramEvents.Message, ConsoleColor.Yellow);
+            logger.LogCommon(
+                validationErrorDetails.ToString(),
+                TelegramEvents.Message,
+                Constants.LogColors.Problem);
 
             return new Response { Message = validationErrorMessage.ToString() };
         }
@@ -58,7 +97,7 @@ namespace DoggetTelegramBot.Presentation.BotControllers.Common
             logger.LogCommon(
                 $" Error Code: {error.Code}, Description: {error.Description}",
                 TelegramEvents.Message,
-                ConsoleColor.Red);
+                Constants.LogColors.Problem);
 
             return new Response { Message = errorMessage };
         }
