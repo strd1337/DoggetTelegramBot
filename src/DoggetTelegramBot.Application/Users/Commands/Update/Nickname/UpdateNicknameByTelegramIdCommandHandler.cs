@@ -24,7 +24,7 @@ namespace DoggetTelegramBot.Application.Users.Commands.Update.Nickname
 
             var user = await userRepository
                 .FirstOrDefaultAsync(
-                    u => u.TelegramId == request.TelegramId,
+                    u => u.TelegramId == request.TelegramId && !u.IsDeleted,
                     cancellationToken);
 
             if (user is null)

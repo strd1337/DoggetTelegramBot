@@ -20,7 +20,7 @@ namespace DoggetTelegramBot.Application.Families.Queries.Get.Information
         {
             var family = unitOfWork.GetRepository<Family, FamilyId>()
                 .GetWhere(
-                    f => f.Members.Any(m => m.UserId == request.UserId),
+                    f => f.Members.Any(m => m.UserId == request.UserId) && !f.IsDeleted,
                     nameof(Family.Members))
                 .FirstOrDefault();
 

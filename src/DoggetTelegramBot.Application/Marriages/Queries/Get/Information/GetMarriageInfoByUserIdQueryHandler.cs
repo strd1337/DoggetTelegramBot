@@ -21,7 +21,7 @@ namespace DoggetTelegramBot.Application.Marriages.Queries.Get.Information
         {
             var marriage = await unitOfWork.GetRepository<Marriage, MarriageId>()
                 .FirstOrDefaultAsync(
-                    m => m.SpouseIds.Any(id => id.Value == request.UserId.Value),
+                    m => m.SpouseIds.Any(id => id.Value == request.UserId.Value) && !m.IsDeleted,
                     cancellationToken);
 
             if (marriage is null)

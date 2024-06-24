@@ -26,7 +26,7 @@ namespace DoggetTelegramBot.Application.Users.Queries.Get.Information
             CancellationToken cancellationToken)
         {
             var user = unitOfWork.GetRepository<User, UserId>()
-                .GetWhere(u => u.TelegramId == request.TelegramId)
+                .GetWhere(u => u.TelegramId == request.TelegramId && !u.IsDeleted)
                 .Select(u => new
                 {
                     UserId = UserId.Create(u.Id.Value),

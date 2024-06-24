@@ -22,7 +22,7 @@ namespace DoggetTelegramBot.Application.Users.Queries.Get.Existence
             CancellationToken cancellationToken)
         {
             var user = unitOfWork.GetRepository<User, UserId>()
-                .GetWhere(u => u.TelegramId == request.TelegramId)
+                .GetWhere(u => u.TelegramId == request.TelegramId && !u.IsDeleted)
                 .Select(u => new
                 {
                     u.TelegramId,

@@ -23,8 +23,7 @@ namespace DoggetTelegramBot.Application.Users.Queries.GetAll.Spouses
             [
                 .. await unitOfWork.GetRepository<User, UserId>()
                     .GetWhereAsync(
-                        u => request.TelegramIds.Contains(u.TelegramId) &&
-                            u.MaritalStatus == MaritalStatus.NotMarried,
+                        u => request.TelegramIds.Contains(u.TelegramId) && !u.IsDeleted,
                         cancellationToken)
             ];
 
