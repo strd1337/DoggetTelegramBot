@@ -4,7 +4,7 @@ using DoggetTelegramBot.Domain.Models.MarriageEntity.Enums;
 
 namespace DoggetTelegramBot.Application.Marriages.Commands.Create
 {
-    public record CreateMarriageCommand(
+    public record MarryCommand(
         MarriageType Type,
-        List<long> Spouses) : ICommand<CreateMarriageResult>;
+        List<long> Spouses) : ICommand<MarriageResult>;
 }

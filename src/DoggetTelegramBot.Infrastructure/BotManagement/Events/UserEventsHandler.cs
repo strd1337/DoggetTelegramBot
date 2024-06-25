@@ -93,27 +93,44 @@ namespace DoggetTelegramBot.Infrastructure.BotManagement.Events
                 TelegramEvents.Message,
                 Constants.LogColors.Request);
 
-            if (update.Message?.From is null)
+            if (update.Message?.From is null && update.CallbackQuery?.From is null)
             {
                 logger.LogCommon(
                      Constants.ErrorMessage.MissingInformation,
                      TelegramEvents.Message,
                      Constants.LogColors.PreUpdate);
 
-                return UpdateResult.Continue;
+                return UpdateResult.Stop;
             }
 
-            CheckUserExistenceByTelegramIdQuery query = new(
-                update.Message.From.Id,
-                update.Message.From.Username,
-                update.Message.From.FirstName);
+            CheckUserExistenceByTelegramIdQuery query;
+            long userTelegramId;
+
+            if (update.Message?.From is not null)
+            {
+                query = new CheckUserExistenceByTelegramIdQuery(
+                    update.Message.From.Id,
+                    update.Message.From.Username,
+                    update.Message.From.FirstName);
+
+                userTelegramId = update.Message.From.Id;
+            }
+            else
+            {
+                query = new CheckUserExistenceByTelegramIdQuery(
+                    update.CallbackQuery!.From.Id,
+                    update.CallbackQuery.From.Username,
+                    update.CallbackQuery.From.FirstName);
+
+                userTelegramId = update.CallbackQuery.From.Id;
+            }
 
             var result = await service.Send(query);
 
             logger.LogCommon(
-                Constants.User.Messages.SuccessExistence(update.Message.From.Id),
-                TelegramEvents.Message,
-                Constants.LogColors.PreUpdate);
+                    Constants.User.Messages.SuccessExistence(userTelegramId),
+                    TelegramEvents.Message,
+                    Constants.LogColors.PreUpdate);
 
             logger.LogCommon(
                 Constants.User.Messages.CheckExistenceRequest(false),

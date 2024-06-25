@@ -87,7 +87,7 @@ namespace DoggetTelegramBot.Presentation.BotControllers.Common
             {
                 StatusCodes.Status409Conflict => string.Format(null, CompositeFormat.Parse(Constants.ErrorMessage.Conflict), error.Description),
                 StatusCodes.Status400BadRequest => string.Format(null, CompositeFormat.Parse(Constants.ErrorMessage.BadRequest), error.Description),
-                StatusCodes.Status404NotFound => string.Format(null, CompositeFormat.Parse(Constants.ErrorMessage.NotFound), error.Description),
+                StatusCodes.Status404NotFound => error.Description,
                 StatusCodes.Status401Unauthorized => Constants.ErrorMessage.Unauthorized,
                 StatusCodes.Status403Forbidden => Constants.ErrorMessage.Forbidden,
                 StatusCodes.Status500InternalServerError => Constants.ErrorMessage.InternalServer,

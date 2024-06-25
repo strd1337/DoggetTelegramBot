@@ -20,10 +20,11 @@ namespace DoggetTelegramBot.Presentation.Handlers
             if (command is not null)
             {
                 UserState.SetUserResponse(
-                    update.CallbackQuery.Message!.From!.Id,
+                    //update.CallbackQuery.Message!.From!.Id,
+                    update.CallbackQuery.From.Id,
                     command.Data.EntityId);
 
-                if (update.CallbackQuery.From.Id == update.CallbackQuery.Message.ReplyToMessage!.From!.Id)
+                /*if (update.CallbackQuery.From.Id == update.CallbackQuery.Message.ReplyToMessage!.From!.Id)
                 {
                     await botClient.AnswerCallbackQueryAsync(
                         update.CallbackQuery.Id,
@@ -34,7 +35,7 @@ namespace DoggetTelegramBot.Presentation.Handlers
                     await botClient.AnswerCallbackQueryAsync(
                         update.CallbackQuery.Id,
                         Constants.Messages.NotAllowed);
-                }
+                }*/
             }
         }
     }

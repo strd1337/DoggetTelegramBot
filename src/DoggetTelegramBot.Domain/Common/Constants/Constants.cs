@@ -9,6 +9,9 @@ namespace DoggetTelegramBot.Domain.Common.Constants
         {
             public const string TimeExpired = "Time expired.";
             public const string NotAllowed = $"You are not allowed.";
+
+            public static string NotFoundUserReply(string command) =>
+                $"Select the user and reply on his message using the command: {command}";
         }
     }
 }

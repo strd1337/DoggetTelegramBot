@@ -1,17 +1,13 @@
 using DoggetTelegramBot.Application.Common.CQRS;
 using DoggetTelegramBot.Application.Common.Interfaces;
-using DoggetTelegramBot.Application.Common.Services;
 using DoggetTelegramBot.Application.Users.Common;
-using DoggetTelegramBot.Domain.Common.Constants;
-using DoggetTelegramBot.Domain.Common.Enums;
 using DoggetTelegramBot.Domain.Models.UserEntity;
 using ErrorOr;
 
 namespace DoggetTelegramBot.Application.Users.Commands.Update.MaritalStatuses
 {
     public sealed class UpdateSpousesMaritalStatusCommandHandler(
-        IUnitOfWork unitOfWork,
-        IBotLogger logger) :
+        IUnitOfWork unitOfWork) :
             ICommandHandler<UpdateSpousesMaritalStatusCommand, UpdateSpousesMaritalStatusResult>
     {
         public async Task<ErrorOr<UpdateSpousesMaritalStatusResult>> Handle(
@@ -26,11 +22,6 @@ namespace DoggetTelegramBot.Application.Users.Commands.Update.MaritalStatuses
                 .UpdateAsync(spouses);
 
             List<long> telegramIds = spouses.Select(s => s.TelegramId).ToList();
-
-            logger.LogCommon(
-               Constants.User.Messages.UpdatedSuccessfully(telegramIds),
-               TelegramEvents.Message,
-               Constants.LogColors.Update);
 
             return new UpdateSpousesMaritalStatusResult();
         }

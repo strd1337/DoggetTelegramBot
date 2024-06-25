@@ -10,6 +10,6 @@ namespace DoggetTelegramBot.Application.Users.Common
         DateTime RegisteredDate,
         MaritalStatus MaritalStatus,
         List<UserPrivilege> Privileges,
-        MarriageDto? Marriage,
+        List<MarriageDto>? Marriage,
         FamilyDto? Family);
 }

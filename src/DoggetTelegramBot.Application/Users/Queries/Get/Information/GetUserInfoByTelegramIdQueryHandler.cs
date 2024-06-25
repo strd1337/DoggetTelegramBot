@@ -3,7 +3,7 @@ using DoggetTelegramBot.Application.Common.Interfaces;
 using DoggetTelegramBot.Application.Common.Services;
 using DoggetTelegramBot.Application.DTOs;
 using DoggetTelegramBot.Application.Families.Queries.Get.Information;
-using DoggetTelegramBot.Application.Marriages.Queries.Get.Information;
+using DoggetTelegramBot.Application.Marriages.Queries.GetAll.Information;
 using DoggetTelegramBot.Application.Users.Common;
 using DoggetTelegramBot.Domain.Common.Constants;
 using DoggetTelegramBot.Domain.Common.Enums;
@@ -73,38 +73,41 @@ namespace DoggetTelegramBot.Application.Users.Queries.Get.Information
                 family);
         }
 
-        private async Task<MarriageDto?> GetUserMarriageInfoAsync(
+        private async Task<List<MarriageDto>> GetUserMarriageInfoAsync(
             UserId userId,
             CancellationToken cancellationToken)
         {
             logger.LogCommon(
-               Constants.Marriage.Messages.GetInformationRequest(),
-               TelegramEvents.Message,
-               Constants.LogColors.Request);
+                Constants.Marriage.Messages.GetInformationRequest(),
+                TelegramEvents.Message,
+                Constants.LogColors.Request);
 
-            GetMarriageInfoByUserIdQuery query = new(userId);
+            GetAllMarriagesInfoByUserIdQuery query = new(userId);
             var result = await mediator.Send(query, cancellationToken);
 
-            MarriageDto? marriage = null;
+            List<MarriageDto> marriages = [];
 
             if (!result.IsError)
             {
-                var spouseIds = result.Value.SpouseIds;
+                var allMarriages = result.Value.Marriages;
 
-                List<SpouseDto> userSpouses =
-                [
-                    .. unitOfWork.GetRepository<User, UserId>()
-                        .GetWhere(u => spouseIds.Contains(u.Id))
-                        .Select(u => new SpouseDto(u.Username, u.Nickname, u.FirstName))
-,
-                ];
+                marriages = allMarriages.Select(marriage =>
+                {
+                    List<SpouseDto> spouses =
+                    [
+                        .. unitOfWork.GetRepository<User, UserId>()
+                            .GetWhere(u => marriage.SpouseIds.Contains(u.Id))
+                            .Select(u => new SpouseDto(u.Username, u.Nickname, u.FirstName))
+                    ];
 
-                marriage = new MarriageDto(
-                    userSpouses,
-                    result.Value.MarriageDate,
-                    result.Value.DivorceDate,
-                    result.Value.Type,
-                    result.Value.Status);
+                    return new MarriageDto(
+                        spouses,
+                        marriage.MarriageDate,
+                        marriage.DivorceDate,
+                        marriage.Type,
+                        marriage.Status);
+
+                }).ToList();
             }
 
             logger.LogCommon(
@@ -112,8 +115,9 @@ namespace DoggetTelegramBot.Application.Users.Queries.Get.Information
                 TelegramEvents.Message,
                 Constants.LogColors.Request);
 
-            return marriage;
+            return marriages;
         }
+
 
         private async Task<FamilyDto?> GetUserFamilyInfoAsync(
            UserId userId,
