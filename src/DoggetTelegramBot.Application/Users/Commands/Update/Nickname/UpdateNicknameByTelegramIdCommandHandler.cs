@@ -44,7 +44,7 @@ namespace DoggetTelegramBot.Application.Users.Commands.Update.Nickname
 
             user.UpdateNickname(request.Nickname);
 
-            await userRepository.UpdateAsync(user!);
+            await userRepository.UpdateAsync(user);
 
             await unitOfWork.SaveChangesAsync(cancellationToken);
 

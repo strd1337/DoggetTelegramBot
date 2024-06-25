@@ -28,7 +28,7 @@ namespace DoggetTelegramBot.Presentation.Common.Mapping.Users
             DateTime registeredDate,
             MaritalStatus maritalStatus,
             List<UserPrivilege> privileges,
-            MarriageDto? marriage,
+            List<MarriageDto> marriages,
             FamilyDto? family)
         {
             StringBuilder sb = new("User information:\n");
@@ -43,9 +43,9 @@ namespace DoggetTelegramBot.Presentation.Common.Mapping.Users
             sb.AppendLine($"Marital status: {maritalStatus.GetDescription()}");
             sb.AppendLine($"Privileges: {(privileges.Count != 0 ? string.Join(", ", privileges) : "member")}");
 
-            if (marriage is not null)
+            if (marriages.Count != 0)
             {
-                FormatMarriageInfo(ref sb, marriage);
+                FormatMarriageInfo(ref sb, marriages);
             }
 
             if (family is not null)
@@ -58,27 +58,41 @@ namespace DoggetTelegramBot.Presentation.Common.Mapping.Users
 
         private static void FormatMarriageInfo(
             ref StringBuilder sb,
-            MarriageDto marriage)
+            List<MarriageDto> marriages)
         {
-            sb.AppendLine("\nMarriage information:");
-            sb.Append($"Spouses: ");
-            foreach (var spouse in marriage.Spouses)
-            {
-                sb.Append(spouse.Nickname is not null ?
-                    $"{spouse.Nickname}" :
-                    spouse.Username is not null ?
-                    $"@{spouse.Username}" :
-                    $"{spouse.FirstName}");
-            }
+            sb.AppendLine("\nMarriages information:");
 
-            sb.AppendLine($"\nMarriage date: {marriage.MarriageDate:dd-MM-yyyy}");
-            if (marriage.DivorceDate is not null)
+            foreach (var marriage in marriages)
             {
-                sb.AppendLine($"Divorce date: {marriage.DivorceDate:dd-MM-yyyy}");
-            }
+                sb.AppendLine(" Marriage:");
 
-            sb.AppendLine($"Type: {marriage.Type.GetDescription()}");
-            sb.AppendLine($"Status: {marriage.Status.GetDescription()}");
+                sb.Append("  Spouses: ");
+                foreach (var spouse in marriage.Spouses)
+                {
+                    if (spouse.Nickname is not null)
+                    {
+                        sb.Append($"  {spouse.Nickname} ");
+                    }
+                    else if (spouse.Username is not null)
+                    {
+                        sb.Append($"  @{spouse.Username} ");
+                    }
+                    else
+                    {
+                        sb.Append($"  {spouse.FirstName} ");
+                    }
+                }
+
+                sb.AppendLine($"\n  Marriage date: {marriage.MarriageDate:dd-MM-yyyy}");
+                if (marriage.DivorceDate is not null)
+                {
+                    sb.AppendLine($"  Divorce date: {marriage.DivorceDate:dd-MM-yyyy}");
+                }
+
+                sb.AppendLine($"  Type: {marriage.Type.GetDescription()}");
+                sb.AppendLine($"  Status: {marriage.Status.GetDescription()}");
+                sb.AppendLine();
+            }
         }
 
         private static void FormatFamilyInfo(

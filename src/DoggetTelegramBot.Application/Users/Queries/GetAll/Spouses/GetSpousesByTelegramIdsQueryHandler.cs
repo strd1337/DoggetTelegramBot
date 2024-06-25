@@ -6,8 +6,8 @@ using DoggetTelegramBot.Domain.Common.Constants;
 using DoggetTelegramBot.Domain.Common.Enums;
 using DoggetTelegramBot.Domain.Common.Errors;
 using DoggetTelegramBot.Domain.Models.UserEntity;
-using ErrorOr;
 using DoggetTelegramBot.Domain.Models.UserEntity.Enums;
+using ErrorOr;
 
 namespace DoggetTelegramBot.Application.Users.Queries.GetAll.Spouses
 {
@@ -27,20 +27,15 @@ namespace DoggetTelegramBot.Application.Users.Queries.GetAll.Spouses
                         cancellationToken)
             ];
 
-            List<User> spouses = users
-                .Where(u => u.MaritalStatus == MaritalStatus.NotMarried)
-                .ToList();
+            var eligibleSpouses = FilterSpousesByMaritalStatus(users, request.IsGetMarried);
 
-            if (spouses.Count != request.TelegramIds.Count)
+            if (eligibleSpouses.Count != request.TelegramIds.Count)
             {
-                logger.LogCommon(
-                    Constants.User.Messages.NotFoundRetrievedWithCause(
-                        request.TelegramIds,
-                        Errors.User.SomeNotFoundOrMarried.Description),
-                    TelegramEvents.Message,
-                    Constants.LogColors.GetAll);
+                string errorDescription = request.IsGetMarried ?
+                    Errors.User.SomeMarried.Description :
+                    Errors.User.SomeNotMarriedOrDivorced.Description;
 
-                return Errors.User.SomeNotFoundOrMarried;
+                return LogAndReturnError(request.TelegramIds, errorDescription, request.IsGetMarried);
             }
 
             logger.LogCommon(
@@ -48,7 +43,32 @@ namespace DoggetTelegramBot.Application.Users.Queries.GetAll.Spouses
                 TelegramEvents.Message,
                 Constants.LogColors.GetAll);
 
-            return new GetSpousesResult(spouses);
+            return new GetSpousesResult(eligibleSpouses);
+        }
+
+        private static List<User> FilterSpousesByMaritalStatus(List<User> users, bool isGetMarried) =>
+            users.Where(u =>
+                    isGetMarried ?
+                    u.MaritalStatus is MaritalStatus.NotMarried or MaritalStatus.Divorced :
+                    u.MaritalStatus is MaritalStatus.Married)
+                .ToList();
+
+        private Error LogAndReturnError(
+            List<long> spouseIds,
+            string errorDescription,
+            bool isGetMarried)
+        {
+            string errorMessage = Constants.User.Messages.NotFoundRetrievedWithCause(
+                spouseIds, errorDescription);
+
+            var eventType = TelegramEvents.Message;
+            var logColor = Constants.LogColors.GetAll;
+
+            logger.LogCommon(errorMessage, eventType, logColor);
+
+            return isGetMarried ?
+                Errors.User.SomeMarried :
+                Errors.User.SomeNotMarriedOrDivorced;
         }
     }
 }

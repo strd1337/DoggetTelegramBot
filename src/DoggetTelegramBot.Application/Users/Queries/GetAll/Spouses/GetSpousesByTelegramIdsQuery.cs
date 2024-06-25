@@ -5,7 +5,8 @@ using DoggetTelegramBot.Application.Users.Common;
 namespace DoggetTelegramBot.Application.Users.Queries.GetAll.Spouses
 {
     public record GetSpousesByTelegramIdsQuery(
-        List<long> TelegramIds) : ICachedQuery<GetSpousesResult>
+        List<long> TelegramIds,
+        bool IsGetMarried = true) : ICachedQuery<GetSpousesResult>
     {
         public string CachedKey => CacheKeyGenerator.GetUsersByTelegramIdsQuery(TelegramIds);
 

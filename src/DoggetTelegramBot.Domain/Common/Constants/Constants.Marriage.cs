@@ -18,31 +18,49 @@ namespace DoggetTelegramBot.Domain.Common.Constants
                     $"Get marriage information request started." :
                     $"Get marriage information request ended.";
 
-                public static string Retrieved(MarriageId marriageId) =>
-                    $"Marriage {marriageId.Value} was retrieved.";
+                public static string Retrieved(List<MarriageId> marriageIds) =>
+                    $"Marriages {string.Join(",", marriageIds.Select(id => id.Value))} were retrieved.";
 
                 public static string NotFoundRetrieved(UserId userId) =>
-                    $"Marriage was not retrieved using user id {userId.Value}.";
+                    $"Marriages were not retrieved using user id {userId.Value}.";
 
-                public static string CreateMarriageRequest(bool isStarted = true) =>
+                public static string NotFoundRetrieved(List<UserId> userIds) =>
+                    $"Marriage was not retrieved using user ids {string.Join(",", userIds.Select(id => id.Value))}";
+
+                public static string MarryRequest(bool isStarted = true) =>
                     isStarted ?
-                    $"Create new marriage request started." :
-                    $"Create new marriage request ended.";
+                    $"Marry request started." :
+                    $"Marry request ended.";
 
-                public static string ComposeMarriageProposal(
+                public static string DivorceRequest(bool isStarted = true) =>
+                    isStarted ?
+                    $"Divorce request started." :
+                    $"Divorce request ended.";
+
+                public static string ComposeMarryOrDivorceProposal(
                     string requesterFirstName,
                     string? requesterUsername,
                     string recipientFirstName,
-                    string? recipientUsername)
+                    string? recipientUsername,
+                    bool isGetMarried = true)
                 {
                     StringBuilder sb = new();
                     sb.Append(string.Create(
                         CultureInfo.InvariantCulture,
                         $"{(recipientUsername is not null ? $"@{recipientUsername}" : recipientFirstName)}, "));
 
-                    sb.Append(string.Create(
-                        CultureInfo.InvariantCulture,
-                        $"do you want to get married to "));
+                    if (isGetMarried)
+                    {
+                        sb.Append(string.Create(
+                            CultureInfo.InvariantCulture,
+                            $"do you want to get married to "));
+                    }
+                    else
+                    {
+                        sb.Append(string.Create(
+                            CultureInfo.InvariantCulture,
+                            $"do you want to divorce "));
+                    }
 
                     sb.Append(string.Create(
                         CultureInfo.InvariantCulture,
@@ -53,16 +71,28 @@ namespace DoggetTelegramBot.Domain.Common.Constants
                     return sb.ToString();
                 }
 
-                public static string DenyMarriageRequest(string firstName, string? username) =>
-                    $"{(username is not null ? $"@{username}" : firstName)} has denied the marriage request.";
+                public static string DenyMarryOrDivorceRequest(
+                    string firstName,
+                    string? username,
+                    bool isGetMarried = true)
+                {
+                    StringBuilder sb = new();
 
-                public const string NotFoundUserReply =
-                   $"Select the user and reply on his message using the command: {ReplyKeys.CreateMarriage}";
+                    sb.Append(username is not null ? $"@{username}" : firstName);
+                    sb.Append(" has denied ");
+                    sb.Append(isGetMarried ? "marrying request." : "divorcing request.");
+
+                    return sb.ToString();
+                }
+
+                public static string UpdatedSuccessfully(MarriageId marriageId) =>
+                   $"Marriage {marriageId.Value} was successfully updated.";
             }
 
             public static class ReplyKeys
             {
-                public const string CreateMarriage = $"+marriage";
+                public const string Marry = $"+marriage";
+                public const string Divorce = $"+divorce";
             }
         }
     }

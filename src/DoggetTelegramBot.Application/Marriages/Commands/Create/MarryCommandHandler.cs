@@ -14,18 +14,19 @@ using DoggetTelegramBot.Domain.Models.UserEntity;
 using DoggetTelegramBot.Application.Users.Commands.Update.MaritalStatuses;
 using DoggetTelegramBot.Domain.Models.UserEntity.Enums;
 using DoggetTelegramBot.Application.Helpers;
+using DoggetTelegramBot.Application.DTOs;
 
 namespace DoggetTelegramBot.Application.Marriages.Commands.Create
 {
-    public sealed class CreateMarriageCommandHandler(
+    public sealed class MarryCommandHandler(
         IUnitOfWork unitOfWork,
         IMediator mediator,
         IBotLogger logger,
         IDateTimeProvider dateTimeProvider,
-        ICacheService cacheService) : ICommandHandler<CreateMarriageCommand, CreateMarriageResult>
+        ICacheService cacheService) : ICommandHandler<MarryCommand, MarriageResult>
     {
-        public async Task<ErrorOr<CreateMarriageResult>> Handle(
-            CreateMarriageCommand request,
+        public async Task<ErrorOr<MarriageResult>> Handle(
+            MarryCommand request,
             CancellationToken cancellationToken)
         {
             var result = await GetSpousesByTelegramIds(
@@ -34,6 +35,7 @@ namespace DoggetTelegramBot.Application.Marriages.Commands.Create
 
             if (result.IsError)
             {
+                await RemoveKeyFromCacheAsync(request.Spouses, cancellationToken);
                 return result.Errors;
             }
 
@@ -57,9 +59,32 @@ namespace DoggetTelegramBot.Application.Marriages.Commands.Create
 
             await unitOfWork.SaveChangesAsync(cancellationToken);
 
-            await RemoveKeyFromCacheAsync(request.Spouses, cancellationToken);
+            logger.LogCommon(
+               Constants.User.Messages.UpdatedSuccessfully(request.Spouses),
+               TelegramEvents.Message,
+               Constants.LogColors.Update);
 
-            return new CreateMarriageResult();
+            logger.LogCommon(
+               Constants.Marriage.Messages.UpdatedSuccessfully(
+                   MarriageId.Create(marriage.Id.Value)),
+               TelegramEvents.Message,
+               Constants.LogColors.Update);
+
+            logger.LogCommon(
+                Constants.User.Messages.UpdateMaritalStatusRequest(false),
+                TelegramEvents.Message,
+                Constants.LogColors.Update);
+
+            await RemoveKeysFromCacheAsync(spouses, request.Spouses, cancellationToken);
+
+            List<SpouseDto> spousesResult = spouses.
+                Select(s => new SpouseDto(
+                    s.Username,
+                    s.Nickname,
+                    s.FirstName))
+                .ToList();
+
+            return new MarriageResult(spousesResult);
         }
 
         private async Task<ErrorOr<GetSpousesResult>> GetSpousesByTelegramIds(
@@ -69,7 +94,7 @@ namespace DoggetTelegramBot.Application.Marriages.Commands.Create
             logger.LogCommon(
                 Constants.User.Messages.GetSpousesRequest(),
                 TelegramEvents.Message,
-                Constants.LogColors.Request);
+                Constants.LogColors.GetAll);
 
             GetSpousesByTelegramIdsQuery query = new(telegramIds);
             var result = await mediator.Send(query, cancellationToken);
@@ -77,7 +102,7 @@ namespace DoggetTelegramBot.Application.Marriages.Commands.Create
             logger.LogCommon(
                 Constants.User.Messages.GetSpousesRequest(false),
                 TelegramEvents.Message,
-                Constants.LogColors.Request);
+                Constants.LogColors.GetAll);
 
             return result;
         }
@@ -89,24 +114,51 @@ namespace DoggetTelegramBot.Application.Marriages.Commands.Create
             logger.LogCommon(
                 Constants.User.Messages.UpdateMaritalStatusRequest(),
                 TelegramEvents.Message,
-                Constants.LogColors.Request);
+                Constants.LogColors.Update);
 
             UpdateSpousesMaritalStatusCommand command = new(
                 spouses, MaritalStatus.Married);
 
             _ = await mediator.Send(command, cancellationToken);
+        }
 
-            logger.LogCommon(
-                Constants.User.Messages.UpdateMaritalStatusRequest(false),
-                TelegramEvents.Message,
-                Constants.LogColors.Request);
+        private async Task RemoveKeysFromCacheAsync(
+            List<User> spouses,
+            List<long> spouseIds,
+            CancellationToken cancellationToken)
+        {
+            if (spouses.Count != 2)
+            {
+                throw new ArgumentException("The list must contain exactly two spouses.");
+            }
+
+            var spouseOne = spouses[0];
+            var spouseTwo = spouses[1];
+
+            string[] keys =
+            [
+                CacheKeyGenerator.UserExistsWithTelegramId(spouseOne.TelegramId),
+                CacheKeyGenerator.GetUserInfoByTelegramId(spouseOne.TelegramId),
+                CacheKeyGenerator.GetFamilyInfoByUserId(UserId.Create(spouseOne.Id.Value)),
+                CacheKeyGenerator.GetAllMarriagesInfoByUserId(UserId.Create(spouseOne.Id.Value)),
+                CacheKeyGenerator.UserExistsWithTelegramId(spouseTwo.TelegramId),
+                CacheKeyGenerator.GetUserInfoByTelegramId(spouseTwo.TelegramId),
+                CacheKeyGenerator.GetFamilyInfoByUserId(UserId.Create(spouseTwo.Id.Value)),
+                CacheKeyGenerator.GetAllMarriagesInfoByUserId(UserId.Create(spouseTwo.Id.Value)),
+                CacheKeyGenerator.GetUsersByTelegramIdsQuery(spouseIds)
+            ];
+
+            var removalTasks = keys
+                .Select(key => cacheService.RemoveAsync(key, cancellationToken));
+
+            await Task.WhenAll(removalTasks);
         }
 
         private async Task RemoveKeyFromCacheAsync(
-            List<long> telegramIds,
+            List<long> spouseIds,
             CancellationToken cancellationToken)
         {
-            string key = CacheKeyGenerator.GetUsersByTelegramIdsQuery(telegramIds);
+            string key = CacheKeyGenerator.GetUsersByTelegramIdsQuery(spouseIds);
             await cacheService.RemoveAsync(key, cancellationToken);
         }
     }
