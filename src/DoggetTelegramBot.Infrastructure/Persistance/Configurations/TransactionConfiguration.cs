@@ -1,6 +1,7 @@
 using DoggetTelegramBot.Domain.Models.TransactionEntity;
 using DoggetTelegramBot.Domain.Models.UserEntity;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.ChangeTracking;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace DoggetTelegramBot.Infrastructure.Persistance.Configurations
@@ -17,15 +18,27 @@ namespace DoggetTelegramBot.Infrastructure.Persistance.Configurations
                     id => id.Value,
                     value => TransactionId.Create(value));
 
-            builder.Property(t => t.FromUserId)
+            builder.Property(t => t.FromUserIds)
                 .HasConversion(
-                    id => id.Value,
-                    value => UserId.Create(value));
+                    v => string.Join(',', v.Select(id => id.Value.ToString())),
+                    v => v.Split(',', StringSplitOptions.RemoveEmptyEntries)
+                          .Select(value => UserId.Create(Guid.Parse(value)))
+                          .ToList())
+                .Metadata.SetValueComparer(new ValueComparer<List<UserId>>(
+                    (c1, c2) => c1!.SequenceEqual(c2!),
+                    c => c.Aggregate(0, (a, v) => HashCode.Combine(a, v.GetHashCode())),
+                    c => c.ToList()));
 
-            builder.Property(t => t.ToUserId)
+            builder.Property(t => t.ToUserIds)
                 .HasConversion(
-                    id => id.Value,
-                    value => UserId.Create(value));
+                    v => string.Join(',', v.Select(id => id.Value.ToString())),
+                    v => v.Split(',', StringSplitOptions.RemoveEmptyEntries)
+                          .Select(value => UserId.Create(Guid.Parse(value)))
+                          .ToList())
+                .Metadata.SetValueComparer(new ValueComparer<List<UserId>>(
+                    (c1, c2) => c1!.SequenceEqual(c2!),
+                    c => c.Aggregate(0, (a, v) => HashCode.Combine(a, v.GetHashCode())),
+                    c => c.ToList()));
 
             builder.Property(t => t.Amount)
                 .HasColumnType("decimal(18,2)");

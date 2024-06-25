@@ -17,6 +17,22 @@ namespace DoggetTelegramBot.Domain.Models.InventoryEntity
         public static Inventory Create(decimal yuanBalance = 0)
             => new(InventoryId.CreateUnique(), yuanBalance);
 
+        public bool HasSufficientBalance(decimal amount) =>
+            YuanBalance >= amount;
+        public void IncreaseBalance(decimal amount) =>
+            YuanBalance += amount;
+
+        public void DeductBalance(decimal amount) =>
+            YuanBalance -= amount;
+
+        public void DeductItems(List<ItemId> items)
+        {
+            foreach (var item in items)
+            {
+                itemIds.Remove(item);
+            }
+        }
+
         public Inventory()
         {
         }

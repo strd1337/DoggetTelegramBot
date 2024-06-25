@@ -12,5 +12,7 @@ namespace DoggetTelegramBot.Domain.Models.TransactionEntity.Enums
         Reward,
         [Description(nameof(Penalty))]
         Penalty,
+        [Description("Service fee")]
+        ServiceFee,
     }
 }
