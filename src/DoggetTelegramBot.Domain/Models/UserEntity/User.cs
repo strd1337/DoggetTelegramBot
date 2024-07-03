@@ -4,10 +4,11 @@ using DoggetTelegramBot.Domain.Models.UserEntity.Enums;
 
 namespace DoggetTelegramBot.Domain.Models.UserEntity
 {
-    public sealed class User : Root<UserId, Guid>
+    public sealed class User : Entity
     {
         private readonly List<UserPrivilege> privileges = [];
 
+        public UserId UserId { get; private set; }
         public long TelegramId { get; private set; }
         public string? Username { get; private set; }
         public string? Nickname { get; private set; }
@@ -26,8 +27,9 @@ namespace DoggetTelegramBot.Domain.Models.UserEntity
             string firstName,
             DateTime registeredDate,
             InventoryId inventoryId,
-            MaritalStatus maritalStatus) : base(userId)
+            MaritalStatus maritalStatus)
         {
+            UserId = userId;
             TelegramId = telegramId;
             Username = username;
             FirstName = firstName;

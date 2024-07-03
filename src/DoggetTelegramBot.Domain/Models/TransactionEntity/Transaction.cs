@@ -5,10 +5,11 @@ using DoggetTelegramBot.Domain.Models.UserEntity;
 
 namespace DoggetTelegramBot.Domain.Models.TransactionEntity
 {
-    public sealed class Transaction : Root<TransactionId, Guid>
+    public sealed class Transaction : Entity
     {
         private readonly List<ItemId> itemIds = [];
 
+        public TransactionId TransactionId { get; private set; }
         public List<UserId> FromUserIds { get; private set; } = [];
         public List<UserId> ToUserIds { get; private set; } = [];
         public decimal? Amount { get; private set; }
@@ -20,6 +21,7 @@ namespace DoggetTelegramBot.Domain.Models.TransactionEntity
             List<UserId> fromUserIds,
             decimal amount) => new()
             {
+                TransactionId = TransactionId.CreateUnique(),
                 FromUserIds = fromUserIds,
                 Amount = amount,
                 Type = TransactionType.ServiceFee
@@ -33,6 +35,7 @@ namespace DoggetTelegramBot.Domain.Models.TransactionEntity
         {
             Transaction transaction = new()
             {
+                TransactionId = TransactionId.CreateUnique(),
                 FromUserIds = [fromUserId],
                 ToUserIds = [toUserId],
                 Amount = amount,
@@ -49,6 +52,7 @@ namespace DoggetTelegramBot.Domain.Models.TransactionEntity
         {
             Transaction transaction = new()
             {
+                TransactionId = TransactionId.CreateUnique(),
                 ToUserIds = [toUserId],
                 Amount = amount,
                 Type = TransactionType.Purchase
@@ -65,6 +69,7 @@ namespace DoggetTelegramBot.Domain.Models.TransactionEntity
         {
             Transaction transaction = new()
             {
+                TransactionId = TransactionId.CreateUnique(),
                 FromUserIds = [fromUserId],
                 ToUserIds = [toUserId],
                 Amount = amount,
@@ -82,6 +87,7 @@ namespace DoggetTelegramBot.Domain.Models.TransactionEntity
         {
             Transaction transaction = new()
             {
+                TransactionId = TransactionId.CreateUnique(),
                 FromUserIds = [fromUserId],
                 ToUserIds = [toUserId],
                 Amount = amount,
@@ -91,6 +97,10 @@ namespace DoggetTelegramBot.Domain.Models.TransactionEntity
             return transaction;
         }
 
-        private Transaction() { }
+#pragma warning disable CS8618
+        private Transaction()
+        {
+        }
+#pragma warning restore CS8618
     }
 }

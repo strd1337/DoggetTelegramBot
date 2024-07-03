@@ -62,7 +62,7 @@ namespace DoggetTelegramBot.Presentation.BotControllers.Common
 
         private Response ValidationProblem(List<Error> errors)
         {
-            StringBuilder validationErrorMessage = new("Validation errors occurred:");
+            StringBuilder validationErrorMessage = new();
             StringBuilder validationErrorDetails = new(validationErrorMessage.ToString());
 
             foreach (var error in errors)

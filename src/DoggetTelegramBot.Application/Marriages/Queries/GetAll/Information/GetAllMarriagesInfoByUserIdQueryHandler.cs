@@ -39,7 +39,7 @@ namespace DoggetTelegramBot.Application.Marriages.Queries.GetAll.Information
             }
 
             List<MarriageId> marriageIds = marriages
-                .Select(m => MarriageId.Create(m.Id.Value))
+                .Select(m => MarriageId.Create(m.MarriageId.Value))
                 .ToList();
 
             logger.LogCommon(

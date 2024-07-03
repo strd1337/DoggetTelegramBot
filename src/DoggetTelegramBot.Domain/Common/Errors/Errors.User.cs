@@ -17,6 +17,10 @@ namespace DoggetTelegramBot.Domain.Common.Errors
             public static Error SomeNotMarriedOrDivorced => Error.NotFound(
                 code: "Users.SomeNotMarried",
                 description: "Some of the users provided were unmarried or divorced.");
+
+            public static Error SomeNotFound => Error.NotFound(
+                code: "Users.SomeNotFound",
+                description: "Some of the provided users were not found.");
         }
     }
 }

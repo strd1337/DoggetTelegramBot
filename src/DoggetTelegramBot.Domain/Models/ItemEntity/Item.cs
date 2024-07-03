@@ -3,8 +3,9 @@ using DoggetTelegramBot.Domain.Models.ItemEntity.Enums;
 
 namespace DoggetTelegramBot.Domain.Models.ItemEntity
 {
-    public sealed class Item : Root<ItemId, Guid>
+    public sealed class Item : Entity
     {
+        public ItemId ItemId { get; private set; }
         public string Name { get; private set; }
         public string Description { get; private set; }
         public ItemType Type { get; private set; }
@@ -15,8 +16,9 @@ namespace DoggetTelegramBot.Domain.Models.ItemEntity
             string name,
             string description,
             ItemType type,
-            decimal price) : base(itemId)
+            decimal price)
         {
+            ItemId = itemId;
             Name = name;
             Description = description;
             Type = type;

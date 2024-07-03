@@ -29,7 +29,7 @@ namespace DoggetTelegramBot.Application.Users.Queries.Get.Information
                 .GetWhere(u => u.TelegramId == request.TelegramId && !u.IsDeleted)
                 .Select(u => new
                 {
-                    UserId = UserId.Create(u.Id.Value),
+                    UserId = UserId.Create(u.UserId.Value),
                     u.Username,
                     u.Nickname,
                     u.FirstName,
@@ -96,7 +96,7 @@ namespace DoggetTelegramBot.Application.Users.Queries.Get.Information
                     List<SpouseDto> spouses =
                     [
                         .. unitOfWork.GetRepository<User, UserId>()
-                            .GetWhere(u => marriage.SpouseIds.Contains(u.Id))
+                            .GetWhere(u => marriage.SpouseIds.Contains(u.UserId))
                             .Select(u => new SpouseDto(u.Username, u.Nickname, u.FirstName))
                     ];
 
@@ -140,10 +140,10 @@ namespace DoggetTelegramBot.Application.Users.Queries.Get.Information
                     .ToList();
 
                 var users = unitOfWork.GetRepository<User, UserId>()
-                    .GetWhere(u => userIds.Contains(u.Id))
+                    .GetWhere(u => userIds.Contains(u.UserId))
                     .Select(u => new
                     {
-                        UserId = u.Id.Value,
+                        UserId = u.UserId.Value,
                         u.Username,
                         u.Nickname,
                         u.FirstName,

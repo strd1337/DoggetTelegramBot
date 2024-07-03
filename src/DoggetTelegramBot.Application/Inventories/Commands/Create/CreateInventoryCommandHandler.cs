@@ -19,7 +19,7 @@ namespace DoggetTelegramBot.Application.Inventories.Commands.Create
 
             await inventoryRepository.AddAsync(inventory, cancellationToken);
 
-            return new CreateInventoryResult(InventoryId.Create(inventory.Id.Value));
+            return new CreateInventoryResult(InventoryId.Create(inventory.InventoryId.Value));
         }
     }
 }

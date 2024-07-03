@@ -36,7 +36,7 @@ namespace DoggetTelegramBot.Presentation.Common.Mapping.Users
             sb.AppendLine(nickname is not null ?
                 $"Nickname: {nickname}" :
                 username is not null ?
-                $"Username: @{username}" :
+                $"Username: {username}" :
                 $"First name: {firstName}");
 
             sb.AppendLine($"Registered date: {registeredDate:dd-MM-yyyy}");
@@ -75,7 +75,7 @@ namespace DoggetTelegramBot.Presentation.Common.Mapping.Users
                     }
                     else if (spouse.Username is not null)
                     {
-                        sb.Append($"  @{spouse.Username} ");
+                        sb.Append($"  {spouse.Username} ");
                     }
                     else
                     {
@@ -106,7 +106,7 @@ namespace DoggetTelegramBot.Presentation.Common.Mapping.Users
                 sb.AppendLine(member.Nickname is not null ?
                      $" Nickname: {member.Nickname}" :
                      member.Username is not null ?
-                     $" Username: @{member.Username}" :
+                     $" Username: {member.Username}" :
                      $" First name: {member.FirstName}");
 
                 sb.AppendLine($" Role: {member.Role.GetDescription()}");

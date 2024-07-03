@@ -36,7 +36,7 @@ namespace DoggetTelegramBot.Application.Families.Queries.Get.Information
             }
 
             logger.LogCommon(
-                Constants.Family.Messages.Retrieved(FamilyId.Create(family.Id.Value)),
+                Constants.Family.Messages.Retrieved(FamilyId.Create(family.FamilyId.Value)),
                 TelegramEvents.Message,
                 Constants.LogColors.Get);
 

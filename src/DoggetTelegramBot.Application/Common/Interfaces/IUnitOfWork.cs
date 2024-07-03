@@ -1,4 +1,6 @@
 using DoggetTelegramBot.Domain.Common.Entities;
+using DoggetTelegramBot.Domain.Models.TransactionEntity;
+using ErrorOr;
 
 namespace DoggetTelegramBot.Application.Common.Interfaces
 {
@@ -9,7 +11,11 @@ namespace DoggetTelegramBot.Application.Common.Interfaces
 
         IGenericRepository<TEntity, TId> GetRepository<TEntity, TId>(
             bool hasCustomRepository = false)
-                where TEntity : Entity<TId>
-                where TId : ValueObject;
+                where TEntity : Entity
+                where TId : class;
+
+        Task<ErrorOr<bool>> ProcessTransactionAsync(
+            Transaction transaction,
+            CancellationToken cancellationToken);
     }
 }

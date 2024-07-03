@@ -24,7 +24,8 @@ namespace DoggetTelegramBot.Application.Marriages.Commands.Delete
         IMediator mediator,
         IBotLogger logger,
         IDateTimeProvider dateTimeProvider,
-        ICacheService cacheService) : ICommandHandler<DivorceCommand, MarriageResult>
+        ICacheService cacheService,
+        ITransactionService transactionService) : ICommandHandler<DivorceCommand, MarriageResult>
     {
         public async Task<ErrorOr<MarriageResult>> Handle(
             DivorceCommand request,
@@ -45,13 +46,23 @@ namespace DoggetTelegramBot.Application.Marriages.Commands.Delete
             var spouses = result.Value.Spouses;
 
             List<UserId> spouseIds = spouses
-                .Select(s => UserId.Create(s.Id.Value))
+                .Select(s => UserId.Create(s.UserId.Value))
                 .ToList();
+
+            var transactionResult = await transactionService.ExecuteServiceFeeAsync(
+                spouseIds,
+                Constants.Marriage.Costs.Divorce,
+                cancellationToken);
+
+            if (transactionResult.IsError)
+            {
+                return transactionResult.Errors;
+            }
 
             var spouse = spouses.FirstOrDefault();
             var marriage = await marriageRepository
                 .FirstOrDefaultAsync(
-                    m => m.SpouseIds.Any(id => id.Value == spouse!.Id.Value) &&
+                    m => m.SpouseIds.Any(id => id.Value == spouse!.UserId.Value) &&
                     !m.IsDeleted &&
                     m.Status == MarriageStatus.Active,
                     cancellationToken);
@@ -81,7 +92,7 @@ namespace DoggetTelegramBot.Application.Marriages.Commands.Delete
 
             logger.LogCommon(
               Constants.Marriage.Messages.UpdatedSuccessfully(
-                  MarriageId.Create(marriage.Id.Value)),
+                  MarriageId.Create(marriage.MarriageId.Value)),
               TelegramEvents.Message,
               Constants.LogColors.Update);
 
@@ -154,12 +165,12 @@ namespace DoggetTelegramBot.Application.Marriages.Commands.Delete
             [
                 CacheKeyGenerator.UserExistsWithTelegramId(spouseOne.TelegramId),
                 CacheKeyGenerator.GetUserInfoByTelegramId(spouseOne.TelegramId),
-                CacheKeyGenerator.GetFamilyInfoByUserId(UserId.Create(spouseOne.Id.Value)),
-                CacheKeyGenerator.GetAllMarriagesInfoByUserId(UserId.Create(spouseOne.Id.Value)),
+                CacheKeyGenerator.GetFamilyInfoByUserId(UserId.Create(spouseOne.UserId.Value)),
+                CacheKeyGenerator.GetAllMarriagesInfoByUserId(UserId.Create(spouseOne.UserId.Value)),
                 CacheKeyGenerator.UserExistsWithTelegramId(spouseTwo.TelegramId),
                 CacheKeyGenerator.GetUserInfoByTelegramId(spouseTwo.TelegramId),
-                CacheKeyGenerator.GetFamilyInfoByUserId(UserId.Create(spouseTwo.Id.Value)),
-                CacheKeyGenerator.GetAllMarriagesInfoByUserId(UserId.Create(spouseTwo.Id.Value)),
+                CacheKeyGenerator.GetFamilyInfoByUserId(UserId.Create(spouseTwo.UserId.Value)),
+                CacheKeyGenerator.GetAllMarriagesInfoByUserId(UserId.Create(spouseTwo.UserId.Value)),
                 CacheKeyGenerator.GetUsersByTelegramIdsQuery(spouseIds)
             ];
 

@@ -4,13 +4,9 @@ using DoggetTelegramBot.Domain.Common.Entities;
 namespace DoggetTelegramBot.Application.Common.Interfaces
 {
     public interface IGenericRepository<TEntity, TId>
-        where TEntity : Entity<TId>
-        where TId : ValueObject
+        where TEntity : Entity
+        where TId : class
     {
-        Task<TEntity?> GetByIdAsync(
-            TId id,
-            CancellationToken cancellationToken = default);
-
         Task<TEntity?> FirstOrDefaultAsync(
             Expression<Func<TEntity, bool>> predicate,
             CancellationToken cancellationToken = default);

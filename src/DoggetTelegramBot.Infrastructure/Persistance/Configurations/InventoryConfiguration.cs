@@ -8,9 +8,9 @@ namespace DoggetTelegramBot.Infrastructure.Persistance.Configurations
     {
         public void Configure(EntityTypeBuilder<Inventory> builder)
         {
-            builder.HasKey(i => i.Id);
+            builder.HasKey(i => i.InventoryId);
 
-            builder.Property(i => i.Id)
+            builder.Property(i => i.InventoryId)
                 .ValueGeneratedNever()
                 .HasConversion(
                     id => id.Value,

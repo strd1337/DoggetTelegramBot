@@ -9,9 +9,9 @@ namespace DoggetTelegramBot.Infrastructure.Persistance.Configurations
     {
         public void Configure(EntityTypeBuilder<Family> builder)
         {
-            builder.HasKey(f => f.Id);
+            builder.HasKey(f => f.FamilyId);
 
-            builder.Property(f => f.Id)
+            builder.Property(f => f.FamilyId)
                 .ValueGeneratedNever()
                 .HasConversion(
                     id => id.Value,
@@ -25,7 +25,7 @@ namespace DoggetTelegramBot.Infrastructure.Persistance.Configurations
 
                 fmb.HasKey("Id", "FamilyId");
 
-                fmb.Property(fm => fm.Id)
+                fmb.Property(fm => fm.FamilyMemberId)
                     .HasColumnName("FamilyMemberId")
                     .ValueGeneratedNever()
                     .HasConversion(
