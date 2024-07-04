@@ -24,34 +24,13 @@ namespace DoggetTelegramBot.Infrastructure.Persistance.Processors
             Transaction transaction,
             CancellationToken cancellationToken)
         {
-            var userId = transaction.ToUserIds.First();
-            var user = await userRepository.FirstOrDefaultAsync(
-                u => u.UserId.Value == userId.Value,
-                cancellationToken);
+            var findAndUpdateResult = await FindAndUpdateToInventory(transaction, cancellationToken);
 
-            if (user is null)
+            if (findAndUpdateResult.IsError)
             {
-                return Errors.User.NotFound;
+                return findAndUpdateResult;
             }
 
-            var inventory = await inventoryRepository
-                .FirstOrDefaultAsync(i => i.InventoryId == user.InventoryId, cancellationToken);
-
-            if (inventory is null)
-            {
-                return Errors.Inventory.NotFound;
-            }
-
-            bool isValid = CheckInventoryValidity(transaction, inventory);
-            if (!isValid)
-            {
-                return Errors.Inventory.InsufficientBalance;
-            }
-
-            inventory!.DeductBalance(transaction.Amount!.Value);
-            inventory.AddItems([.. transaction.ItemIds]);
-
-            await inventoryRepository.UpdateAsync(inventory);
             await transactionRepository.AddAsync(transaction, cancellationToken);
 
             return true;
@@ -62,34 +41,39 @@ namespace DoggetTelegramBot.Infrastructure.Persistance.Processors
             CancellationToken cancellationToken)
         {
             var fromUsers = GetUsers(transaction.FromUserIds);
-            var toUsers = GetUsers(transaction.ToUserIds);
 
-            if (fromUsers.Count() != transaction.FromUserIds.Count ||
-                toUsers.Count() != transaction.ToUserIds.Count)
+            if (fromUsers.Count() != transaction.FromUserIds.Count)
             {
                 return Errors.User.SomeNotFound;
             }
 
             var fromInventories = GetInventories(fromUsers);
-            var toInventories = GetInventories(toUsers);
 
-            if (fromInventories.Count() != fromUsers.Count() ||
-                toInventories.Count() != toUsers.Count())
+            if (fromInventories.Count() != fromUsers.Count())
             {
                 return Errors.Inventory.SomeNotFound;
             }
 
             var validationResult = await ValidateAndUpdateFromInventoriesAsync(
                 transaction,
-                [.. fromInventories],
-                cancellationToken);
+                [.. fromInventories]);
 
             if (validationResult.IsError)
             {
                 return validationResult;
             }
 
-            await UpdateToInventories(transaction, [.. toInventories]);
+            if (transaction.ToUserId is not null)
+            {
+                var findAndUpdateResult = await FindAndUpdateToInventory(
+                    transaction,
+                    cancellationToken);
+
+                if (findAndUpdateResult.IsError)
+                {
+                    return findAndUpdateResult;
+                }
+            }
 
             await transactionRepository.AddAsync(transaction, cancellationToken);
 
@@ -105,72 +89,74 @@ namespace DoggetTelegramBot.Infrastructure.Persistance.Processors
 
         private async Task<ErrorOr<bool>> ValidateAndUpdateFromInventoriesAsync(
             Transaction transaction,
-            List<Inventory> fromInventories,
-            CancellationToken cancellationToken = default)
+            List<Inventory> fromInventories)
         {
             foreach (var inventory in fromInventories)
             {
-                bool isValid = CheckInventoryValidity(transaction, inventory);
-                if (!isValid)
-                {
-                    return Errors.Inventory.InsufficientInventories;
-                }
+                var result = await CheckAndUpdateInventory(inventory, transaction);
 
-                if (transaction.Amount is not null)
+                if (result.IsError)
                 {
-                    inventory.DeductBalance(transaction.Amount.Value);
+                    return Errors.Inventory.InsufficientBalances;
                 }
-
-                if (transaction.ItemIds.Count > 0)
-                {
-                    inventory.DeductItems([.. transaction.ItemIds]);
-                }
-
-                await inventoryRepository.UpdateAsync(inventory);
             }
 
             return true;
         }
 
-        private async Task UpdateToInventories(
+        private async Task<ErrorOr<bool>> FindAndUpdateToInventory(
             Transaction transaction,
-            List<Inventory> toInventories)
+            CancellationToken cancellationToken)
         {
-            foreach (var inventory in toInventories)
+            var inventoryResult = await GetInventory(transaction, cancellationToken);
+
+            if (inventoryResult.IsError)
             {
-                if (transaction.Amount is not null)
-                {
-                    inventory.IncreaseBalance(transaction.Amount.Value);
-                }
-
-                if (transaction.ItemIds.Count > 0)
-                {
-                    inventory.AddItems([.. transaction.ItemIds]);
-                }
-
-                await inventoryRepository.UpdateAsync(inventory);
+                return inventoryResult.Errors;
             }
+
+            var checkAndUpdateResult = await CheckAndUpdateInventory(inventoryResult.Value, transaction);
+
+            return checkAndUpdateResult.IsError ?
+                checkAndUpdateResult.Errors :
+                true;
         }
 
-        private static bool CheckInventoryValidity(
+        private async Task<ErrorOr<Inventory>> GetInventory(
             Transaction transaction,
-            Inventory inventory)
+            CancellationToken cancellationToken)
         {
-            decimal? amount = transaction.Amount;
-            var itemIds = transaction.ItemIds;
+            var user = await userRepository.FirstOrDefaultAsync(
+                u => u.UserId.Value == transaction.ToUserId!.Value,
+                cancellationToken);
 
-            bool hasSufficientBalance = amount is null ||
-                inventory.HasSufficientBalance(amount.Value);
-
-            bool hasSufficientItems = itemIds.Count == 0 ||
-                inventory.HasSufficientItems([.. itemIds]);
-
-            return transaction.Type switch
+            if (user is null)
             {
-                TransactionType.ServiceFee => amount is not null && hasSufficientBalance,
-                TransactionType.Purchase => hasSufficientBalance,
-                _ => hasSufficientBalance && hasSufficientItems
-            };
+                return Errors.User.NotFound;
+            }
+
+            var inventory = await inventoryRepository
+                .FirstOrDefaultAsync(i => i.InventoryId == user.InventoryId, cancellationToken);
+
+            return inventory is null ?
+                Errors.Inventory.NotFound :
+                inventory;
+        }
+
+        private async Task<ErrorOr<bool>> CheckAndUpdateInventory(
+            Inventory inventory,
+            Transaction transaction)
+        {
+            if (!inventory.HasSufficientBalance(transaction.Amount))
+            {
+                return Errors.Inventory.InsufficientBalance;
+            }
+
+            inventory.DeductBalance(transaction.Amount);
+
+            await inventoryRepository.UpdateAsync(inventory);
+
+            return true;
         }
     }
 }

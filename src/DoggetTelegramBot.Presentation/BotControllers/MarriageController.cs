@@ -102,7 +102,7 @@ namespace DoggetTelegramBot.Presentation.BotControllers
             Message message)
         {
             bool? userResponse = await UserState.WaitForResponseAsync(
-                update.Message!.ReplyToMessage!.From!.Id);
+                update.Message!.From!.Id);
 
             if (!userResponse.HasValue)
             {
@@ -160,7 +160,7 @@ namespace DoggetTelegramBot.Presentation.BotControllers
             Message message)
         {
             bool? userResponse = await UserState.WaitForResponseAsync(
-                update.Message!.ReplyToMessage!.From!.Id);
+                update.Message!.From!.Id);
 
             if (!userResponse.HasValue)
             {

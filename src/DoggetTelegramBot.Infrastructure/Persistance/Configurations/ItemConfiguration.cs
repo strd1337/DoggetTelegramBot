@@ -16,10 +16,10 @@ namespace DoggetTelegramBot.Infrastructure.Persistance.Configurations
                     id => id.Value,
                     value => ItemId.Create(value));
 
-            builder.Property(i => i.Name)
+            builder.Property(i => i.ServerName)
                 .HasMaxLength(100);
 
-            builder.Property(i => i.Description)
+            builder.Property(i => i.Value)
                 .HasMaxLength(500);
 
             builder.Property(i => i.Price)

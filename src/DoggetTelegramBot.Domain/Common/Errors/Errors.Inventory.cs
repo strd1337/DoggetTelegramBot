@@ -16,12 +16,11 @@ namespace DoggetTelegramBot.Domain.Common.Errors
 
             public static Error InsufficientBalance => Error.Validation(
               code: "Inventory.InsufficientBalance",
-              description: "User has insufficient balance. Please check your inventory.");
+              description: "You have insufficient balance. Please check your inventory.");
 
-            public static Error InsufficientInventories => Error.Validation(
-              code: "Inventories.InsufficientInventories",
-              description: "Some of the provided users have insufficient inventory. " +
-                "Please check yours inventories.");
+            public static Error InsufficientBalances => Error.Validation(
+              code: "Inventory.InsufficientBalances",
+              description: "Some of you have insufficient balance. Please check yours inventories.");
         }
     }
 }
