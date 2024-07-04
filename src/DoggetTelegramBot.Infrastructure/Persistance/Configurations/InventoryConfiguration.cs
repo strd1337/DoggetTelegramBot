@@ -8,9 +8,9 @@ namespace DoggetTelegramBot.Infrastructure.Persistance.Configurations
     {
         public void Configure(EntityTypeBuilder<Inventory> builder)
         {
-            builder.HasKey(i => i.Id);
+            builder.HasKey(i => i.InventoryId);
 
-            builder.Property(i => i.Id)
+            builder.Property(i => i.InventoryId)
                 .ValueGeneratedNever()
                 .HasConversion(
                     id => id.Value,
@@ -18,19 +18,6 @@ namespace DoggetTelegramBot.Infrastructure.Persistance.Configurations
 
             builder.Property(i => i.YuanBalance)
                 .HasColumnType("decimal(18,2)");
-
-            builder.OwnsMany(i => i.ItemIds, ib =>
-            {
-                ib.ToTable("InventoryItemIds");
-
-                ib.WithOwner().HasForeignKey("InventoryId");
-
-                ib.HasKey("Id");
-
-                ib.Property(ni => ni.Value)
-                    .HasColumnName("ItemId")
-                    .ValueGeneratedNever();
-            });
         }
     }
 }

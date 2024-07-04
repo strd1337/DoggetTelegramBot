@@ -7,6 +7,7 @@ using DoggetTelegramBot.Infrastructure.BotManagement.Events;
 using DoggetTelegramBot.Infrastructure.Configs;
 using DoggetTelegramBot.Infrastructure.Persistance;
 using DoggetTelegramBot.Infrastructure.Persistance.Repositories;
+using DoggetTelegramBot.Infrastructure.Persistance.Services;
 using DoggetTelegramBot.Infrastructure.Services;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
@@ -90,14 +91,15 @@ namespace DoggetTelegramBot.Infrastructure
            this IServiceCollection services)
         {
             services.AddScoped<IUnitOfWork, UnitOfWork>();
+            services.AddScoped<ITransactionService, TransactionService>();
 
             return services;
         }
 
         public static IServiceCollection AddCustomRepository<TEntity, TId, TRepository>(
             this IServiceCollection services)
-               where TEntity : Entity<TId>
-               where TId : ValueObject
+               where TEntity : Entity
+               where TId : class
                where TRepository : class, IGenericRepository<TEntity, TId>
 
         {

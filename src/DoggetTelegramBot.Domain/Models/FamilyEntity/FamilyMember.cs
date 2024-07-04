@@ -4,16 +4,18 @@ using DoggetTelegramBot.Domain.Models.UserEntity;
 
 namespace DoggetTelegramBot.Domain.Models.FamilyEntity
 {
-    public sealed class FamilyMember : Entity<FamilyMemberId>
+    public sealed class FamilyMember : Entity
     {
+        public FamilyMemberId FamilyMemberId { get; private set; }
         public UserId UserId { get; private set; }
         public FamilyRole Role { get; private set; }
 
         private FamilyMember(
             FamilyMemberId familyMemberId,
             UserId userId,
-            FamilyRole role) : base(familyMemberId)
+            FamilyRole role)
         {
+            FamilyMemberId = familyMemberId;
             UserId = userId;
             Role = role;
         }

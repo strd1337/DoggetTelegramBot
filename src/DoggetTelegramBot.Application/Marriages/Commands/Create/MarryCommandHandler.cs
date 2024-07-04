@@ -23,7 +23,8 @@ namespace DoggetTelegramBot.Application.Marriages.Commands.Create
         IMediator mediator,
         IBotLogger logger,
         IDateTimeProvider dateTimeProvider,
-        ICacheService cacheService) : ICommandHandler<MarryCommand, MarriageResult>
+        ICacheService cacheService,
+        ITransactionService transactionService) : ICommandHandler<MarryCommand, MarriageResult>
     {
         public async Task<ErrorOr<MarriageResult>> Handle(
             MarryCommand request,
@@ -41,14 +42,24 @@ namespace DoggetTelegramBot.Application.Marriages.Commands.Create
 
             var spouses = result.Value.Spouses;
 
+            List<UserId> spouseIds = spouses
+                .Select(s => UserId.Create(s.UserId.Value))
+                .ToList();
+
+            var transactionResult = await transactionService.ExecuteServiceFeeAsync(
+                spouseIds,
+                Constants.Marriage.Costs.Marry,
+                cancellationToken);
+
+            if (transactionResult.IsError)
+            {
+                return transactionResult.Errors;
+            }
+
             Marriage marriage = Marriage.Create(
                 dateTimeProvider.UtcNow,
                 request.Type,
                 MarriageStatus.Active);
-
-            List<UserId> spouseIds = spouses
-                .Select(s => UserId.Create(s.Id.Value))
-                .ToList();
 
             marriage.AddSpouses(spouseIds);
 
@@ -66,7 +77,7 @@ namespace DoggetTelegramBot.Application.Marriages.Commands.Create
 
             logger.LogCommon(
                Constants.Marriage.Messages.UpdatedSuccessfully(
-                   MarriageId.Create(marriage.Id.Value)),
+                   MarriageId.Create(marriage.MarriageId.Value)),
                TelegramEvents.Message,
                Constants.LogColors.Update);
 
@@ -139,12 +150,12 @@ namespace DoggetTelegramBot.Application.Marriages.Commands.Create
             [
                 CacheKeyGenerator.UserExistsWithTelegramId(spouseOne.TelegramId),
                 CacheKeyGenerator.GetUserInfoByTelegramId(spouseOne.TelegramId),
-                CacheKeyGenerator.GetFamilyInfoByUserId(UserId.Create(spouseOne.Id.Value)),
-                CacheKeyGenerator.GetAllMarriagesInfoByUserId(UserId.Create(spouseOne.Id.Value)),
+                CacheKeyGenerator.GetFamilyInfoByUserId(UserId.Create(spouseOne.UserId.Value)),
+                CacheKeyGenerator.GetAllMarriagesInfoByUserId(UserId.Create(spouseOne.UserId.Value)),
                 CacheKeyGenerator.UserExistsWithTelegramId(spouseTwo.TelegramId),
                 CacheKeyGenerator.GetUserInfoByTelegramId(spouseTwo.TelegramId),
-                CacheKeyGenerator.GetFamilyInfoByUserId(UserId.Create(spouseTwo.Id.Value)),
-                CacheKeyGenerator.GetAllMarriagesInfoByUserId(UserId.Create(spouseTwo.Id.Value)),
+                CacheKeyGenerator.GetFamilyInfoByUserId(UserId.Create(spouseTwo.UserId.Value)),
+                CacheKeyGenerator.GetAllMarriagesInfoByUserId(UserId.Create(spouseTwo.UserId.Value)),
                 CacheKeyGenerator.GetUsersByTelegramIdsQuery(spouseIds)
             ];
 

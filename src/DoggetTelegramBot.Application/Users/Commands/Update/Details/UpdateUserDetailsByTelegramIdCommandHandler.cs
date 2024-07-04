@@ -55,8 +55,8 @@ namespace DoggetTelegramBot.Application.Users.Commands.Update.Details
             [
                 CacheKeyGenerator.UserExistsWithTelegramId(user.TelegramId),
                 CacheKeyGenerator.GetUserInfoByTelegramId(user.TelegramId),
-                CacheKeyGenerator.GetFamilyInfoByUserId(UserId.Create(user.Id.Value)),
-                CacheKeyGenerator.GetAllMarriagesInfoByUserId(UserId.Create(user.Id.Value))
+                CacheKeyGenerator.GetFamilyInfoByUserId(UserId.Create(user.UserId.Value)),
+                CacheKeyGenerator.GetAllMarriagesInfoByUserId(UserId.Create(user.UserId.Value))
             ];
 
             var removalTasks = keys.Select(key => cacheService.RemoveAsync(key, cancellationToken));

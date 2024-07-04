@@ -24,8 +24,8 @@ namespace DoggetTelegramBot.Domain.Common.Entities
             => !Equals(left, right);
 
         public override int GetHashCode() => GetEqualityComponents()
-                .Select(x => x?.GetHashCode() ?? 0)
-                .Aggregate((x, y) => x ^ y);
+            .Select(x => x?.GetHashCode() ?? 0)
+            .Aggregate((x, y) => x ^ y);
 
         public bool Equals(ValueObject? other)
             => Equals((object?)other);

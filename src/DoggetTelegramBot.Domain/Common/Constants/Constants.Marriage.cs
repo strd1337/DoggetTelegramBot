@@ -94,6 +94,12 @@ namespace DoggetTelegramBot.Domain.Common.Constants
                 public const string Marry = $"+marriage";
                 public const string Divorce = $"+divorce";
             }
+
+            public static class Costs
+            {
+                public const decimal Marry = 50;
+                public const decimal Divorce = 50;
+            }
         }
     }
 }

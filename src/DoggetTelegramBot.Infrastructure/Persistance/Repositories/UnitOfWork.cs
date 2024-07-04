@@ -1,7 +1,14 @@
 using DoggetTelegramBot.Application.Common.Interfaces;
 using DoggetTelegramBot.Application.Common.Services;
 using DoggetTelegramBot.Domain.Common.Entities;
+using DoggetTelegramBot.Domain.Models.InventoryEntity;
+using DoggetTelegramBot.Domain.Models.TransactionEntity;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using DoggetTelegramBot.Domain.Models.UserEntity;
+using DoggetTelegramBot.Infrastructure.Persistance.Processors;
+using System.Transactions;
+using Transaction = DoggetTelegramBot.Domain.Models.TransactionEntity.Transaction;
+using ErrorOr;
 
 namespace DoggetTelegramBot.Infrastructure.Persistance.Repositories
 {
@@ -16,8 +23,8 @@ namespace DoggetTelegramBot.Infrastructure.Persistance.Repositories
 
         public IGenericRepository<TEntity, TId> GetRepository<TEntity, TId>(
             bool hasCustomRepository = false)
-                where TEntity : Entity<TId>
-                where TId : ValueObject
+                where TEntity : Entity
+                where TId : class
         {
             if (hasCustomRepository)
             {
@@ -40,10 +47,36 @@ namespace DoggetTelegramBot.Infrastructure.Persistance.Repositories
             return (IGenericRepository<TEntity, TId>)value;
         }
 
+        public async Task<ErrorOr<bool>> ProcessTransactionAsync(
+            Transaction transaction,
+            CancellationToken cancellationToken)
+        {
+            using TransactionScope scope = new(TransactionScopeAsyncFlowOption.Enabled);
+
+            var inventoryRepository = GetRepository<Inventory, InventoryId>();
+            var transactionRepository = GetRepository<Transaction, TransactionId>();
+            var userRepository = GetRepository<User, UserId>();
+
+            TransactionProcessor processor = new(
+                inventoryRepository,
+                transactionRepository,
+                userRepository);
+
+            var result = await processor.ProcessTransactionAsync(transaction, cancellationToken);
+
+            if (!result.IsError)
+            {
+                await SaveChangesAsync(cancellationToken);
+                scope.Complete();
+            }
+
+            return result;
+        }
+
         public int SaveChanges() => dbContext.SaveChanges();
 
-        public async Task<int> SaveChangesAsync(
-            CancellationToken cancellationToken) => await dbContext.SaveChangesAsync(cancellationToken);
+        public async Task<int> SaveChangesAsync(CancellationToken cancellationToken) =>
+            await dbContext.SaveChangesAsync(cancellationToken);
 
         public void Dispose()
         {

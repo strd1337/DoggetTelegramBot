@@ -8,18 +8,18 @@ namespace DoggetTelegramBot.Infrastructure.Persistance.Configurations
     {
         public void Configure(EntityTypeBuilder<Item> builder)
         {
-            builder.HasKey(i => i.Id);
+            builder.HasKey(i => i.ItemId);
 
-            builder.Property(i => i.Id)
+            builder.Property(i => i.ItemId)
                 .ValueGeneratedNever()
                 .HasConversion(
                     id => id.Value,
                     value => ItemId.Create(value));
 
-            builder.Property(i => i.Name)
+            builder.Property(i => i.ServerName)
                 .HasMaxLength(100);
 
-            builder.Property(i => i.Description)
+            builder.Property(i => i.Value)
                 .HasMaxLength(500);
 
             builder.Property(i => i.Price)

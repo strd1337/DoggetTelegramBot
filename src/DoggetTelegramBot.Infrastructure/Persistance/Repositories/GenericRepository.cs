@@ -7,16 +7,9 @@ namespace DoggetTelegramBot.Infrastructure.Persistance.Repositories
 {
     public class GenericRepository<TEntity, TId>(
         BotDbContext dbContext) : IGenericRepository<TEntity, TId>
-            where TEntity : Entity<TId>
-            where TId : ValueObject
+            where TEntity : Entity
+            where TId : class
     {
-        public async Task<TEntity?> GetByIdAsync(
-            TId id,
-            CancellationToken cancellationToken = default) => await dbContext
-                .Set<TEntity>()
-                .FirstOrDefaultAsync(e => e.Id == id,
-                    cancellationToken);
-
         public async Task<TEntity?> FirstOrDefaultAsync(
             Expression<Func<TEntity, bool>> predicate,
             CancellationToken cancellationToken = default) => await dbContext

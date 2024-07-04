@@ -3,6 +3,7 @@ using System;
 using DoggetTelegramBot.Infrastructure.Persistance;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
@@ -11,9 +12,11 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace DoggetTelegramBot.Infrastructure.Migrations
 {
     [DbContext(typeof(BotDbContext))]
-    partial class BotDbContextModelSnapshot : ModelSnapshot
+    [Migration("20240702194214_UpdateAllModelsToFixBug")]
+    partial class UpdateAllModelsToFixBug
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -68,11 +71,13 @@ namespace DoggetTelegramBot.Infrastructure.Migrations
                     b.Property<Guid>("ItemId")
                         .HasColumnType("uuid");
 
-                    b.Property<int>("Count")
-                        .HasColumnType("integer");
-
                     b.Property<DateTime>("CreatedDate")
                         .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("Description")
+                        .IsRequired()
+                        .HasMaxLength(500)
+                        .HasColumnType("character varying(500)");
 
                     b.Property<bool>("IsDeleted")
                         .HasColumnType("boolean");
@@ -80,23 +85,18 @@ namespace DoggetTelegramBot.Infrastructure.Migrations
                     b.Property<DateTime>("ModifiedDate")
                         .HasColumnType("timestamp with time zone");
 
-                    b.Property<decimal>("Price")
-                        .HasColumnType("decimal(18,2)");
-
-                    b.Property<string>("ServerName")
+                    b.Property<string>("Name")
                         .IsRequired()
                         .HasMaxLength(100)
                         .HasColumnType("character varying(100)");
+
+                    b.Property<decimal>("Price")
+                        .HasColumnType("decimal(18,2)");
 
                     b.Property<string>("Type")
                         .IsRequired()
                         .HasMaxLength(50)
                         .HasColumnType("character varying(50)");
-
-                    b.Property<string>("Value")
-                        .IsRequired()
-                        .HasMaxLength(500)
-                        .HasColumnType("character varying(500)");
 
                     b.HasKey("ItemId");
 
@@ -143,7 +143,7 @@ namespace DoggetTelegramBot.Infrastructure.Migrations
                     b.Property<Guid>("TransactionId")
                         .HasColumnType("uuid");
 
-                    b.Property<decimal>("Amount")
+                    b.Property<decimal?>("Amount")
                         .HasColumnType("decimal(18,2)");
 
                     b.Property<DateTime>("CreatedDate")
@@ -159,8 +159,9 @@ namespace DoggetTelegramBot.Infrastructure.Migrations
                     b.Property<DateTime>("ModifiedDate")
                         .HasColumnType("timestamp with time zone");
 
-                    b.Property<Guid?>("ToUserId")
-                        .HasColumnType("uuid");
+                    b.Property<string>("ToUserIds")
+                        .IsRequired()
+                        .HasColumnType("text");
 
                     b.Property<string>("Type")
                         .IsRequired()
@@ -269,6 +270,36 @@ namespace DoggetTelegramBot.Infrastructure.Migrations
                     b.Navigation("Members");
                 });
 
+            modelBuilder.Entity("DoggetTelegramBot.Domain.Models.InventoryEntity.Inventory", b =>
+                {
+                    b.OwnsMany("DoggetTelegramBot.Domain.Models.ItemEntity.ItemId", "ItemIds", b1 =>
+                        {
+                            b1.Property<int>("Id")
+                                .ValueGeneratedOnAdd()
+                                .HasColumnType("integer");
+
+                            NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b1.Property<int>("Id"));
+
+                            b1.Property<Guid>("InventoryId")
+                                .HasColumnType("uuid");
+
+                            b1.Property<Guid>("Value")
+                                .HasColumnType("uuid")
+                                .HasColumnName("ItemId");
+
+                            b1.HasKey("Id");
+
+                            b1.HasIndex("InventoryId");
+
+                            b1.ToTable("InventoryItemIds", (string)null);
+
+                            b1.WithOwner()
+                                .HasForeignKey("InventoryId");
+                        });
+
+                    b.Navigation("ItemIds");
+                });
+
             modelBuilder.Entity("DoggetTelegramBot.Domain.Models.MarriageEntity.Marriage", b =>
                 {
                     b.OwnsMany("DoggetTelegramBot.Domain.Models.UserEntity.UserId", "SpouseIds", b1 =>
@@ -297,6 +328,36 @@ namespace DoggetTelegramBot.Infrastructure.Migrations
                         });
 
                     b.Navigation("SpouseIds");
+                });
+
+            modelBuilder.Entity("DoggetTelegramBot.Domain.Models.TransactionEntity.Transaction", b =>
+                {
+                    b.OwnsMany("DoggetTelegramBot.Domain.Models.ItemEntity.ItemId", "ItemIds", b1 =>
+                        {
+                            b1.Property<int>("Id")
+                                .ValueGeneratedOnAdd()
+                                .HasColumnType("integer");
+
+                            NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b1.Property<int>("Id"));
+
+                            b1.Property<Guid>("TransactionId")
+                                .HasColumnType("uuid");
+
+                            b1.Property<Guid>("Value")
+                                .HasColumnType("uuid")
+                                .HasColumnName("ItemId");
+
+                            b1.HasKey("Id");
+
+                            b1.HasIndex("TransactionId");
+
+                            b1.ToTable("TransactionItemIds", (string)null);
+
+                            b1.WithOwner()
+                                .HasForeignKey("TransactionId");
+                        });
+
+                    b.Navigation("ItemIds");
                 });
 #pragma warning restore 612, 618
         }

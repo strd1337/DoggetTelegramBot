@@ -4,10 +4,11 @@ using DoggetTelegramBot.Domain.Models.UserEntity;
 
 namespace DoggetTelegramBot.Domain.Models.MarriageEntity
 {
-    public sealed class Marriage : Root<MarriageId, Guid>
+    public sealed class Marriage : Entity
     {
         private readonly List<UserId> spouseIds = [];
 
+        public MarriageId MarriageId { get; private set; }
         public DateTime MarriageDate { get; private set; }
         public DateTime? DivorceDate { get; private set; }
         public MarriageType Type { get; private set; }
@@ -19,8 +20,9 @@ namespace DoggetTelegramBot.Domain.Models.MarriageEntity
             MarriageId marriageId,
             DateTime marriageDate,
             MarriageType type,
-            MarriageStatus status) : base(marriageId)
+            MarriageStatus status)
         {
+            MarriageId = marriageId;
             MarriageDate = marriageDate;
             Type = type;
             Status = status;
@@ -44,8 +46,10 @@ namespace DoggetTelegramBot.Domain.Models.MarriageEntity
             Status = status;
         }
 
-        public Marriage()
+#pragma warning disable CS8618
+        private Marriage()
         {
         }
+#pragma warning restore CS8618
     }
 }
