@@ -152,11 +152,13 @@ namespace DoggetTelegramBot.Application.Marriages.Commands.Create
                 CacheKeyGenerator.GetUserInfoByTelegramId(spouseOne.TelegramId),
                 CacheKeyGenerator.GetFamilyInfoByUserId(UserId.Create(spouseOne.UserId.Value)),
                 CacheKeyGenerator.GetAllMarriagesInfoByUserId(UserId.Create(spouseOne.UserId.Value)),
+                CacheKeyGenerator.GetInventoryInfoByTelegramId(spouseOne.TelegramId),
                 CacheKeyGenerator.UserExistsWithTelegramId(spouseTwo.TelegramId),
                 CacheKeyGenerator.GetUserInfoByTelegramId(spouseTwo.TelegramId),
                 CacheKeyGenerator.GetFamilyInfoByUserId(UserId.Create(spouseTwo.UserId.Value)),
                 CacheKeyGenerator.GetAllMarriagesInfoByUserId(UserId.Create(spouseTwo.UserId.Value)),
-                CacheKeyGenerator.GetUsersByTelegramIdsQuery(spouseIds)
+                CacheKeyGenerator.GetInventoryInfoByTelegramId(spouseTwo.TelegramId),
+                CacheKeyGenerator.GetUsersByTelegramIdsQuery(spouseIds),
             ];
 
             var removalTasks = keys

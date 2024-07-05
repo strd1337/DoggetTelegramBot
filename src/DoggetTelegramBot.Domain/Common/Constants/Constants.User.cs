@@ -21,6 +21,11 @@ namespace DoggetTelegramBot.Domain.Common.Constants
                     $"Get user information request started." :
                     $"Get user information request ended.";
 
+                public static string GetRequest(bool isStarted = true) =>
+                    isStarted ?
+                    $"Get user request started." :
+                    $"Get user request ended.";
+
                 public static string GetSpousesRequest(bool isStarted = true) =>
                     isStarted ?
                     $"Get spouses request started." :
