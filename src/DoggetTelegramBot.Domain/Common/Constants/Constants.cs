@@ -12,6 +12,9 @@ namespace DoggetTelegramBot.Domain.Common.Constants
 
             public static string NotFoundUserReply(string command) =>
                 $"Select the user and reply on his message using the command: {command}";
+
+            public static string NotFoundUserReply(string command, string key) =>
+                $"Select the user and reply on his message using the command: {command} {key}";
         }
     }
 }

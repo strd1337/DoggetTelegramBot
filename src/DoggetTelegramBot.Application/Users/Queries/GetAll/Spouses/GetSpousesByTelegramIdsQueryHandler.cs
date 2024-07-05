@@ -58,7 +58,7 @@ namespace DoggetTelegramBot.Application.Users.Queries.GetAll.Spouses
             string errorDescription,
             bool isGetMarried)
         {
-            string errorMessage = Constants.User.Messages.NotFoundRetrievedWithCause(
+            string errorMessage = Constants.User.Messages.NotFoundRetrieved(
                 spouseIds, errorDescription);
 
             var eventType = TelegramEvents.Message;

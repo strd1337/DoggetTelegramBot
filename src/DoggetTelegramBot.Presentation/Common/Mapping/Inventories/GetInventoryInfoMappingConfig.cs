@@ -15,7 +15,8 @@ namespace DoggetTelegramBot.Presentation.Common.Mapping.Inventories
            decimal yuanBalance)
         {
             StringBuilder sb = new();
-            sb.AppendLine($"Your balance is {yuanBalance} yuan.");
+            string yuanLabel = yuanBalance > 1 ? "yuans" : "yuan";
+            sb.Append($"Your balance is {yuanBalance} {yuanLabel}.");
             return sb.ToString();
         }
     }

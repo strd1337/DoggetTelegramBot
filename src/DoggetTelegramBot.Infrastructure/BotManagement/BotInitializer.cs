@@ -34,7 +34,7 @@ namespace DoggetTelegramBot.Infrastructure.BotManagement
             bot.Events.OnCommonLog += logger.OnLogCommonAsync;
             bot.Events.OnErrorLog += logger.OnLogErrorAsync;
 
-            bot.Events.OnPreUpdate += dispatcher.OnCheckUserExistance;
+            bot.Events.UpdateEvents.OnPreUpdate += dispatcher.OnCheckUserExistance;
             bot.Events.OnCheckPrivilege += dispatcher.OnCheckPrivilege;
 
             await bot.Start();
