@@ -49,7 +49,7 @@ namespace DoggetTelegramBot.Application.Marriages.Commands.Delete
                 .Select(s => UserId.Create(s.UserId.Value))
                 .ToList();
 
-            var transactionResult = await transactionService.ExecuteServiceFeeAsync(
+            var transactionResult = await ExecuteServiceFeeAsync(
                 spouseIds,
                 Constants.Marriage.Costs.Divorce,
                 cancellationToken);
@@ -120,7 +120,7 @@ namespace DoggetTelegramBot.Application.Marriages.Commands.Delete
             logger.LogCommon(
                 Constants.User.Messages.GetSpousesRequest(),
                 TelegramEvents.Message,
-                Constants.LogColors.GetAll);
+                Constants.LogColors.Request);
 
             GetSpousesByTelegramIdsQuery query = new(telegramIds, false);
             var result = await mediator.Send(query, cancellationToken);
@@ -128,7 +128,7 @@ namespace DoggetTelegramBot.Application.Marriages.Commands.Delete
             logger.LogCommon(
                 Constants.User.Messages.GetSpousesRequest(false),
                 TelegramEvents.Message,
-                Constants.LogColors.GetAll);
+                Constants.LogColors.Request);
 
             return result;
         }
@@ -146,6 +146,29 @@ namespace DoggetTelegramBot.Application.Marriages.Commands.Delete
                 spouses, MaritalStatus.Divorced);
 
             _ = await mediator.Send(command, cancellationToken);
+        }
+
+        private async Task<ErrorOr<bool>> ExecuteServiceFeeAsync(
+           List<UserId> spouseIds,
+           decimal amount,
+           CancellationToken cancellationToken)
+        {
+            logger.LogCommon(
+                Constants.Transaction.Messages.ExecuteServiceFee(),
+                TelegramEvents.Message,
+                Constants.LogColors.Request);
+
+            var transactionResult = await transactionService.ExecuteServiceFeeAsync(
+                spouseIds,
+                amount,
+                cancellationToken);
+
+            logger.LogCommon(
+                Constants.Transaction.Messages.ExecuteServiceFee(false),
+                TelegramEvents.Message,
+                Constants.LogColors.Request);
+
+            return transactionResult;
         }
 
         private async Task RemoveKeysFromCacheAsync(
@@ -167,11 +190,13 @@ namespace DoggetTelegramBot.Application.Marriages.Commands.Delete
                 CacheKeyGenerator.GetUserInfoByTelegramId(spouseOne.TelegramId),
                 CacheKeyGenerator.GetFamilyInfoByUserId(UserId.Create(spouseOne.UserId.Value)),
                 CacheKeyGenerator.GetAllMarriagesInfoByUserId(UserId.Create(spouseOne.UserId.Value)),
+                CacheKeyGenerator.GetInventoryInfoByTelegramId(spouseOne.TelegramId),
                 CacheKeyGenerator.UserExistsWithTelegramId(spouseTwo.TelegramId),
                 CacheKeyGenerator.GetUserInfoByTelegramId(spouseTwo.TelegramId),
                 CacheKeyGenerator.GetFamilyInfoByUserId(UserId.Create(spouseTwo.UserId.Value)),
                 CacheKeyGenerator.GetAllMarriagesInfoByUserId(UserId.Create(spouseTwo.UserId.Value)),
-                CacheKeyGenerator.GetUsersByTelegramIdsQuery(spouseIds)
+                CacheKeyGenerator.GetInventoryInfoByTelegramId(spouseTwo.TelegramId),
+                CacheKeyGenerator.GetSpousesByTelegramIdsQuery(spouseIds),
             ];
 
             var removalTasks = keys
@@ -184,7 +209,7 @@ namespace DoggetTelegramBot.Application.Marriages.Commands.Delete
             List<long> spouseIds,
             CancellationToken cancellationToken)
         {
-            string key = CacheKeyGenerator.GetUsersByTelegramIdsQuery(spouseIds);
+            string key = CacheKeyGenerator.GetSpousesByTelegramIdsQuery(spouseIds);
             await cacheService.RemoveAsync(key, cancellationToken);
         }
     }

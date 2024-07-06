@@ -21,6 +21,16 @@ namespace DoggetTelegramBot.Domain.Common.Constants
                     $"Get user information request started." :
                     $"Get user information request ended.";
 
+                public static string GetRequest(bool isStarted = true) =>
+                    isStarted ?
+                    $"Get user request started." :
+                    $"Get user request ended.";
+
+                public static string GetTransactionParticipantsRequest(bool isStarted = true) =>
+                    isStarted ?
+                    $"Get transaction participants request started." :
+                    $"Get transaction participants request ended.";
+
                 public static string GetSpousesRequest(bool isStarted = true) =>
                     isStarted ?
                     $"Get spouses request started." :
@@ -53,7 +63,10 @@ namespace DoggetTelegramBot.Domain.Common.Constants
                 public static string NotFoundRetrieved(long telegramId) =>
                     $"User {telegramId} was not found.";
 
-                public static string NotFoundRetrievedWithCause(
+                public static string NotFoundRetrieved(List<long> telegramIds) =>
+                    $"Users {string.Join(",", telegramIds.Select(id => id))} were not retrieved.";
+
+                public static string NotFoundRetrieved(
                     List<long> telegramIds,
                     string cause) =>
                         $"Users {string.Join(",", telegramIds.Select(id => id))} were not retrieved. {cause}";

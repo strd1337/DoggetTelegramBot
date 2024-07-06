@@ -97,7 +97,9 @@ namespace DoggetTelegramBot.Infrastructure.Persistance.Processors
 
                 if (result.IsError)
                 {
-                    return Errors.Inventory.InsufficientBalances;
+                    return fromInventories.Count > 1 ?
+                        Errors.Inventory.InsufficientBalances :
+                        Errors.Inventory.InsufficientBalance;
                 }
             }
 
@@ -115,7 +117,10 @@ namespace DoggetTelegramBot.Infrastructure.Persistance.Processors
                 return inventoryResult.Errors;
             }
 
-            var checkAndUpdateResult = await CheckAndUpdateInventory(inventoryResult.Value, transaction);
+            var checkAndUpdateResult = await CheckAndUpdateInventory(
+                inventoryResult.Value,
+                transaction,
+                false);
 
             return checkAndUpdateResult.IsError ?
                 checkAndUpdateResult.Errors :
@@ -127,7 +132,7 @@ namespace DoggetTelegramBot.Infrastructure.Persistance.Processors
             CancellationToken cancellationToken)
         {
             var user = await userRepository.FirstOrDefaultAsync(
-                u => u.UserId.Value == transaction.ToUserId!.Value,
+                u => u.UserId == transaction.ToUserId,
                 cancellationToken);
 
             if (user is null)
@@ -145,14 +150,22 @@ namespace DoggetTelegramBot.Infrastructure.Persistance.Processors
 
         private async Task<ErrorOr<bool>> CheckAndUpdateInventory(
             Inventory inventory,
-            Transaction transaction)
+            Transaction transaction,
+            bool isPurchase = true)
         {
             if (!inventory.HasSufficientBalance(transaction.Amount))
             {
                 return Errors.Inventory.InsufficientBalance;
             }
 
-            inventory.DeductBalance(transaction.Amount);
+            if (isPurchase)
+            {
+                inventory.DeductBalance(transaction.Amount);
+            }
+            else
+            {
+                inventory.IncreaseBalance(transaction.Amount);
+            }
 
             await inventoryRepository.UpdateAsync(inventory);
 
