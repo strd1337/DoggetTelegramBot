@@ -67,7 +67,8 @@ namespace DoggetTelegramBot.Infrastructure.Persistance.Processors
             {
                 var findAndUpdateResult = await FindAndUpdateToInventory(
                     transaction,
-                    cancellationToken);
+                    cancellationToken,
+                    false);
 
                 if (findAndUpdateResult.IsError)
                 {
@@ -108,7 +109,8 @@ namespace DoggetTelegramBot.Infrastructure.Persistance.Processors
 
         private async Task<ErrorOr<bool>> FindAndUpdateToInventory(
             Transaction transaction,
-            CancellationToken cancellationToken)
+            CancellationToken cancellationToken,
+            bool isPurchase = true)
         {
             var inventoryResult = await GetInventory(transaction, cancellationToken);
 
@@ -120,7 +122,7 @@ namespace DoggetTelegramBot.Infrastructure.Persistance.Processors
             var checkAndUpdateResult = await CheckAndUpdateInventory(
                 inventoryResult.Value,
                 transaction,
-                false);
+                isPurchase);
 
             return checkAndUpdateResult.IsError ?
                 checkAndUpdateResult.Errors :

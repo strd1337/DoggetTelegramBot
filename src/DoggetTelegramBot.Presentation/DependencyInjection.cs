@@ -2,6 +2,8 @@ using System.Reflection;
 using System.Threading.RateLimiting;
 using DoggetTelegramBot.Domain.Common.Constants;
 using DoggetTelegramBot.Presentation.Common.ErrorHandling;
+using DoggetTelegramBot.Presentation.Common.Services;
+using DoggetTelegramBot.Presentation.Handlers.Requests;
 using Mapster;
 using MapsterMapper;
 using Microsoft.AspNetCore.RateLimiting;
@@ -20,6 +22,10 @@ namespace DoggetTelegramBot.Presentation
             services.AddRateLimiter();
 
             services.AddMappings();
+
+            services.AddSingleton<ITelegramBotService, TelegramBotService>();
+
+            services.AddRequestHandlers();
 
             return services;
         }
@@ -89,6 +95,15 @@ namespace DoggetTelegramBot.Presentation
             services.AddSingleton(config);
 
             services.AddScoped<IMapper, ServiceMapper>();
+
+            return services;
+        }
+
+        public static IServiceCollection AddRequestHandlers(
+            this IServiceCollection services)
+        {
+            services.AddScoped<ItemRequestHandler>();
+            services.AddScoped<MarriageRequestHandler>();
 
             return services;
         }

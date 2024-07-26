@@ -37,9 +37,7 @@ namespace DoggetTelegramBot.Infrastructure.Services
             string key,
             CancellationToken cancellationToken = default)
         {
-            bool isRetrieved = memoryCache.TryGetValue(key, out _);
-
-            if (isRetrieved)
+            if (memoryCache.TryGetValue(key, out _))
             {
                 memoryCache.Remove(key);
 
@@ -50,6 +48,30 @@ namespace DoggetTelegramBot.Infrastructure.Services
             }
 
             return Task.CompletedTask;
+        }
+
+        public Task SetUsageTimeAsync(
+            string key,
+            DateTime usageTime,
+            TimeSpan? expiration = null,
+            CancellationToken cancellationToken = default)
+        {
+            memoryCache.Set(key, usageTime, expiration ?? defaultExpiration);
+
+            logger.LogCommon(
+                Constants.Cache.StoreOrRetrieveMessage,
+                TelegramEvents.Message,
+                Constants.LogColors.Cache);
+
+            return Task.CompletedTask;
+        }
+
+        public Task<(bool hasValue, T? value)> TryGetValueAsync<T>(
+            string key,
+            CancellationToken cancellationToken = default)
+        {
+            bool hasValue = memoryCache.TryGetValue(key, out T? value);
+            return Task.FromResult((hasValue, value));
         }
     }
 }

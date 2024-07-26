@@ -15,6 +15,11 @@ namespace DoggetTelegramBot.Domain.Common.Constants
                    isStarted ?
                    $"Execute service fee transaction request started." :
                    $"Execute service fee transaction request ended.";
+
+                public static string ExecutePurchase(bool isStarted = true) =>
+                   isStarted ?
+                   $"Execute purchase transaction request started." :
+                   $"Execute purchase transaction request ended.";
             }
         }
     }

@@ -5,6 +5,7 @@ using DoggetTelegramBot.Domain.Common.Constants;
 using DoggetTelegramBot.Domain.Common.Enums;
 using DoggetTelegramBot.Presentation.BotControllers.Common;
 using DoggetTelegramBot.Presentation.Common.Mapping;
+using DoggetTelegramBot.Presentation.Common.Services;
 using MapsterMapper;
 using PRTelegramBot.Attributes;
 using PRTelegramBot.Models.Enums;
@@ -17,10 +18,9 @@ namespace DoggetTelegramBot.Presentation.BotControllers
     public class UserController(
         IBotLogger logger,
         IScopeService service,
-        IMapper mapper) : BaseController(logger)
+        IMapper mapper,
+        ITelegramBotService botService) : BaseController(botService)
     {
-        private readonly IBotLogger logger = logger;
-
         [ReplyMenuHandler(CommandComparison.Equals, StringComparison.OrdinalIgnoreCase, Constants.User.ReplyKeys.GetMyInfo)]
         public async Task GetInfo(ITelegramBotClient botClient, Update update)
         {
@@ -36,7 +36,7 @@ namespace DoggetTelegramBot.Presentation.BotControllers
 
             var response = result.Match(mapper.Map<Response>, Problem);
 
-            await SendMessage(botClient, update, response.Message);
+            await SendReplyMessage(botClient, update, response.Message);
 
             logger.LogCommon(
                 Constants.User.Messages.GetInformationRequest(false),
@@ -66,7 +66,7 @@ namespace DoggetTelegramBot.Presentation.BotControllers
 
             var response = result.Match(mapper.Map<Response>, Problem);
 
-            await SendMessage(botClient, update, response.Message);
+            await SendReplyMessage(botClient, update, response.Message);
 
             logger.LogCommon(
                Constants.User.Messages.UpdateNicknameRequest(false),
@@ -92,7 +92,7 @@ namespace DoggetTelegramBot.Presentation.BotControllers
 
             var response = result.Match(mapper.Map<Response>, Problem);
 
-            await SendMessage(botClient, update, response.Message);
+            await SendReplyMessage(botClient, update, response.Message);
 
             logger.LogCommon(
                 Constants.User.Messages.UpdateNicknameRequest(false),

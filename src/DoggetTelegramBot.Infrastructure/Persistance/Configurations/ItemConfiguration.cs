@@ -28,6 +28,10 @@ namespace DoggetTelegramBot.Infrastructure.Persistance.Configurations
             builder.Property(i => i.Type)
                 .HasConversion<string>()
                 .HasMaxLength(50);
+
+            builder.Property(i => i.AmountType)
+               .HasConversion<string>()
+               .HasMaxLength(50);
         }
     }
 }
