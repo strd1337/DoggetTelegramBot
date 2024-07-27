@@ -19,6 +19,9 @@ namespace DoggetTelegramBot.Application.Common.Interfaces
         Task AddAsync(TEntity entity,
             CancellationToken cancellationToken = default);
 
+        Task AddRangeAsync(List<TEntity> entities,
+            CancellationToken cancellationToken = default);
+
         Task UpdateAsync(TEntity entity);
         Task UpdateAsync(List<TEntity> entities);
 

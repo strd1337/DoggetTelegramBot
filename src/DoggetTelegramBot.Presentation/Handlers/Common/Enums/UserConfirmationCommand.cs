@@ -1,10 +1,10 @@
 using System.ComponentModel;
 using PRTelegramBot.Attributes;
 
-namespace DoggetTelegramBot.Domain.Common.Enums
+namespace DoggetTelegramBot.Presentation.Handlers.Common.Enums
 {
     [InlineCommand]
-    public enum UserResponse
+    public enum UserConfirmationCommand
     {
         [Description(nameof(Yes))]
         Yes = 500,

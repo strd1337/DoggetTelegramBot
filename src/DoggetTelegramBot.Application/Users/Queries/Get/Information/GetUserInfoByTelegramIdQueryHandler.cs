@@ -54,7 +54,7 @@ namespace DoggetTelegramBot.Application.Users.Queries.Get.Information
                 TelegramEvents.Message,
                 Constants.LogColors.Get);
 
-            var marriage = await GetUserMarriageInfoAsync(
+            var marriages = await GetUserMarriagesInfoAsync(
                 user.UserId,
                 cancellationToken);
 
@@ -69,11 +69,11 @@ namespace DoggetTelegramBot.Application.Users.Queries.Get.Information
                 user.RegisteredDate,
                 user.MaritalStatus,
                 [.. user.Privileges],
-                marriage,
+                marriages,
                 family);
         }
 
-        private async Task<List<MarriageDto>> GetUserMarriageInfoAsync(
+        private async Task<List<MarriageDto>> GetUserMarriagesInfoAsync(
             UserId userId,
             CancellationToken cancellationToken)
         {

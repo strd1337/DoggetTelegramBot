@@ -33,5 +33,11 @@ namespace DoggetTelegramBot.Application.Helpers
 
         public static string GetInventoryInfoByTelegramId(long telegramId) =>
             $"get-inventory-info-by-telegramId-{telegramId}";
+
+        public static string GetAllItemServerNames() =>
+            $"get-all-item-server-names";
+
+        public static string CommandUsageByTelegramId(long telegramId, string commandName) =>
+            $"command-{commandName}-usage-by-{telegramId}";
     }
 }

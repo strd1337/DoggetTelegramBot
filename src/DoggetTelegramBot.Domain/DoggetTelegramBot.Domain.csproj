@@ -8,9 +8,9 @@
 
   <ItemGroup>
     <PackageReference Include="ErrorOr" Version="2.0.1" />
-    <PackageReference Include="MediatR" Version="12.3.0" />
-    <PackageReference Include="PRTelegramBot" Version="0.6.2" />
-    <PackageReference Include="Telegram.Bot" Version="21.4.1" />
+    <PackageReference Include="MediatR" Version="12.4.0" />
+    <PackageReference Include="PRTelegramBot" Version="0.7.0" />
+    <PackageReference Include="Telegram.Bot" Version="21.7.1" />
   </ItemGroup>
 
 </Project>

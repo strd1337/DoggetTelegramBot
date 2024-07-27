@@ -5,6 +5,7 @@ using DoggetTelegramBot.Domain.Common.Constants;
 using DoggetTelegramBot.Domain.Common.Enums;
 using DoggetTelegramBot.Presentation.BotControllers.Common;
 using DoggetTelegramBot.Presentation.Common.Mapping;
+using DoggetTelegramBot.Presentation.Common.Services;
 using MapsterMapper;
 using PRTelegramBot.Attributes;
 using PRTelegramBot.Models.Enums;
@@ -17,10 +18,9 @@ namespace DoggetTelegramBot.Presentation.BotControllers
     public sealed class InventoryController(
         IBotLogger logger,
         IScopeService service,
-        IMapper mapper) : BaseController(logger)
+        IMapper mapper,
+        ITelegramBotService botService) : BaseController(botService)
     {
-        private readonly IBotLogger logger = logger;
-
         [ReplyMenuHandler(CommandComparison.Equals, StringComparison.OrdinalIgnoreCase, Constants.Inventory.ReplyKeys.GetInfo)]
         public async Task GetInfo(ITelegramBotClient botClient, Update update)
         {
@@ -36,7 +36,7 @@ namespace DoggetTelegramBot.Presentation.BotControllers
 
             var response = result.Match(mapper.Map<Response>, Problem);
 
-            await SendMessage(botClient, update, response.Message);
+            await SendReplyMessage(botClient, update, response.Message);
 
             logger.LogCommon(
                Constants.Inventory.Messages.GetInformationRequest(false),
@@ -61,7 +61,7 @@ namespace DoggetTelegramBot.Presentation.BotControllers
             if (update.Message?.ReplyToMessage is null ||
                 !decimal.TryParse(text, out decimal amount))
             {
-                await SendMessage(
+                await SendReplyMessage(
                     botClient,
                     update,
                     Constants.Messages.NotFoundUserReply(
@@ -80,7 +80,7 @@ namespace DoggetTelegramBot.Presentation.BotControllers
 
             var response = result.Match(mapper.Map<Response>, Problem);
 
-            await SendMessage(botClient, update, response.Message);
+            await SendReplyMessage(botClient, update, response.Message);
 
             logger.LogCommon(
                Constants.Inventory.Messages.TransferRequest(false),

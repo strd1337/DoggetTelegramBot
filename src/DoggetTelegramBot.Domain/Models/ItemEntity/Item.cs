@@ -9,16 +9,18 @@ namespace DoggetTelegramBot.Domain.Models.ItemEntity
         public string ServerName { get; private set; }
         public int Count { get; private set; }
         public ItemType Type { get; private set; }
+        public ItemAmountType? AmountType { get; private set; }
         public decimal Price { get; private set; }
         public string Value { get; private set; }
 
         private Item(
             ItemId itemId,
             string serverName,
-            int count,
             ItemType type,
             decimal price,
-            string value)
+            string value,
+            ItemAmountType? amountType = null,
+            int count = 1)
         {
             ItemId = itemId;
             ServerName = serverName;
@@ -26,20 +28,27 @@ namespace DoggetTelegramBot.Domain.Models.ItemEntity
             Type = type;
             Price = price;
             Value = value;
+            AmountType = amountType;
         }
 
         public static Item Create(
             string serverName,
-            int count,
             ItemType type,
             decimal price,
-            string value) => new(
+            string value,
+            ItemAmountType? amountType = null,
+            int count = 1) => new(
                 ItemId.CreateUnique(),
                 serverName,
-                count,
                 type,
                 price,
-                value);
+                value,
+                amountType,
+                count);
+
+        public void DiminishCount() => --Count;
+
+        public void Delete() => IsDeleted = true;
 
 #pragma warning disable CS8618
         private Item()

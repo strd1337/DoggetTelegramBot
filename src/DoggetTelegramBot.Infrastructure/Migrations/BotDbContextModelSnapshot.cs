@@ -68,6 +68,10 @@ namespace DoggetTelegramBot.Infrastructure.Migrations
                     b.Property<Guid>("ItemId")
                         .HasColumnType("uuid");
 
+                    b.Property<string>("AmountType")
+                        .HasMaxLength(50)
+                        .HasColumnType("character varying(50)");
+
                     b.Property<int>("Count")
                         .HasColumnType("integer");
 

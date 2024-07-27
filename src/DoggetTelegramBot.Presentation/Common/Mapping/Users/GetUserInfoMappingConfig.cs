@@ -18,7 +18,7 @@ namespace DoggetTelegramBot.Presentation.Common.Mapping.Users
                     src.RegisteredDate,
                     src.MaritalStatus,
                     src.Privileges,
-                    src.Marriage,
+                    src.Marriages,
                     src.Family));
 
         private static string FormatUserInfoMessage(
@@ -45,7 +45,7 @@ namespace DoggetTelegramBot.Presentation.Common.Mapping.Users
 
             if (marriages.Count != 0)
             {
-                FormatMarriageInfo(ref sb, marriages);
+                FormatMarriagesInfo(ref sb, marriages);
             }
 
             if (family is not null)
@@ -56,7 +56,7 @@ namespace DoggetTelegramBot.Presentation.Common.Mapping.Users
             return sb.ToString();
         }
 
-        private static void FormatMarriageInfo(
+        private static void FormatMarriagesInfo(
             ref StringBuilder sb,
             List<MarriageDto> marriages)
         {
