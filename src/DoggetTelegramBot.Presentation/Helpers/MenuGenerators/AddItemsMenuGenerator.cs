@@ -1,21 +1,22 @@
+using DoggetTelegramBot.Domain.Models.ItemEntity.Enums;
+using DoggetTelegramBot.Presentation.Handlers.Common.Enums;
 using PRTelegramBot.Interfaces;
 using PRTelegramBot.Models.CallbackCommands;
 using PRTelegramBot.Models.InlineButtons;
 using PRTelegramBot.Models;
 using PRTelegramBot.Utils;
-using DoggetTelegramBot.Domain.Models.ItemEntity.Enums;
+using Telegram.Bot.Types.ReplyMarkups;
 using PRTelegramBot.Extensions;
-using DoggetTelegramBot.Presentation.Handlers.Common.Enums;
 
 namespace DoggetTelegramBot.Presentation.Helpers.MenuGenerators
 {
-    public sealed class BuyItemMenuGenerator
+    public class AddItemsMenuGenerator
     {
         public static OptionMessage GenerateItemTypeMenu(int maxColumn = 3)
         {
             InlineCallback<EntityTCommand<ItemType>> promoCode = new(
                 ItemType.PromoCode.GetDescription(),
-                BuyItemStepCommands.SelectItemType,
+                AddItemsStepCommands.SelectItemType,
                 new EntityTCommand<ItemType>(ItemType.PromoCode));
 
             List<IInlineContent> menu = [promoCode];
@@ -30,26 +31,23 @@ namespace DoggetTelegramBot.Presentation.Helpers.MenuGenerators
             return options;
         }
 
-        public static OptionMessage GenerateItemServerNamesInlineMenu(
-            IReadOnlyList<string> serverNames,
-            int maxColumn = 3)
+        public static OptionMessage GenerateServerNamesReplyMenu(
+             IReadOnlyList<string> serverNames,
+             int maxColumn = 3)
         {
-            List<IInlineContent> menu = [];
+            List<KeyboardButton> menu = [];
             foreach (string name in serverNames)
             {
-                InlineCallback<EntityTCommand<string>> serverName = new(
-                    name,
-                    BuyItemStepCommands.SelectItemServerName,
-                    new EntityTCommand<string>(name));
+                KeyboardButton serverName = new(name);
 
                 menu.Add(serverName);
             };
 
-            var inlineKeyboardMenu = MenuGenerator.InlineKeyboard(maxColumn, menu);
+            var replyKeyboardMenu = MenuGenerator.ReplyKeyboard(maxColumn, menu);
 
             return new OptionMessage
             {
-                MenuInlineKeyboardMarkup = inlineKeyboardMenu,
+                MenuReplyKeyboardMarkup = replyKeyboardMenu
             };
         }
 
@@ -57,27 +55,27 @@ namespace DoggetTelegramBot.Presentation.Helpers.MenuGenerators
         {
             InlineCallback<EntityTCommand<ItemAmountType>> ten = new(
                 ItemAmountType.Ten.GetDescription(),
-                BuyItemStepCommands.SelectItemAmountType,
+                AddItemsStepCommands.SelectItemAmountType,
                 new EntityTCommand<ItemAmountType>(ItemAmountType.Ten));
 
             InlineCallback<EntityTCommand<ItemAmountType>> twelve = new(
                 ItemAmountType.Twelve.GetDescription(),
-                BuyItemStepCommands.SelectItemAmountType,
+                AddItemsStepCommands.SelectItemAmountType,
                 new EntityTCommand<ItemAmountType>(ItemAmountType.Twelve));
 
             InlineCallback<EntityTCommand<ItemAmountType>> fifty = new(
                 ItemAmountType.Fifty.GetDescription(),
-                BuyItemStepCommands.SelectItemAmountType,
+                AddItemsStepCommands.SelectItemAmountType,
                 new EntityTCommand<ItemAmountType>(ItemAmountType.Fifty));
 
             InlineCallback<EntityTCommand<ItemAmountType>> oneHundred = new(
                 ItemAmountType.OneHundred.GetDescription(),
-                BuyItemStepCommands.SelectItemAmountType,
+                AddItemsStepCommands.SelectItemAmountType,
                 new EntityTCommand<ItemAmountType>(ItemAmountType.OneHundred));
 
             InlineCallback<EntityTCommand<ItemAmountType>> twoHundred = new(
                 ItemAmountType.TwoHundred.GetDescription(),
-                BuyItemStepCommands.SelectItemAmountType,
+                AddItemsStepCommands.SelectItemAmountType,
                 new EntityTCommand<ItemAmountType>(ItemAmountType.TwoHundred));
 
             List<IInlineContent> menu = [ten, twelve, fifty, oneHundred, twoHundred];

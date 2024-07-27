@@ -5,14 +5,14 @@ namespace DoggetTelegramBot.Domain.Models.ItemEntity.Enums
     public enum ItemAmountType
     {
         [Description("10")]
-        Ten,
+        Ten = 10,
         [Description("20")]
-        Twelve,
+        Twelve = 20,
         [Description("50")]
-        Fifty,
+        Fifty = 50,
         [Description("100")]
-        OneHundred,
+        OneHundred = 100,
         [Description("200")]
-        TwoHundred,
+        TwoHundred = 200,
     }
 }

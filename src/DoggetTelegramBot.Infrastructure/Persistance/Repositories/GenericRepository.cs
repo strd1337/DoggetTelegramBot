@@ -22,6 +22,12 @@ namespace DoggetTelegramBot.Infrastructure.Persistance.Repositories
                 .Set<TEntity>()
                 .AddAsync(entity, cancellationToken);
 
+        public async Task AddRangeAsync(
+            List<TEntity> entities,
+            CancellationToken cancellationToken = default) => await dbContext
+                .Set<TEntity>()
+                .AddRangeAsync(entities, cancellationToken);
+
         public Task UpdateAsync(TEntity entity)
         {
             dbContext.Set<TEntity>().Update(entity);

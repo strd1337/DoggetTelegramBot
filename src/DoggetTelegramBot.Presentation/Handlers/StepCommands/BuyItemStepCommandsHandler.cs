@@ -32,7 +32,7 @@ namespace DoggetTelegramBot.Presentation.Handlers.StepCommands
             handler.RegisterNextStep(SelectItemServerName);
 
             var selectServerNameMessageOptions = BuyItemMenuGenerator
-                .GenerateItemServerNamesMenu(cache.ServerNames);
+                .GenerateItemServerNamesInlineMenu(cache.ServerNames);
 
             await PRTelegramBot.Helpers.Message.Edit(
                 botClient,
@@ -67,7 +67,7 @@ namespace DoggetTelegramBot.Presentation.Handlers.StepCommands
             await PRTelegramBot.Helpers.Message.Edit(
                 botClient,
                 update,
-                Constants.Item.Messages.Purchase.SelectItemAmountTypeRequest(userChoice),
+                Constants.Item.Messages.SelectItemAmountTypeRequest(userChoice),
                 selectItemAmountTypeMessageOptions);
         }
 

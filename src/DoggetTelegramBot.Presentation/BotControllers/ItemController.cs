@@ -2,6 +2,7 @@ using DoggetTelegramBot.Application.Common.Services;
 using DoggetTelegramBot.Application.Items.Queries.Server;
 using DoggetTelegramBot.Domain.Common.Constants;
 using DoggetTelegramBot.Domain.Common.Enums;
+using DoggetTelegramBot.Domain.Models.UserEntity.Enums;
 using DoggetTelegramBot.Presentation.BotControllers.Common;
 using DoggetTelegramBot.Presentation.Common.Services;
 using DoggetTelegramBot.Presentation.Handlers.Common.Caches;
@@ -62,10 +63,44 @@ namespace DoggetTelegramBot.Presentation.BotControllers
             var message = await SendMessage(
                 botClient,
                 update,
-                Constants.Item.Messages.Purchase.SelectItemTypeRequest,
+                Constants.Item.Messages.SelectItemTypeRequest(),
                 selectItemTypeMessageOptions);
 
             _ = requestHandler.HandlePurchaseAsync(botClient, update, message);
+        }
+
+        [ReplyMenuHandler(CommandComparison.Equals, StringComparison.OrdinalIgnoreCase, Constants.Item.ReplyKeys.Add)]
+        [RequiredTypeChat(ChatType.Private)]
+        [Access((int)UserPrivilege.Admin)]
+        public async Task Add(ITelegramBotClient botClient, Update update)
+        {
+            logger.LogCommon(update);
+
+            logger.LogCommon(
+                Constants.Item.Messages.AddRequest(),
+                TelegramEvents.Message,
+                Constants.LogColors.Request);
+
+            var serverNames = await GetServerNamesAsync();
+
+            AddItemsStepCache cache = new();
+            cache.AddServerNames(serverNames);
+
+            StepTelegram handler = new(
+                AddItemsStepCommandsHandler.SelectItemType,
+                cache);
+
+            update.RegisterStepHandler(handler);
+
+            var selectItemTypeMessageOptions = AddItemsMenuGenerator.GenerateItemTypeMenu();
+
+            var message = await SendMessage(
+                botClient,
+                update,
+                Constants.Item.Messages.SelectItemTypeRequest(false),
+                selectItemTypeMessageOptions);
+
+            _ = requestHandler.HandleAddAsync(botClient, update, message);
         }
 
         private async Task<List<string>> GetServerNamesAsync()

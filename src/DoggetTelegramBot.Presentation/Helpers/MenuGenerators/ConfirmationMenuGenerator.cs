@@ -11,7 +11,7 @@ namespace DoggetTelegramBot.Presentation.Helpers.MenuGenerators
 {
     public sealed class ConfirmationMenuGenerator
     {
-        public static OptionMessage Generate(Update update)
+        public static OptionMessage Generate(Update update, int maxColumn = 2)
         {
             InlineCallback<EntityTCommand<bool>> yes = new(
                 UserConfirmationCommand.Yes.GetDescription(),
@@ -25,7 +25,7 @@ namespace DoggetTelegramBot.Presentation.Helpers.MenuGenerators
 
             List<IInlineContent> menu = [yes, no];
 
-            var testMenu = MenuGenerator.InlineKeyboard(2, menu);
+            var testMenu = MenuGenerator.InlineKeyboard(maxColumn, menu);
 
             OptionMessage options = new()
             {

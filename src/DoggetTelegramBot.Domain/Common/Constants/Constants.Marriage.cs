@@ -9,8 +9,6 @@ namespace DoggetTelegramBot.Domain.Common.Constants
     {
         public static class Marriage
         {
-            public const int MaxSpousesCount = 5;
-
             public static class Messages
             {
                 public static string GetInformationRequest(bool isStarted = true) =>
@@ -66,7 +64,7 @@ namespace DoggetTelegramBot.Domain.Common.Constants
                         CultureInfo.InvariantCulture,
                         $"{(requesterUsername is not null ? $"@{requesterUsername}" : requesterFirstName)}? "));
 
-                    sb.Append("Time is limited.");
+                    sb.Append(Constants.Messages.FormatTimeIntoString());
 
                     return sb.ToString();
                 }

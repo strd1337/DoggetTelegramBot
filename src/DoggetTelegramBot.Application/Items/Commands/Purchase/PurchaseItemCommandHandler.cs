@@ -96,7 +96,7 @@ namespace DoggetTelegramBot.Application.Items.Commands.Purchase
             await unitOfWork.SaveChangesAsync(cancellationToken);
 
             logger.LogCommon(
-                Constants.Item.Messages.UpdatedSuccessfully(item.ItemId),
+                Constants.Item.Messages.Updated(item.ItemId),
                 TelegramEvents.Message,
                 Constants.LogColors.Update);
         }

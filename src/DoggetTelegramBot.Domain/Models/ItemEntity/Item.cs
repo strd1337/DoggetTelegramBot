@@ -19,8 +19,8 @@ namespace DoggetTelegramBot.Domain.Models.ItemEntity
             ItemType type,
             decimal price,
             string value,
-            int count = 1,
-            ItemAmountType? amountType = null)
+            ItemAmountType? amountType = null,
+            int count = 1)
         {
             ItemId = itemId;
             ServerName = serverName;
@@ -36,15 +36,15 @@ namespace DoggetTelegramBot.Domain.Models.ItemEntity
             ItemType type,
             decimal price,
             string value,
-            int count = 1,
-            ItemAmountType? amountType = null) => new(
+            ItemAmountType? amountType = null,
+            int count = 1) => new(
                 ItemId.CreateUnique(),
                 serverName,
                 type,
                 price,
                 value,
-                count,
-                amountType);
+                amountType,
+                count);
 
         public void DiminishCount() => --Count;
 
