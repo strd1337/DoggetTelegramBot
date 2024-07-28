@@ -15,6 +15,8 @@ using DoggetTelegramBot.Application.Users.Commands.Update.MaritalStatuses;
 using DoggetTelegramBot.Domain.Models.UserEntity.Enums;
 using DoggetTelegramBot.Application.Helpers;
 using DoggetTelegramBot.Application.DTOs;
+using DoggetTelegramBot.Application.Families.Commands.Create;
+using DoggetTelegramBot.Application.Families.Common;
 
 namespace DoggetTelegramBot.Application.Marriages.Commands.Create
 {
@@ -65,10 +67,22 @@ namespace DoggetTelegramBot.Application.Marriages.Commands.Create
 
             await UpdateSpousesMaritalStatus(spouses, cancellationToken);
 
+            var familyResult = await CreateFamilyAsync(spouses, cancellationToken);
+
             await unitOfWork.GetRepository<Marriage, MarriageId>()
                 .AddAsync(marriage, cancellationToken);
 
             await unitOfWork.SaveChangesAsync(cancellationToken);
+
+            logger.LogCommon(
+                Constants.Family.Messages.Created(familyResult.FamilyId),
+                TelegramEvents.Message,
+                Constants.LogColors.Create);
+
+            logger.LogCommon(
+                Constants.Family.Messages.CreateRequest(false),
+                TelegramEvents.Message,
+                Constants.LogColors.Request);
 
             logger.LogCommon(
                Constants.User.Messages.UpdatedSuccessfully(request.Spouses),
@@ -154,6 +168,25 @@ namespace DoggetTelegramBot.Application.Marriages.Commands.Create
                 Constants.LogColors.Request);
 
             return transactionResult;
+        }
+
+        private async Task<FamilyResult> CreateFamilyAsync(
+            List<User> spouses,
+            CancellationToken cancellationToken)
+        {
+            logger.LogCommon(
+                Constants.Family.Messages.CreateRequest(),
+                TelegramEvents.Message,
+                Constants.LogColors.Request);
+
+            List<UserId> spouseIds = spouses
+                .Select(s => s.UserId)
+                .ToList();
+
+            CreateFamilyCommand command = new(spouseIds);
+            var result = await mediator.Send(command, cancellationToken);
+
+            return result.Value;
         }
 
         private async Task RemoveKeysFromCacheAsync(

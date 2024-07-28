@@ -89,5 +89,29 @@ namespace DoggetTelegramBot.Presentation.Helpers.MenuGenerators
 
             return options;
         }
+
+        public static OptionMessage GenerateMoreAmountTypesConfirmationMenu(int maxColumn = 2)
+        {
+            InlineCallback<EntityTCommand<bool>> yes = new(
+                SelectAmountTypeConfirmationCommands.Yes.GetDescription(),
+                SelectAmountTypeConfirmationCommands.Yes,
+                new EntityTCommand<bool>(true));
+
+            InlineCallback<EntityTCommand<bool>> no = new(
+                SelectAmountTypeConfirmationCommands.No.GetDescription(),
+                SelectAmountTypeConfirmationCommands.No,
+                new EntityTCommand<bool>(false));
+
+            List<IInlineContent> menu = [yes, no];
+
+            var inlineKeyboard = MenuGenerator.InlineKeyboard(maxColumn, menu);
+
+            OptionMessage options = new()
+            {
+                MenuInlineKeyboardMarkup = inlineKeyboard
+            };
+
+            return options;
+        }
     }
 }

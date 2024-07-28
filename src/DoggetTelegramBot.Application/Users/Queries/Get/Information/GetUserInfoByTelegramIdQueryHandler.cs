@@ -148,6 +148,7 @@ namespace DoggetTelegramBot.Application.Users.Queries.Get.Information
                         u.Nickname,
                         u.FirstName,
                     })
+                    .ToList()
                     .OrderBy(u => u.UserId)
                     .ToList();
 

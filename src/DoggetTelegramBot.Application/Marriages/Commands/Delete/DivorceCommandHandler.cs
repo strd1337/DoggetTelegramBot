@@ -16,6 +16,9 @@ using MediatR;
 using DoggetTelegramBot.Domain.Common.Errors;
 using DoggetTelegramBot.Application.DTOs;
 using DoggetTelegramBot.Domain.Models.MarriageEntity.Enums;
+using DoggetTelegramBot.Application.Families.Commands.Create;
+using DoggetTelegramBot.Application.Families.Common;
+using DoggetTelegramBot.Application.Families.Commands.Delete;
 
 namespace DoggetTelegramBot.Application.Marriages.Commands.Delete
 {
@@ -83,7 +86,19 @@ namespace DoggetTelegramBot.Application.Marriages.Commands.Delete
 
             await UpdateSpousesMaritalStatus(spouses, cancellationToken);
 
+            var familyResult = await DeleteFamilyAsync(spouses, cancellationToken);
+
             await unitOfWork.SaveChangesAsync(cancellationToken);
+
+            logger.LogCommon(
+                Constants.Family.Messages.Deleted(familyResult.FamilyId),
+                TelegramEvents.Message,
+                Constants.LogColors.Delete);
+
+            logger.LogCommon(
+                Constants.Family.Messages.DeleteRequest(false),
+                TelegramEvents.Message,
+                Constants.LogColors.Request);
 
             logger.LogCommon(
                Constants.User.Messages.UpdatedSuccessfully(request.Spouses),
@@ -169,6 +184,25 @@ namespace DoggetTelegramBot.Application.Marriages.Commands.Delete
                 Constants.LogColors.Request);
 
             return transactionResult;
+        }
+
+        private async Task<FamilyResult> DeleteFamilyAsync(
+           List<User> spouses,
+           CancellationToken cancellationToken)
+        {
+            logger.LogCommon(
+                Constants.Family.Messages.DeleteRequest(),
+                TelegramEvents.Message,
+                Constants.LogColors.Request);
+
+            List<UserId> spouseIds = spouses
+                .Select(s => s.UserId)
+                .ToList();
+
+            DeleteFamilyCommand command = new(spouseIds);
+            var result = await mediator.Send(command, cancellationToken);
+
+            return result.Value;
         }
 
         private async Task RemoveKeysFromCacheAsync(

@@ -1,6 +1,5 @@
 using System.Globalization;
 using System.Text;
-using DoggetTelegramBot.Domain.Models.InventoryEntity;
 using DoggetTelegramBot.Domain.Models.ItemEntity;
 using DoggetTelegramBot.Domain.Models.ItemEntity.Enums;
 using PRTelegramBot.Extensions;

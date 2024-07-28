@@ -111,7 +111,8 @@ namespace DoggetTelegramBot.Presentation.Handlers.StepCommands
 
             handler.RegisterNextStep(SelectMoreAmountTypes);
 
-            var selectNextOrPreviousStepMessageOptions = ConfirmationMenuGenerator.Generate(update);
+            var selectNextOrPreviousStepMessageOptions = AddItemsMenuGenerator
+                .GenerateMoreAmountTypesConfirmationMenu();
 
             await PRTelegramBot.Helpers.Message.Send(
                 botClient,
@@ -120,7 +121,7 @@ namespace DoggetTelegramBot.Presentation.Handlers.StepCommands
                 selectNextOrPreviousStepMessageOptions);
         }
 
-        [InlineCallbackHandler<UserConfirmationCommand>(UserConfirmationCommand.Yes, UserConfirmationCommand.No)]
+        [InlineCallbackHandler<SelectAmountTypeConfirmationCommands>(SelectAmountTypeConfirmationCommands.Yes, SelectAmountTypeConfirmationCommands.No)]
         public static async Task SelectMoreAmountTypes(ITelegramBotClient botClient, Update update)
         {
             InlineCallback<EntityTCommand<bool>>? command = InlineCallback<EntityTCommand<bool>>

@@ -14,6 +14,15 @@ namespace DoggetTelegramBot.Domain.Models.FamilyEntity
 
         public static Family Create() => new(FamilyId.CreateUnique());
 
+        public void AddMembers(List<FamilyMember> familyMembers) =>
+            members.AddRange(familyMembers);
+
+        public override void Delete()
+        {
+            IsDeleted = true;
+            members.ForEach(m => m.Delete());
+        }
+
 #pragma warning disable CS8618
         private Family()
         {

@@ -48,8 +48,6 @@ namespace DoggetTelegramBot.Domain.Models.ItemEntity
 
         public void DiminishCount() => --Count;
 
-        public void Delete() => IsDeleted = true;
-
 #pragma warning disable CS8618
         private Item()
         {

@@ -39,7 +39,7 @@ namespace DoggetTelegramBot.Presentation.BotControllers
                 return;
             }
 
-            var menu = ConfirmationMenuGenerator.Generate(update);
+            var menu = MarriageMenuGenerator.GenerateConfirmationMenu(update);
 
             var message = await SendMessage(
                 botClient,
@@ -75,7 +75,7 @@ namespace DoggetTelegramBot.Presentation.BotControllers
                 return;
             }
 
-            var menu = ConfirmationMenuGenerator.Generate(update);
+            var menu = MarriageMenuGenerator.GenerateConfirmationMenu(update);
 
             var message = await SendMessage(
                 botClient,
