@@ -19,9 +19,9 @@ namespace DoggetTelegramBot.Application.Families.Commands.Create
 
             var family = unitOfWork.GetRepository<Family, FamilyId>()
                 .GetWhere(f => f.Members.Any(
-                            m => request.SpouseIds.Contains(m.UserId) &&
-                                m.IsPet(m.Role) &&
-                                !m.IsDeleted) &&
+                        m => request.SpouseIds.Contains(m.UserId) &&
+                            (m.Role == FamilyRole.Cat || m.Role == FamilyRole.Dog) &&
+                            !m.IsDeleted) &&
                         !f.IsDeleted,
                     nameof(Family.Members))
                 .FirstOrDefault();

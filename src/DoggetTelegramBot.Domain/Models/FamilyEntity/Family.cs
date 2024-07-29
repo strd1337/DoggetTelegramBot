@@ -14,6 +14,9 @@ namespace DoggetTelegramBot.Domain.Models.FamilyEntity
 
         public static Family Create() => new(FamilyId.CreateUnique());
 
+        public void AddMember(FamilyMember familyMember) =>
+            members.Add(familyMember);
+
         public void AddMembers(List<FamilyMember> familyMembers) =>
             members.AddRange(familyMembers);
 

@@ -10,7 +10,7 @@ using PRTelegramBot.Extensions;
 
 namespace DoggetTelegramBot.Presentation.Helpers.MenuGenerators
 {
-    public class AddItemsMenuGenerator
+    public static class AddItemsMenuGenerator
     {
         public static OptionMessage GenerateItemTypeMenu(int maxColumn = 3)
         {

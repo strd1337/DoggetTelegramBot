@@ -23,11 +23,6 @@ namespace DoggetTelegramBot.Domain.Models.FamilyEntity
         public static FamilyMember Create(UserId userId, FamilyRole role)
             => new(FamilyMemberId.CreateUnique(), userId, role);
 
-#pragma warning disable CA1822
-        public bool IsPet(FamilyRole role) =>
-            role is FamilyRole.Cat or FamilyRole.Dog;
-#pragma warning restore CA1822
-
 #pragma warning disable CS8618
         private FamilyMember()
         {

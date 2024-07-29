@@ -104,6 +104,7 @@ namespace DoggetTelegramBot.Presentation
         {
             services.AddScoped<ItemRequestHandler>();
             services.AddScoped<MarriageRequestHandler>();
+            services.AddScoped<FamilyRequestHandler>();
 
             return services;
         }

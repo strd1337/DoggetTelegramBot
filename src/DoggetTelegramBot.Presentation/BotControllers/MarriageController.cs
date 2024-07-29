@@ -19,7 +19,7 @@ namespace DoggetTelegramBot.Presentation.BotControllers
         ITelegramBotService botService) : BaseController(botService)
     {
         [ReplyMenuHandler(CommandComparison.Equals, StringComparison.OrdinalIgnoreCase, Constants.Marriage.ReplyKeys.Marry)]
-        public async Task Marry(ITelegramBotClient botClient, Update update)
+        public async Task MarryAsync(ITelegramBotClient botClient, Update update)
         {
             logger.LogCommon(update);
 
@@ -55,7 +55,7 @@ namespace DoggetTelegramBot.Presentation.BotControllers
         }
 
         [ReplyMenuHandler(CommandComparison.Equals, StringComparison.OrdinalIgnoreCase, Constants.Marriage.ReplyKeys.Divorce)]
-        public async Task Divorce(ITelegramBotClient botClient, Update update)
+        public async Task DivorceAsync(ITelegramBotClient botClient, Update update)
         {
             logger.LogCommon(update);
 

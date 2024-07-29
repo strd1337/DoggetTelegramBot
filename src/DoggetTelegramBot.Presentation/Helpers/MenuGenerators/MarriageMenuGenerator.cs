@@ -9,7 +9,7 @@ using DoggetTelegramBot.Presentation.Handlers.Common.Enums;
 
 namespace DoggetTelegramBot.Presentation.Helpers.MenuGenerators
 {
-    public sealed class MarriageMenuGenerator
+    public static class MarriageMenuGenerator
     {
         public static OptionMessage GenerateConfirmationMenu(Update update, int maxColumn = 2)
         {
