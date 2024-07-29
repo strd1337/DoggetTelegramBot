@@ -36,6 +36,11 @@ namespace DoggetTelegramBot.Presentation.BotControllers
                     Constants.Messages.NotFoundUserReply(
                         Constants.Marriage.ReplyKeys.Marry));
 
+                logger.LogCommon(
+                    Constants.Marriage.Messages.MarryRequest(false),
+                    TelegramEvents.Message,
+                    Constants.LogColors.Request);
+
                 return;
             }
 
@@ -71,6 +76,11 @@ namespace DoggetTelegramBot.Presentation.BotControllers
                     update,
                     Constants.Messages.NotFoundUserReply(
                         Constants.Marriage.ReplyKeys.Divorce));
+
+                logger.LogCommon(
+                    Constants.Marriage.Messages.DivorceRequest(false),
+                    TelegramEvents.Message,
+                    Constants.LogColors.Request);
 
                 return;
             }

@@ -46,6 +46,11 @@ namespace DoggetTelegramBot.Presentation.BotControllers
                     update,
                     Constants.Item.Messages.Purchase.ServerNamesNotFound);
 
+                logger.LogCommon(
+                    Constants.Item.Messages.PurchaseRequest(false),
+                    TelegramEvents.Message,
+                    Constants.LogColors.Request);
+
                 return;
             }
 

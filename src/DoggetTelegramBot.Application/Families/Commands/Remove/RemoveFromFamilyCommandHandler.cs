@@ -6,23 +6,23 @@ using DoggetTelegramBot.Application.Users.Common;
 using DoggetTelegramBot.Application.Users.Queries.Get;
 using DoggetTelegramBot.Domain.Common.Constants;
 using DoggetTelegramBot.Domain.Common.Enums;
-using DoggetTelegramBot.Domain.Common.Errors;
-using DoggetTelegramBot.Domain.Models.FamilyEntity;
 using DoggetTelegramBot.Domain.Models.FamilyEntity.Enums;
-using DoggetTelegramBot.Domain.Models.UserEntity;
+using DoggetTelegramBot.Domain.Models.FamilyEntity;
 using ErrorOr;
 using MediatR;
+using DoggetTelegramBot.Domain.Common.Errors;
+using DoggetTelegramBot.Domain.Models.UserEntity;
 
-namespace DoggetTelegramBot.Application.Families.Commands.Add
+namespace DoggetTelegramBot.Application.Families.Commands.Remove
 {
-    public sealed class AddToFamilyCommandHandler(
+    public sealed class RemoveFromFamilyCommandHandler(
         IUnitOfWork unitOfWork,
-        IBotLogger logger,
         IMediator mediator,
-        ITransactionService transactionService) : ICommandHandler<AddToFamilyCommand, FamilyResult>
+        IBotLogger logger,
+        ITransactionService transactionService) : ICommandHandler<RemoveFromFamilyCommand, FamilyResult>
     {
         public async Task<ErrorOr<FamilyResult>> Handle(
-            AddToFamilyCommand request,
+            RemoveFromFamilyCommand request,
             CancellationToken cancellationToken)
         {
             var familyRepository = unitOfWork.GetRepository<Family, FamilyId>();
@@ -39,24 +39,24 @@ namespace DoggetTelegramBot.Application.Families.Commands.Add
 
             var family = familyResult.Value;
 
-            var newFamilyMemberResult = await CheckAndGetNewFamilyMember(
-                request.NewMemberTelegramId,
+            var memberToRemoveResult = await CheckAndGetMemberToRemove(
+                request.MemberToRemoveTelegramId,
                 family,
                 cancellationToken);
 
-            if (newFamilyMemberResult.IsError)
+            if (memberToRemoveResult.IsError)
             {
-                return newFamilyMemberResult.Errors;
+                return memberToRemoveResult.Errors;
             }
 
-            var newFamilyUser = newFamilyMemberResult.Value;
+            var memberToRemove = memberToRemoveResult.Value;
 
             List<UserId> parentIds = family.Members
                 .Where(m => m.Role == FamilyRole.Parent)
                 .Select(m => m.UserId)
                 .ToList();
 
-            decimal amount = GetServiceFeeAmount(request.FamilyRole);
+            decimal amount = GetServiceFeeAmount(memberToRemove.Role);
 
             var transactionResult = await ExecuteServiceFeeAsync(
                 parentIds,
@@ -68,54 +68,13 @@ namespace DoggetTelegramBot.Application.Families.Commands.Add
                 return transactionResult.Errors;
             }
 
-            FamilyMember newFamilyMember = FamilyMember.Create(
-                newFamilyUser.UserId,
-                request.FamilyRole);
-
-            family.AddMember(newFamilyMember);
+            memberToRemove.Delete();
 
             await familyRepository.UpdateAsync(family);
 
             await unitOfWork.SaveChangesAsync(cancellationToken);
 
             return new FamilyResult(family.FamilyId);
-        }
-
-        private async Task<ErrorOr<User>> CheckAndGetNewFamilyMember(
-            long newFamilyMemberTelegramId,
-            Family family,
-            CancellationToken cancellationToken)
-        {
-            var newFamilyMemberResult = await GetUserByTelegramId(
-                newFamilyMemberTelegramId,
-                cancellationToken);
-
-            if (newFamilyMemberResult.IsError)
-            {
-                return newFamilyMemberResult.Errors;
-            }
-
-            var newFamilyUser = newFamilyMemberResult.Value.User;
-
-            bool isParent = family.Members
-                .Any(m => m.UserId == newFamilyUser.UserId &&
-                    m.Role == FamilyRole.Parent &&
-                    !m.IsDeleted);
-
-            if (isParent)
-            {
-                return Errors.Family.TurnParentIntoChildOrPet;
-            }
-
-            bool memberHasFamily = family.Members
-                .Any(m => m.UserId == newFamilyUser.UserId &&
-                    !(m.Role == FamilyRole.Cat ||
-                        m.Role == FamilyRole.Dog ||
-                        m.Role == FamilyRole.Son ||
-                        m.Role == FamilyRole.Daughter) &&
-                    !m.IsDeleted);
-
-            return memberHasFamily ? Errors.Family.NewMemberHasFamily : newFamilyUser;
         }
 
         private async Task<ErrorOr<Family>> GetFamilyByParentTelegramIdAsync(
@@ -143,6 +102,38 @@ namespace DoggetTelegramBot.Application.Families.Commands.Add
                     !f.IsDeleted);
 
             return family is null ? Errors.Family.UserFamilyNotFound : family;
+        }
+
+        private async Task<ErrorOr<FamilyMember>> CheckAndGetMemberToRemove(
+            long newFamilyMemberTelegramId,
+            Family family,
+            CancellationToken cancellationToken)
+        {
+            var memberToRemoveResult = await GetUserByTelegramId(
+                newFamilyMemberTelegramId,
+                cancellationToken);
+
+            if (memberToRemoveResult.IsError)
+            {
+                return memberToRemoveResult.Errors;
+            }
+
+            var userToRemove = memberToRemoveResult.Value.User;
+
+            bool isParent = family.Members
+                .Any(m => m.UserId == userToRemove.UserId &&
+                    m.Role == FamilyRole.Parent &&
+                    !m.IsDeleted);
+
+            if (isParent)
+            {
+                return Errors.Family.AttemptToRemoveParent;
+            }
+
+            var familyMember = family.Members
+                .FirstOrDefault(m => m.UserId == userToRemove.UserId && !m.IsDeleted);
+
+            return familyMember is null ? Errors.Family.FamilyMemberNotFound : familyMember;
         }
 
         private async Task<ErrorOr<GetUserResult>> GetUserByTelegramId(
@@ -190,7 +181,7 @@ namespace DoggetTelegramBot.Application.Families.Commands.Add
 
         private static decimal GetServiceFeeAmount(FamilyRole familyRole) =>
             familyRole is FamilyRole.Cat or FamilyRole.Dog ?
-            Constants.Family.Costs.AddPet :
-            Constants.Family.Costs.AddChild;
+            Constants.Family.Costs.RemovePet :
+            Constants.Family.Costs.RemoveChild;
     }
 }

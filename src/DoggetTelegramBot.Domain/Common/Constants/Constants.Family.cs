@@ -20,6 +20,11 @@ namespace DoggetTelegramBot.Domain.Common.Constants
                    $"Add to family request started." :
                    $"Add to family request ended.";
 
+                public static string RemoveFromFamilyRequest(bool isStarted = true) =>
+                   isStarted ?
+                   $"Remove from family request started." :
+                   $"Remove from family request ended.";
+
                 public static string CreateRequest(bool isStarted = true) =>
                     isStarted ?
                     $"Create a family request started." :

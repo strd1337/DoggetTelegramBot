@@ -5,7 +5,7 @@ using DoggetTelegramBot.Domain.Models.FamilyEntity.Enums;
 namespace DoggetTelegramBot.Application.Families.Commands.Add
 {
     public record AddToFamilyCommand(
-        long FamilyMemberTelegramId,
+        long ParentTelegramId,
         long NewMemberTelegramId,
         FamilyRole FamilyRole) : ICommand<FamilyResult>;
 }

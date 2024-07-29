@@ -20,10 +20,10 @@ namespace DoggetTelegramBot.Presentation.Handlers.Requests
     {
         public async Task HandleAddToFamilyAsync(ITelegramBotClient botClient, Update update, Message message)
         {
-            long familyMemberTelegramId = update.Message!.From!.Id;
+            long parentTelegramId = update.Message!.From!.Id;
 
             var userResponse = await ConfirmationState<AddToFamilyStepCache>.WaitForResponseAsync(
-                familyMemberTelegramId, Constants.Family.AddToFamilyTimeoutInSeconds);
+                parentTelegramId, Constants.Family.AddToFamilyTimeoutInSeconds);
 
             if (userResponse is null)
             {
@@ -38,7 +38,7 @@ namespace DoggetTelegramBot.Presentation.Handlers.Requests
                 long newMemberTelegramId = update.Message.ReplyToMessage!.From!.Id;
 
                 AddToFamilyCommand command = new(
-                    familyMemberTelegramId,
+                    parentTelegramId,
                     newMemberTelegramId,
                     userResponse.FamilyRole);
 
