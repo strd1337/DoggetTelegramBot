@@ -16,7 +16,7 @@ namespace DoggetTelegramBot.Presentation.Handlers.Commands
         {
             long currentUser = update.CallbackQuery!.From!.Id;
             long necessaryUser = update.CallbackQuery.Message!.ReplyToMessage!.From!.Id;
-            /*
+
             if (currentUser != necessaryUser)
             {
                 await botClient.AnswerCallbackQueryAsync(
@@ -25,7 +25,7 @@ namespace DoggetTelegramBot.Presentation.Handlers.Commands
 
                 return;
             }
-            */
+
             InlineCallback<EntityTCommand<bool>> command = InlineCallback<EntityTCommand<bool>>
                 .GetCommandByCallbackOrNull(update.CallbackQuery.Data!);
 
