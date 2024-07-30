@@ -19,7 +19,7 @@ namespace DoggetTelegramBot.Presentation.Common.Mapping.Users
                     src.MaritalStatus,
                     src.Privileges,
                     src.Marriages,
-                    src.Family));
+                    src.Families));
 
         private static string FormatUserInfoMessage(
             string? username,
@@ -29,15 +29,11 @@ namespace DoggetTelegramBot.Presentation.Common.Mapping.Users
             MaritalStatus maritalStatus,
             List<UserPrivilege> privileges,
             List<MarriageDto> marriages,
-            FamilyDto? family)
+            List<FamilyDto> families)
         {
-            StringBuilder sb = new("User information:\n");
+            StringBuilder sb = new("User information:\n\n");
 
-            sb.AppendLine(nickname is not null ?
-                $"Nickname: {nickname}" :
-                username is not null ?
-                $"Username: {username}" :
-                $"First name: {firstName}");
+            sb.AppendLine(GetDisplayName(firstName, username, nickname));
 
             sb.AppendLine($"Registered date: {registeredDate:dd-MM-yyyy}");
             sb.AppendLine($"Marital status: {maritalStatus.GetDescription()}");
@@ -48,9 +44,9 @@ namespace DoggetTelegramBot.Presentation.Common.Mapping.Users
                 FormatMarriagesInfo(ref sb, marriages);
             }
 
-            if (family is not null)
+            if (families.Count != 0)
             {
-                FormatFamilyInfo(ref sb, family);
+                FormatFamiliesInfo(ref sb, families);
             }
 
             return sb.ToString();
@@ -60,57 +56,53 @@ namespace DoggetTelegramBot.Presentation.Common.Mapping.Users
             ref StringBuilder sb,
             List<MarriageDto> marriages)
         {
-            sb.AppendLine("\nMarriages information:");
+            sb.AppendLine("\n\nMarriages information:\n");
 
             foreach (var marriage in marriages)
             {
                 sb.AppendLine(" Marriage:");
 
-                sb.Append("  Spouses: ");
-                foreach (var spouse in marriage.Spouses)
-                {
-                    if (spouse.Nickname is not null)
-                    {
-                        sb.Append($"  {spouse.Nickname} ");
-                    }
-                    else if (spouse.Username is not null)
-                    {
-                        sb.Append($"  {spouse.Username} ");
-                    }
-                    else
-                    {
-                        sb.Append($"  {spouse.FirstName} ");
-                    }
-                }
+                string spouses = string.Join(", ", marriage.Spouses.Select(GetDisplayName));
+                sb.AppendLine($"  Spouses: {spouses}");
 
-                sb.AppendLine($"\n  Marriage date: {marriage.MarriageDate:dd-MM-yyyy}");
+                sb.AppendLine($"  Marriage date: {marriage.MarriageDate:dd-MM-yyyy}");
                 if (marriage.DivorceDate is not null)
                 {
                     sb.AppendLine($"  Divorce date: {marriage.DivorceDate:dd-MM-yyyy}");
                 }
 
                 sb.AppendLine($"  Type: {marriage.Type.GetDescription()}");
-                sb.AppendLine($"  Status: {marriage.Status.GetDescription()}");
-                sb.AppendLine();
+                sb.AppendLine($"  Status: {marriage.Status.GetDescription()}\n");
             }
         }
 
-        private static void FormatFamilyInfo(
+        private static void FormatFamiliesInfo(
             ref StringBuilder sb,
-            FamilyDto family)
+            List<FamilyDto> families)
         {
-            sb.AppendLine("\nFamily information:");
-            sb.AppendLine($"Members:");
-            foreach (var member in family.Members)
-            {
-                sb.AppendLine(member.Nickname is not null ?
-                     $" Nickname: {member.Nickname}" :
-                     member.Username is not null ?
-                     $" Username: {member.Username}" :
-                     $" First name: {member.FirstName}");
+            sb.AppendLine("\nFamilies information:");
 
-                sb.AppendLine($" Role: {member.Role.GetDescription()}");
+            foreach (var family in families)
+            {
+                sb.AppendLine($"\nFamily:");
+                foreach (var member in family.Members)
+                {
+                    sb.AppendLine($" Members:");
+                    sb.AppendLine($" {GetDisplayName(member.FirstName, member.Username, member.Nickname)}");
+
+                    sb.AppendLine($" Role: {member.Role.GetDescription()}");
+                }
             }
         }
+
+        private static string GetDisplayName(SpouseDto spouse) =>
+            spouse.Nickname ?? spouse.Username ?? spouse.FirstName;
+
+        private static string GetDisplayName(string firstName, string? username, string? nickname) =>
+            nickname is not null ?
+            $"Nickname: {nickname}" :
+            username is not null ?
+            $"Username: {username}" :
+            $"First name: {firstName}";
     }
 }

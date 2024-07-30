@@ -25,7 +25,7 @@ namespace DoggetTelegramBot.Presentation.Handlers.Requests
             Message message)
         {
             bool? userResponse = await ConfirmationState<bool>.WaitForResponseAsync(
-                update.Message!.ReplyToMessage!.From!.Id);
+                update.Message!.From!.Id);// update.Message!.ReplyToMessage!.From!.Id);
 
             if (userResponse.HasValue && !userResponse.Value)
             {

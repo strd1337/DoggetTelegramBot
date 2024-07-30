@@ -3,10 +3,10 @@ using DoggetTelegramBot.Application.Families.Common;
 using DoggetTelegramBot.Application.Helpers;
 using DoggetTelegramBot.Domain.Models.UserEntity;
 
-namespace DoggetTelegramBot.Application.Families.Queries.Get.Information
+namespace DoggetTelegramBot.Application.Families.Queries.GetAll.Information
 {
-    public record GetFamilyInfoByUserIdQuery(UserId UserId) :
-        ICachedQuery<GetFamilyInfoResult>
+    public record GetAllFamiliesInfoByUserIdQuery(UserId UserId) :
+        ICachedQuery<GetAllFamiliesInfoResult>
     {
         public string CachedKey => CacheKeyGenerator.GetFamilyInfoByUserId(UserId);
 

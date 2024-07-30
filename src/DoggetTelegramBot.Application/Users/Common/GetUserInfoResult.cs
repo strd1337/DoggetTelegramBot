@@ -11,5 +11,5 @@ namespace DoggetTelegramBot.Application.Users.Common
         MaritalStatus MaritalStatus,
         List<UserPrivilege> Privileges,
         List<MarriageDto> Marriages,
-        FamilyDto? Family);
+        List<FamilyDto> Families);
 }

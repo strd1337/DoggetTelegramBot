@@ -35,10 +35,10 @@ namespace DoggetTelegramBot.Domain.Common.Constants
                     $"Delete a family request started." :
                     $"Delete a family request ended.";
 
-                public static string GetInformationRequest(bool isStarted = true) =>
+                public static string GetAllInformationRequest(bool isStarted = true) =>
                     isStarted ?
-                    $"Get family information request started." :
-                    $"Get family information request ended.";
+                    $"Get all families information request started." :
+                    $"Get all families information request ended.";
 
                 public static string Created(FamilyId familyId) =>
                     $"Family {familyId.Value} was created.";
@@ -46,11 +46,11 @@ namespace DoggetTelegramBot.Domain.Common.Constants
                 public static string Deleted(FamilyId familyId) =>
                     $"Family {familyId.Value} was deleted.";
 
-                public static string Retrieved(FamilyId familyId) =>
-                    $"Family {familyId.Value} was retrieved.";
+                public static string Retrieved(List<FamilyId> familyIds) =>
+                    $"Families {string.Join(",", familyIds.Select(id => id.Value))} were retrieved.";
 
                 public static string NotFoundRetrieved(UserId userId) =>
-                    $"Family was not retrieved using user id {userId.Value}.";
+                    $"Families were not retrieved using user id {userId.Value}.";
 
                 public static string NotFoundRetrieved(List<UserId> userIds) =>
                     $"Family was not retrieved using user ids {string.Join(",", userIds.Select(id => id.Value))}.";

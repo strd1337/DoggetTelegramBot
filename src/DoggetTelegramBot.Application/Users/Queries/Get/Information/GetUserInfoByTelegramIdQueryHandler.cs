@@ -2,7 +2,7 @@ using DoggetTelegramBot.Application.Common.CQRS;
 using DoggetTelegramBot.Application.Common.Interfaces;
 using DoggetTelegramBot.Application.Common.Services;
 using DoggetTelegramBot.Application.DTOs;
-using DoggetTelegramBot.Application.Families.Queries.Get.Information;
+using DoggetTelegramBot.Application.Families.Queries.GetAll.Information;
 using DoggetTelegramBot.Application.Marriages.Queries.GetAll.Information;
 using DoggetTelegramBot.Application.Users.Common;
 using DoggetTelegramBot.Domain.Common.Constants;
@@ -58,7 +58,7 @@ namespace DoggetTelegramBot.Application.Users.Queries.Get.Information
                 user.UserId,
                 cancellationToken);
 
-            var family = await GetUserFamilyInfoAsync(
+            var families = await GetUserFamiliesInfoAsync(
                 user.UserId,
                 cancellationToken);
 
@@ -70,7 +70,7 @@ namespace DoggetTelegramBot.Application.Users.Queries.Get.Information
                 user.MaritalStatus,
                 [.. user.Privileges],
                 marriages,
-                family);
+                families);
         }
 
         private async Task<List<MarriageDto>> GetUserMarriagesInfoAsync(
@@ -119,24 +119,26 @@ namespace DoggetTelegramBot.Application.Users.Queries.Get.Information
         }
 
 
-        private async Task<FamilyDto?> GetUserFamilyInfoAsync(
+        private async Task<List<FamilyDto>> GetUserFamiliesInfoAsync(
            UserId userId,
            CancellationToken cancellationToken)
         {
             logger.LogCommon(
-               Constants.Family.Messages.GetInformationRequest(),
+               Constants.Family.Messages.GetAllInformationRequest(),
                TelegramEvents.Message,
                Constants.LogColors.Request);
 
-            GetFamilyInfoByUserIdQuery query = new(userId);
+            GetAllFamiliesInfoByUserIdQuery query = new(userId);
             var result = await mediator.Send(query, cancellationToken);
 
-            FamilyDto? family = null;
+            List<FamilyDto>? families = [];
 
             if (!result.IsError)
             {
-                List<UserId> userIds = result.Value.Members
+                List<UserId> userIds = result.Value.Families
+                    .SelectMany(family => family.Members)
                     .Select(m => UserId.Create(m.UserId.Value))
+                    .Distinct()
                     .ToList();
 
                 var users = unitOfWork.GetRepository<User, UserId>()
@@ -148,35 +150,37 @@ namespace DoggetTelegramBot.Application.Users.Queries.Get.Information
                         u.Nickname,
                         u.FirstName,
                     })
-                    .ToList()
-                    .OrderBy(u => u.UserId)
                     .ToList();
 
-                var membersResult = result.Value.Members.OrderBy(m => m.UserId.Value);
+                var usersDictionary = users.ToDictionary(u => u.UserId);
 
-                List<FamilyMemberDto> members = membersResult
-                    .Join(
-                        users,
-                        member => member.UserId.Value,
-                        user => user.UserId,
-                        (member, user) => new FamilyMemberDto(
-                            user.Username,
-                            user.Nickname,
-                            user.FirstName,
-                            member.Role
-                        )
-                    )
-                    .ToList();
+                foreach (var family in result.Value.Families)
+                {
+                    List<FamilyMemberDto> members = family.Members
+                        .OrderBy(m => m.UserId.Value)
+                        .Select(m =>
+                        {
+                            var userIdValue = m.UserId.Value;
+                            var user = usersDictionary[userIdValue];
 
-                family = new(members);
+                            return new FamilyMemberDto(
+                                user.Username,
+                                user.Nickname,
+                                user.FirstName,
+                                m.Role);
+                        })
+                        .ToList();
+
+                    families.Add(new FamilyDto(members));
+                }
             }
 
             logger.LogCommon(
-                Constants.Family.Messages.GetInformationRequest(false),
+                Constants.Family.Messages.GetAllInformationRequest(false),
                 TelegramEvents.Message,
                 Constants.LogColors.Request);
 
-            return family;
+            return families;
         }
     }
 }
