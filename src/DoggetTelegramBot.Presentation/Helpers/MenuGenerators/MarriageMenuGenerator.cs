@@ -9,18 +9,18 @@ using DoggetTelegramBot.Presentation.Handlers.Common.Enums;
 
 namespace DoggetTelegramBot.Presentation.Helpers.MenuGenerators
 {
-    public sealed class ConfirmationMenuGenerator
+    public static class MarriageMenuGenerator
     {
-        public static OptionMessage Generate(Update update, int maxColumn = 2)
+        public static OptionMessage GenerateConfirmationMenu(Update update, int maxColumn = 2)
         {
             InlineCallback<EntityTCommand<bool>> yes = new(
-                UserConfirmationCommand.Yes.GetDescription(),
-                UserConfirmationCommand.Yes,
+                MarriageConfirmationCommands.Yes.GetDescription(),
+                MarriageConfirmationCommands.Yes,
                 new EntityTCommand<bool>(true));
 
             InlineCallback<EntityTCommand<bool>> no = new(
-                UserConfirmationCommand.No.GetDescription(),
-                UserConfirmationCommand.No,
+                MarriageConfirmationCommands.No.GetDescription(),
+                MarriageConfirmationCommands.No,
                 new EntityTCommand<bool>(false));
 
             List<IInlineContent> menu = [yes, no];

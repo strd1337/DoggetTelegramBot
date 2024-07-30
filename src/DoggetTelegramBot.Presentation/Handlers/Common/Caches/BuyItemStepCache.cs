@@ -20,6 +20,8 @@ namespace DoggetTelegramBot.Presentation.Handlers.Common.Caches
         public bool ClearData()
         {
             ServerName = string.Empty;
+            Type = default;
+            AmountType = default;
             return true;
         }
     }

@@ -22,7 +22,7 @@ namespace DoggetTelegramBot.Presentation.BotControllers
         ITelegramBotService botService) : BaseController(botService)
     {
         [ReplyMenuHandler(CommandComparison.Equals, StringComparison.OrdinalIgnoreCase, Constants.Inventory.ReplyKeys.GetInfo)]
-        public async Task GetInfo(ITelegramBotClient botClient, Update update)
+        public async Task GetInfoAsync(ITelegramBotClient botClient, Update update)
         {
             logger.LogCommon(update);
 
@@ -45,7 +45,7 @@ namespace DoggetTelegramBot.Presentation.BotControllers
         }
 
         [ReplyMenuHandler(CommandComparison.Contains, StringComparison.OrdinalIgnoreCase, Constants.Inventory.ReplyKeys.Transfer)]
-        public async Task Transfer(ITelegramBotClient botClient, Update update)
+        public async Task TransferAsync(ITelegramBotClient botClient, Update update)
         {
             logger.LogCommon(update);
 
@@ -67,20 +67,20 @@ namespace DoggetTelegramBot.Presentation.BotControllers
                     Constants.Messages.NotFoundUserReply(
                         Constants.Inventory.ReplyKeys.Transfer,
                         Constants.Inventory.ReplyKeys.TransferKey));
-
-                return;
             }
+            else
+            {
+                TransferMoneyCommand command = new(
+                    update.Message.From!.Id,
+                    update.Message.ReplyToMessage.From!.Id,
+                    amount);
 
-            TransferMoneyCommand command = new(
-                update.Message.From!.Id,
-                update.Message.ReplyToMessage.From!.Id,
-                amount);
+                var result = await service.Send(command);
 
-            var result = await service.Send(command);
+                var response = result.Match(mapper.Map<Response>, Problem);
 
-            var response = result.Match(mapper.Map<Response>, Problem);
-
-            await SendReplyMessage(botClient, update, response.Message);
+                await SendReplyMessage(botClient, update, response.Message);
+            }
 
             logger.LogCommon(
                Constants.Inventory.Messages.TransferRequest(false),

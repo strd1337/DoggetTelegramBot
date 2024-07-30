@@ -28,7 +28,7 @@ namespace DoggetTelegramBot.Presentation.BotControllers
     {
         [ReplyMenuHandler(CommandComparison.Equals, StringComparison.OrdinalIgnoreCase, Constants.Item.ReplyKeys.Purchase)]
         [RequiredTypeChat(ChatType.Private)]
-        public async Task Purchase(ITelegramBotClient botClient, Update update)
+        public async Task PurchaseAsync(ITelegramBotClient botClient, Update update)
         {
             logger.LogCommon(update);
 
@@ -45,6 +45,11 @@ namespace DoggetTelegramBot.Presentation.BotControllers
                     botClient,
                     update,
                     Constants.Item.Messages.Purchase.ServerNamesNotFound);
+
+                logger.LogCommon(
+                    Constants.Item.Messages.PurchaseRequest(false),
+                    TelegramEvents.Message,
+                    Constants.LogColors.Request);
 
                 return;
             }
@@ -72,7 +77,7 @@ namespace DoggetTelegramBot.Presentation.BotControllers
         [ReplyMenuHandler(CommandComparison.Equals, StringComparison.OrdinalIgnoreCase, Constants.Item.ReplyKeys.Add)]
         [RequiredTypeChat(ChatType.Private)]
         [Access((int)UserPrivilege.Admin)]
-        public async Task Add(ITelegramBotClient botClient, Update update)
+        public async Task AddAsync(ITelegramBotClient botClient, Update update)
         {
             logger.LogCommon(update);
 

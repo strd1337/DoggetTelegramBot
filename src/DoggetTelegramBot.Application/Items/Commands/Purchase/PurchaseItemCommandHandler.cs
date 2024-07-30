@@ -180,10 +180,10 @@ namespace DoggetTelegramBot.Application.Items.Commands.Purchase
                     Constants.Item.PurchaseUsageTime,
                     allowedAccessDate);
             }
-
+            Console.WriteLine(dateTimeProvider.UtcNow);
             await cacheService.SetUsageTimeAsync(
                 key,
-                dateTimeProvider.UtcNow,
+                dateTimeProvider.UtcNow.ToLocalTime(),
                 Constants.Item.PurchaseUsageTime,
                 cancellationToken);
 

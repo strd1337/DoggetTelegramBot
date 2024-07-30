@@ -11,7 +11,7 @@ namespace DoggetTelegramBot.Presentation.Handlers.Commands
 {
     public class MarriageCommandsHandler
     {
-        [InlineCallbackHandler<UserConfirmationCommand>(UserConfirmationCommand.Yes, UserConfirmationCommand.No)]
+        [InlineCallbackHandler<MarriageConfirmationCommands>(MarriageConfirmationCommands.Yes, MarriageConfirmationCommands.No)]
         public static async Task HandleUserAgreementResponse(ITelegramBotClient botClient, Update update)
         {
             long currentUser = update.CallbackQuery!.From!.Id;

@@ -26,6 +26,8 @@ namespace DoggetTelegramBot.Domain.Common.Entities
             return hash.ToHashCode();
         }
 
+        public virtual void Delete() => IsDeleted = true;
+
         protected Entity()
         {
         }

@@ -22,7 +22,7 @@ namespace DoggetTelegramBot.Presentation.BotControllers
         ITelegramBotService botService) : BaseController(botService)
     {
         [ReplyMenuHandler(CommandComparison.Equals, StringComparison.OrdinalIgnoreCase, Constants.User.ReplyKeys.GetMyInfo)]
-        public async Task GetInfo(ITelegramBotClient botClient, Update update)
+        public async Task GetInfoAsync(ITelegramBotClient botClient, Update update)
         {
             logger.LogCommon(update);
 
@@ -45,7 +45,7 @@ namespace DoggetTelegramBot.Presentation.BotControllers
         }
 
         [ReplyMenuHandler(CommandComparison.Contains, StringComparison.OrdinalIgnoreCase, Constants.User.ReplyKeys.UpdateNickname)]
-        public async Task UpdateNickname(ITelegramBotClient botClient, Update update)
+        public async Task UpdateNicknameAsync(ITelegramBotClient botClient, Update update)
         {
             logger.LogCommon(update);
 
@@ -75,7 +75,7 @@ namespace DoggetTelegramBot.Presentation.BotControllers
         }
 
         [ReplyMenuHandler(CommandComparison.Equals, StringComparison.OrdinalIgnoreCase, Constants.User.ReplyKeys.DeleteNickname)]
-        public async Task DeleteNickname(ITelegramBotClient botClient, Update update)
+        public async Task DeleteNicknameAsync(ITelegramBotClient botClient, Update update)
         {
             logger.LogCommon(update);
 

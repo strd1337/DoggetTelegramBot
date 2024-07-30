@@ -10,7 +10,7 @@ using PRTelegramBot.Extensions;
 
 namespace DoggetTelegramBot.Presentation.Helpers.MenuGenerators
 {
-    public class AddItemsMenuGenerator
+    public static class AddItemsMenuGenerator
     {
         public static OptionMessage GenerateItemTypeMenu(int maxColumn = 3)
         {
@@ -85,6 +85,30 @@ namespace DoggetTelegramBot.Presentation.Helpers.MenuGenerators
             OptionMessage options = new()
             {
                 MenuInlineKeyboardMarkup = inlineKeyboardMenu,
+            };
+
+            return options;
+        }
+
+        public static OptionMessage GenerateMoreAmountTypesConfirmationMenu(int maxColumn = 2)
+        {
+            InlineCallback<EntityTCommand<bool>> yes = new(
+                SelectAmountTypeConfirmationCommands.Yes.GetDescription(),
+                SelectAmountTypeConfirmationCommands.Yes,
+                new EntityTCommand<bool>(true));
+
+            InlineCallback<EntityTCommand<bool>> no = new(
+                SelectAmountTypeConfirmationCommands.No.GetDescription(),
+                SelectAmountTypeConfirmationCommands.No,
+                new EntityTCommand<bool>(false));
+
+            List<IInlineContent> menu = [yes, no];
+
+            var inlineKeyboard = MenuGenerator.InlineKeyboard(maxColumn, menu);
+
+            OptionMessage options = new()
+            {
+                MenuInlineKeyboardMarkup = inlineKeyboard
             };
 
             return options;

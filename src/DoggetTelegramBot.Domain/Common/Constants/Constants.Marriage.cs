@@ -89,8 +89,8 @@ namespace DoggetTelegramBot.Domain.Common.Constants
 
             public static class ReplyKeys
             {
-                public const string Marry = $"+marriage";
-                public const string Divorce = $"+divorce";
+                public const string Marry = "+marriage";
+                public const string Divorce = "+divorce";
             }
 
             public static class Costs

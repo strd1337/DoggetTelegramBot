@@ -21,6 +21,8 @@ namespace DoggetTelegramBot.Presentation.Handlers.Common.Caches
         {
             ServerName = string.Empty;
             Values = [];
+            Type = default;
+            AmountType = default;
             return true;
         }
     }
