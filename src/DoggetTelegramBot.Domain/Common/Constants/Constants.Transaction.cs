@@ -20,6 +20,16 @@ namespace DoggetTelegramBot.Domain.Common.Constants
                    isStarted ?
                    $"Execute purchase transaction request started." :
                    $"Execute purchase transaction request ended.";
+
+                public static string ExecuteUserReward(bool isStarted = true) =>
+                   isStarted ?
+                   $"Execute user reward transaction request started." :
+                   $"Execute user reward transaction request ended.";
+
+                public static string ExecuteUserPenalty(bool isStarted = true) =>
+                   isStarted ?
+                   $"Execute user penalty transaction request started." :
+                   $"Execute user penalty transaction request ended.";
             }
         }
     }

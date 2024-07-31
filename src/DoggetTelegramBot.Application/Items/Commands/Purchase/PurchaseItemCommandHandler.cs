@@ -22,7 +22,7 @@ namespace DoggetTelegramBot.Application.Items.Commands.Purchase
         ICacheService cacheService,
         ITransactionService transactionService,
         IMediator mediator,
-        IDateTimeProvider dateTimeProvider) : ICommandHandler<PurchaseItemCommand, PurchaseItemResult>
+        CommandUsageManager commandUsage) : ICommandHandler<PurchaseItemCommand, PurchaseItemResult>
     {
         public async Task<ErrorOr<PurchaseItemResult>> Handle(
             PurchaseItemCommand request, CancellationToken cancellationToken)
@@ -48,9 +48,10 @@ namespace DoggetTelegramBot.Application.Items.Commands.Purchase
                 return itemResult.Errors;
             }
 
-            var commandUsageResult = await CheckAndSetCommandUsageAsync(
+            var commandUsageResult = await commandUsage.CheckCommandUsageTimeAsync(
                 request.TelegramId,
                 nameof(PurchaseItemCommand),
+                Constants.Item.PurchaseUsageTime,
                 cancellationToken);
 
             if (commandUsageResult.IsError)
@@ -75,6 +76,12 @@ namespace DoggetTelegramBot.Application.Items.Commands.Purchase
             await DiminishCountAndUpdateItem(itemRepository, item, cancellationToken);
 
             await RemoveKeysFromCacheAsync(user, cancellationToken);
+
+            await commandUsage.SetCommandUsageTimeAsync(
+                request.TelegramId,
+                nameof(PurchaseItemCommand),
+                Constants.Item.PurchaseUsageTime,
+                cancellationToken);
 
             return new PurchaseItemResult(item.Value);
         }
@@ -160,34 +167,6 @@ namespace DoggetTelegramBot.Application.Items.Commands.Purchase
                 Constants.LogColors.Request);
 
             return transactionResult;
-        }
-
-        private async Task<ErrorOr<bool>> CheckAndSetCommandUsageAsync(
-            long telegramId,
-            string commandName,
-            CancellationToken cancellationToken)
-        {
-            string key = CacheKeyGenerator.CommandUsageByTelegramId(telegramId, commandName);
-
-            (bool hasValue, DateTime? cachedTime) = await cacheService
-                .TryGetValueAsync<DateTime>(key, cancellationToken);
-
-            if (hasValue)
-            {
-                var allowedAccessDate = cachedTime.Value.Add(Constants.Item.PurchaseUsageTime);
-
-                return Errors.Permissions.UsageTime(
-                    Constants.Item.PurchaseUsageTime,
-                    allowedAccessDate);
-            }
-            Console.WriteLine(dateTimeProvider.UtcNow);
-            await cacheService.SetUsageTimeAsync(
-                key,
-                dateTimeProvider.UtcNow.ToLocalTime(),
-                Constants.Item.PurchaseUsageTime,
-                cancellationToken);
-
-            return !hasValue;
         }
 
         private async Task<ErrorOr<GetUserResult>> GetUserByTelegramId(

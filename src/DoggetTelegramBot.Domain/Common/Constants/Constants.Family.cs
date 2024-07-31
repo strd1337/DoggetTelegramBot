@@ -56,7 +56,7 @@ namespace DoggetTelegramBot.Domain.Common.Constants
                     $"Family was not retrieved using user ids {string.Join(",", userIds.Select(id => id.Value))}.";
 
                 public static string SelectFamilyRoleRequest =>
-                    $"{Constants.Messages.FormatTimeIntoString(AddToFamilyTimeoutInSeconds)} Please, select one of the roles:";
+                    $"{Constants.Messages.FormatChoosingTimeIntoString(AddToFamilyTimeoutInSeconds)} Please, select one of the roles:";
 
                 public static class AddToFamily
                 {

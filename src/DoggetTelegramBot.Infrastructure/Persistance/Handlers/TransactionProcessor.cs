@@ -2,7 +2,6 @@ using DoggetTelegramBot.Application.Common.Interfaces;
 using DoggetTelegramBot.Domain.Common.Errors;
 using DoggetTelegramBot.Domain.Models.InventoryEntity;
 using DoggetTelegramBot.Domain.Models.TransactionEntity;
-using DoggetTelegramBot.Domain.Models.TransactionEntity.Enums;
 using DoggetTelegramBot.Domain.Models.UserEntity;
 using ErrorOr;
 
@@ -14,29 +13,6 @@ namespace DoggetTelegramBot.Infrastructure.Persistance.Processors
         IGenericRepository<User, UserId> userRepository)
     {
         public async Task<ErrorOr<bool>> ProcessTransactionAsync(
-            Transaction transaction,
-            CancellationToken cancellationToken) =>
-                transaction.Type is TransactionType.Purchase ?
-                    await ProcessPurchaseTransactionAsync(transaction, cancellationToken) :
-                    await ProcessOtherTransactionAsync(transaction, cancellationToken);
-
-        private async Task<ErrorOr<bool>> ProcessPurchaseTransactionAsync(
-            Transaction transaction,
-            CancellationToken cancellationToken)
-        {
-            var findAndUpdateResult = await FindAndUpdateToInventory(transaction, cancellationToken);
-
-            if (findAndUpdateResult.IsError)
-            {
-                return findAndUpdateResult;
-            }
-
-            await transactionRepository.AddAsync(transaction, cancellationToken);
-
-            return true;
-        }
-
-        private async Task<ErrorOr<bool>> ProcessOtherTransactionAsync(
             Transaction transaction,
             CancellationToken cancellationToken)
         {
@@ -65,10 +41,7 @@ namespace DoggetTelegramBot.Infrastructure.Persistance.Processors
 
             if (transaction.ToUserId is not null)
             {
-                var findAndUpdateResult = await FindAndUpdateToInventory(
-                    transaction,
-                    cancellationToken,
-                    false);
+                var findAndUpdateResult = await FindAndUpdateToInventory(transaction, cancellationToken);
 
                 if (findAndUpdateResult.IsError)
                 {
@@ -110,7 +83,7 @@ namespace DoggetTelegramBot.Infrastructure.Persistance.Processors
         private async Task<ErrorOr<bool>> FindAndUpdateToInventory(
             Transaction transaction,
             CancellationToken cancellationToken,
-            bool isPurchase = true)
+            bool isFromUser = false)
         {
             var inventoryResult = await GetInventory(transaction, cancellationToken);
 
@@ -122,7 +95,7 @@ namespace DoggetTelegramBot.Infrastructure.Persistance.Processors
             var checkAndUpdateResult = await CheckAndUpdateInventory(
                 inventoryResult.Value,
                 transaction,
-                isPurchase);
+                isFromUser);
 
             return checkAndUpdateResult.IsError ?
                 checkAndUpdateResult.Errors :
@@ -153,14 +126,14 @@ namespace DoggetTelegramBot.Infrastructure.Persistance.Processors
         private async Task<ErrorOr<bool>> CheckAndUpdateInventory(
             Inventory inventory,
             Transaction transaction,
-            bool isPurchase = true)
+            bool isFromUser = true)
         {
             if (!inventory.HasSufficientBalance(transaction.Amount))
             {
                 return Errors.Inventory.InsufficientBalance;
             }
 
-            if (isPurchase)
+            if (isFromUser)
             {
                 inventory.DeductBalance(transaction.Amount);
             }
