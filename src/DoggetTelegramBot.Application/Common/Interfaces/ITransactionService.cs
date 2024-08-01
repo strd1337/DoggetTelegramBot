@@ -6,7 +6,7 @@ namespace DoggetTelegramBot.Application.Common.Interfaces
     public interface ITransactionService
     {
         Task<ErrorOr<bool>> ExecuteServiceFeeAsync(
-            List<UserId> userIds,
+            List<UserId> fromUserIds,
             decimal amount,
             CancellationToken cancellationToken = default);
 
@@ -17,19 +17,17 @@ namespace DoggetTelegramBot.Application.Common.Interfaces
             CancellationToken cancellationToken = default);
 
         Task<ErrorOr<bool>> ExecutePurchaseItemsAsync(
-            UserId userId,
+            UserId fromUserId,
             decimal amount,
             CancellationToken cancellationToken = default);
 
         Task<ErrorOr<bool>> ExecuteRewardUserAsync(
-            UserId fromUserId,
             UserId toUserId,
             decimal amount,
             CancellationToken cancellationToken = default);
 
         Task<ErrorOr<bool>> ExecuteUserPenaltyAsync(
             UserId fromUserId,
-            UserId toUserId,
             decimal amount,
             CancellationToken cancellationToken = default);
     }

@@ -9,11 +9,11 @@ namespace DoggetTelegramBot.Infrastructure.Persistance.Services
         : ITransactionService
     {
         public async Task<ErrorOr<bool>> ExecuteServiceFeeAsync(
-            List<UserId> userIds,
+            List<UserId> fromUserIds,
             decimal amount,
             CancellationToken cancellationToken = default)
         {
-            Transaction transaction = Transaction.CreateServiceFee(userIds, amount);
+            Transaction transaction = Transaction.CreateServiceFee(fromUserIds, amount);
             return await unitOfWork.ProcessTransactionAsync(transaction, cancellationToken);
         }
 
@@ -28,31 +28,29 @@ namespace DoggetTelegramBot.Infrastructure.Persistance.Services
         }
 
         public async Task<ErrorOr<bool>> ExecutePurchaseItemsAsync(
-            UserId userId,
+            UserId fromUserId,
             decimal amount,
             CancellationToken cancellationToken = default)
         {
-            Transaction transaction = Transaction.CreatePurchase(userId, amount);
+            Transaction transaction = Transaction.CreatePurchase(fromUserId, amount);
             return await unitOfWork.ProcessTransactionAsync(transaction, cancellationToken);
         }
 
         public async Task<ErrorOr<bool>> ExecuteRewardUserAsync(
-            UserId fromUserId,
             UserId toUserId,
             decimal amount,
             CancellationToken cancellationToken = default)
         {
-            Transaction transaction = Transaction.CreateReward(fromUserId, toUserId, amount);
+            Transaction transaction = Transaction.CreateReward(toUserId, amount);
             return await unitOfWork.ProcessTransactionAsync(transaction, cancellationToken);
         }
 
         public async Task<ErrorOr<bool>> ExecuteUserPenaltyAsync(
             UserId fromUserId,
-            UserId toUserId,
             decimal amount,
             CancellationToken cancellationToken = default)
         {
-            Transaction transaction = Transaction.CreatePenalty(fromUserId, toUserId, amount);
+            Transaction transaction = Transaction.CreatePenalty(fromUserId, amount);
             return await unitOfWork.ProcessTransactionAsync(transaction, cancellationToken);
         }
     }

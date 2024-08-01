@@ -1,4 +1,5 @@
 using DoggetTelegramBot.Application.Common.Behaviors;
+using DoggetTelegramBot.Application.Helpers;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace DoggetTelegramBot.Application
@@ -15,6 +16,8 @@ namespace DoggetTelegramBot.Application
                 config.AddOpenBehavior(typeof(ValidationBehavior<,>));
                 config.AddOpenBehavior(typeof(QueryCachingPipelineBehavior<,>));
             });
+
+            services.AddSingleton<CommandUsageManager>();
 
             return services;
         }

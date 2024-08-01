@@ -64,7 +64,7 @@ namespace DoggetTelegramBot.Domain.Common.Constants
                         CultureInfo.InvariantCulture,
                         $"{(requesterUsername is not null ? $"@{requesterUsername}" : requesterFirstName)}? "));
 
-                    sb.Append(Constants.Messages.FormatTimeIntoString());
+                    sb.Append(Constants.Messages.FormatChoosingTimeIntoString());
 
                     return sb.ToString();
                 }

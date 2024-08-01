@@ -35,22 +35,20 @@ namespace DoggetTelegramBot.Domain.Models.TransactionEntity
             };
 
         public static Transaction CreatePurchase(
-            UserId toUserId,
+            UserId fromUserId,
             decimal amount) => new()
             {
                 TransactionId = TransactionId.CreateUnique(),
-                ToUserId = toUserId,
+                FromUserIds = [fromUserId],
                 Amount = amount,
                 Type = TransactionType.Purchase
             };
 
         public static Transaction CreateReward(
-            UserId fromUserId,
             UserId toUserId,
             decimal amount) => new()
             {
                 TransactionId = TransactionId.CreateUnique(),
-                FromUserIds = [fromUserId],
                 ToUserId = toUserId,
                 Amount = amount,
                 Type = TransactionType.Reward
@@ -58,12 +56,10 @@ namespace DoggetTelegramBot.Domain.Models.TransactionEntity
 
         public static Transaction CreatePenalty(
             UserId fromUserId,
-            UserId toUserId,
             decimal amount) => new()
             {
                 TransactionId = TransactionId.CreateUnique(),
                 FromUserIds = [fromUserId],
-                ToUserId = toUserId,
                 Amount = amount,
                 Type = TransactionType.Penalty
             };

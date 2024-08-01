@@ -48,7 +48,7 @@ namespace DoggetTelegramBot.Domain.Common.Constants
                     $"Items {string.Join(",", itemIds.Select(id => id.Value))} were created.";
 
                 public static string SelectItemTypeRequest(bool isPurchase = true) =>
-                    $"{Constants.Messages.FormatTimeIntoString(isPurchase ? PurchaseTimeoutInSeconds : AddTimeoutInSeconds)} Please, select one of the items:";
+                    $"{Constants.Messages.FormatChoosingTimeIntoString(isPurchase ? PurchaseTimeoutInSeconds : AddTimeoutInSeconds)} Please, select one of the items:";
 
                 public static string SelectItemAmountTypeRequest(string serverName) =>
                     $"You have selected {serverName}. Please, select one of the amounts:";
