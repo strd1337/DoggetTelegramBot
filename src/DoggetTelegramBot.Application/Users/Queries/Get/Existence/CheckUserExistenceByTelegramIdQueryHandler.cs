@@ -22,12 +22,14 @@ namespace DoggetTelegramBot.Application.Users.Queries.Get.Existence
             CancellationToken cancellationToken)
         {
             var user = unitOfWork.GetRepository<User, UserId>()
-                .GetWhere(u => u.TelegramId == request.TelegramId && !u.IsDeleted)
+                .GetWhere(u => u.TelegramId == request.TelegramId)
                 .Select(u => new
                 {
                     u.TelegramId,
                     u.Username,
                     u.FirstName,
+                    u.InventoryId,
+                    u.IsDeleted,
                 })
                 .FirstOrDefault();
 
@@ -53,19 +55,28 @@ namespace DoggetTelegramBot.Application.Users.Queries.Get.Existence
                     Constants.LogColors.Get);
 
                 if (user.FirstName != request.FirstName ||
-                    user.Username != request.Username)
+                    user.Username != request.Username ||
+                    user.IsDeleted is true)
                 {
+                    logger.LogCommon(
+                       Constants.User.Messages.UpdateRequest(),
+                       TelegramEvents.Register,
+                       Constants.LogColors.Request);
+
                     UpdateUserDetailsByTelegramIdCommand command = new(
                         request.TelegramId,
                         request.Username,
-                        request.FirstName);
+                        request.FirstName,
+                        user.IsDeleted);
 
-                    _ = await mediator.Send(command, cancellationToken);
+                    var result = await mediator.Send(command, cancellationToken);
 
                     logger.LogCommon(
-                        Constants.User.Messages.UpdatedSuccessfully(request.TelegramId),
-                        TelegramEvents.Register,
-                        Constants.LogColors.Update);
+                       Constants.User.Messages.UpdateRequest(false),
+                       TelegramEvents.Register,
+                       Constants.LogColors.Request);
+
+                    return result.Value;
                 }
             }
 

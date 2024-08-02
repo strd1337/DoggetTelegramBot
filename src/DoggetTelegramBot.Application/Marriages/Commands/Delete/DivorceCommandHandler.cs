@@ -16,7 +16,6 @@ using MediatR;
 using DoggetTelegramBot.Domain.Common.Errors;
 using DoggetTelegramBot.Application.DTOs;
 using DoggetTelegramBot.Domain.Models.MarriageEntity.Enums;
-using DoggetTelegramBot.Application.Families.Commands.Create;
 using DoggetTelegramBot.Application.Families.Common;
 using DoggetTelegramBot.Application.Families.Commands.Delete;
 

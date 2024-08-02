@@ -128,13 +128,13 @@ namespace DoggetTelegramBot.Infrastructure.Persistance.Processors
             Transaction transaction,
             bool isFromUser = true)
         {
-            if (!inventory.HasSufficientBalance(transaction.Amount))
-            {
-                return Errors.Inventory.InsufficientBalance;
-            }
-
             if (isFromUser)
             {
+                if (!inventory.HasSufficientBalance(transaction.Amount))
+                {
+                    return Errors.Inventory.InsufficientBalance;
+                }
+
                 inventory.DeductBalance(transaction.Amount);
             }
             else

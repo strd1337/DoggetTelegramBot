@@ -18,6 +18,12 @@ namespace DoggetTelegramBot.Application.Common.Services
             TimeSpan? expiration = null,
             CancellationToken cancellationToken = default);
 
+        Task SetSlidingExpirationAsync<T>(
+            string key,
+            T value,
+            TimeSpan? expiration = null,
+            CancellationToken cancellationToken = default);
+
         Task<(bool hasValue, T? value)> TryGetValueAsync<T>(
             string key,
             CancellationToken cancellationToken = default);

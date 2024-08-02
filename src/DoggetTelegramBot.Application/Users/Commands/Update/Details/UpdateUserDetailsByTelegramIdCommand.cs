@@ -6,5 +6,6 @@ namespace DoggetTelegramBot.Application.Users.Commands.Update.Details
     public record UpdateUserDetailsByTelegramIdCommand(
         long TelegramId,
         string? Username,
-        string FirstName) : ICommand<UpdateResult>;
+        string FirstName,
+        bool IsDeleted = false) : ICommand<UpdateResult>;
 }

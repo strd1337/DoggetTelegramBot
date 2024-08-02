@@ -21,7 +21,7 @@ namespace DoggetTelegramBot.Domain.Common.Constants
                    $"Execute purchase transaction request started." :
                    $"Execute purchase transaction request ended.";
 
-                public static string ExecuteUserReward(bool isStarted = true) =>
+                public static string ExecuteRewardUser(bool isStarted = true) =>
                    isStarted ?
                    $"Execute user reward transaction request started." :
                    $"Execute user reward transaction request ended.";
@@ -30,6 +30,14 @@ namespace DoggetTelegramBot.Domain.Common.Constants
                    isStarted ?
                    $"Execute user penalty transaction request started." :
                    $"Execute user penalty transaction request ended.";
+            }
+
+            public static class Costs
+            {
+                public const decimal UserMessageReward = 1;
+                public const decimal PostReactionReward = 2;
+                public const decimal NewChatMemberReward = 5;
+                public const decimal MarriageReward = 1;
             }
         }
     }

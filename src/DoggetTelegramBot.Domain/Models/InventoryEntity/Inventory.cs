@@ -27,6 +27,9 @@ namespace DoggetTelegramBot.Domain.Models.InventoryEntity
         public void DeductBalance(decimal amount) =>
             YuanBalance -= amount;
 
+        public void Update(decimal amount) =>
+            YuanBalance = amount;
+
 #pragma warning disable CS8618
         private Inventory()
         {

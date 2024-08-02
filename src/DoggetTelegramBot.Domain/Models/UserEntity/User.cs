@@ -56,6 +56,9 @@ namespace DoggetTelegramBot.Domain.Models.UserEntity
         public void AddPrivilege(UserPrivilege privilege)
             => privileges.Add(privilege);
 
+        public void ClearPrivileges()
+            => privileges.Clear();
+
         public void UpdateNickname(string? nickname) =>
             Nickname = nickname;
 
