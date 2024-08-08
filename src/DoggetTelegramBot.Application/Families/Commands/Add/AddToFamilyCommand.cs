@@ -7,5 +7,5 @@ namespace DoggetTelegramBot.Application.Families.Commands.Add
     public record AddToFamilyCommand(
         long ParentTelegramId,
         long NewMemberTelegramId,
-        FamilyRole FamilyRole) : ICommand<FamilyResult>;
+        FamilyRole FamilyRole) : ICommand<AddToFamilyResult>;
 }

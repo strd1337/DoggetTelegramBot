@@ -60,7 +60,9 @@ namespace DoggetTelegramBot.Infrastructure
         {
             services.AddTransient<BotEventDispatcher>();
 
-            services.AddTransient<UserEventsHandler>();
+            services.AddTransient<CommonEventsHandler>();
+            services.AddTransient<UpdateEventsHandler>();
+            services.AddTransient<TextEventsHandler>();
 
             return services;
         }

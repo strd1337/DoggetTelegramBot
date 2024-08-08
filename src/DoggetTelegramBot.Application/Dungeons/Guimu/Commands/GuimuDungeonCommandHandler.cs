@@ -93,7 +93,7 @@ namespace DoggetTelegramBot.Application.Dungeons.Guimu.Commands
             if (isPositive)
             {
                 logger.LogCommon(
-                    Constants.Transaction.Messages.ExecuteUserReward(),
+                    Constants.Transaction.Messages.ExecuteRewardUser(),
                     TelegramEvents.Message,
                     Constants.LogColors.Request);
 
@@ -103,7 +103,7 @@ namespace DoggetTelegramBot.Application.Dungeons.Guimu.Commands
                     cancellationToken);
 
                 logger.LogCommon(
-                    Constants.Transaction.Messages.ExecuteUserReward(false),
+                    Constants.Transaction.Messages.ExecuteRewardUser(false),
                     TelegramEvents.Message,
                     Constants.LogColors.Request);
             }

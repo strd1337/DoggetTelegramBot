@@ -1,9 +1,15 @@
+using DoggetTelegramBot.Domain.Models.TransactionEntity.Enums;
+
 namespace DoggetTelegramBot.Domain.Common.Constants
 {
     public static partial class Constants
     {
         public static class User
         {
+            public static readonly TimeSpan UserMessageActivityTimeout = TimeSpan.FromMinutes(5);
+
+            public const int MaxMessageCount = 10;
+
             public static class Messages
             {
                 public static string CheckPrivilegeRequest(bool isStarted = true) =>
@@ -46,6 +52,31 @@ namespace DoggetTelegramBot.Domain.Common.Constants
                     $"Update marital status request started." :
                     $"Update marital status request ended.";
 
+                public static string ValidMessageRewardRequest(bool isStarted = true) =>
+                    isStarted ?
+                    $"Valid user message reward request started." :
+                    $"Valid user message reward request ended.";
+
+                public static string AddNewChatMemberRequest(bool isStarted = true) =>
+                   isStarted ?
+                   $"Add new chat member request started." :
+                   $"Add new chat member request ended.";
+
+                public static string ChatMemberLeftRequest(bool isStarted = true) =>
+                   isStarted ?
+                   $"Chat member lfet request started." :
+                   $"Chat member left request ended.";
+
+                public static string UpdateRequest(bool isStarted = true) =>
+                    isStarted ?
+                    $"Update user request started." :
+                    $"Update user request ended.";
+
+                public static string DeleteRequest(bool isStarted = true) =>
+                    isStarted ?
+                    $"Delete user request started." :
+                    $"Delete user request ended.";
+
                 public static string SendChoice(bool isAgreed = true) =>
                     isAgreed ?
                     "You have agreed." :
@@ -85,6 +116,20 @@ namespace DoggetTelegramBot.Domain.Common.Constants
 
                 public static string UpdatedSuccessfully(List<long> telegramIds) =>
                    $"Users {string.Join(",", telegramIds.Select(id => id))} were successfully updated.";
+
+                public static string RewardSentSuccessfully(decimal amount, RewardType rewardType)
+                {
+                    string reason = rewardType switch
+                    {
+                        RewardType.MessageCount => $"for sending {MaxMessageCount} messages.",
+                        RewardType.ReactionToPost => "for reaction to a post.",
+                        RewardType.NewChatMember => "for joining the chat.",
+                        RewardType.MarriedUsersDaily => "for being married.",
+                        _ => "for just like that."
+                    };
+
+                    return $"You have received {amount} yuan{(amount > 1 ? "s" : string.Empty)} {reason}";
+                }
             }
 
             public static class ReplyKeys

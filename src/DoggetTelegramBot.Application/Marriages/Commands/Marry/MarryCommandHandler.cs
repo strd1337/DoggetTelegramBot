@@ -18,7 +18,7 @@ using DoggetTelegramBot.Application.DTOs;
 using DoggetTelegramBot.Application.Families.Commands.Create;
 using DoggetTelegramBot.Application.Families.Common;
 
-namespace DoggetTelegramBot.Application.Marriages.Commands.Create
+namespace DoggetTelegramBot.Application.Marriages.Commands.Marry
 {
     public sealed class MarryCommandHandler(
         IUnitOfWork unitOfWork,
@@ -65,7 +65,7 @@ namespace DoggetTelegramBot.Application.Marriages.Commands.Create
 
             marriage.AddSpouses(spouseIds);
 
-            await UpdateSpousesMaritalStatus(spouses, cancellationToken);
+            await UpdateSpousesMaritalStatus(spouseIds, cancellationToken);
 
             var familyResult = await CreateFamilyAsync(spouses, cancellationToken);
 
@@ -133,7 +133,7 @@ namespace DoggetTelegramBot.Application.Marriages.Commands.Create
         }
 
         private async Task UpdateSpousesMaritalStatus(
-            List<User> spouses,
+            List<UserId> spouseIds,
             CancellationToken cancellationToken)
         {
             logger.LogCommon(
@@ -142,7 +142,7 @@ namespace DoggetTelegramBot.Application.Marriages.Commands.Create
                 Constants.LogColors.Update);
 
             UpdateSpousesMaritalStatusCommand command = new(
-                spouses, MaritalStatus.Married);
+                spouseIds, MaritalStatus.Married);
 
             _ = await mediator.Send(command, cancellationToken);
         }

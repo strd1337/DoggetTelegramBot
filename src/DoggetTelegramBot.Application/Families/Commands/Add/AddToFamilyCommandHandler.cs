@@ -19,9 +19,9 @@ namespace DoggetTelegramBot.Application.Families.Commands.Add
         IUnitOfWork unitOfWork,
         IBotLogger logger,
         IMediator mediator,
-        ITransactionService transactionService) : ICommandHandler<AddToFamilyCommand, FamilyResult>
+        ITransactionService transactionService) : ICommandHandler<AddToFamilyCommand, AddToFamilyResult>
     {
-        public async Task<ErrorOr<FamilyResult>> Handle(
+        public async Task<ErrorOr<AddToFamilyResult>> Handle(
             AddToFamilyCommand request,
             CancellationToken cancellationToken)
         {
@@ -78,7 +78,7 @@ namespace DoggetTelegramBot.Application.Families.Commands.Add
 
             await unitOfWork.SaveChangesAsync(cancellationToken);
 
-            return new FamilyResult(family.FamilyId);
+            return new AddToFamilyResult(family.FamilyId);
         }
 
         private async Task<ErrorOr<User>> CheckAndGetNewFamilyMember(

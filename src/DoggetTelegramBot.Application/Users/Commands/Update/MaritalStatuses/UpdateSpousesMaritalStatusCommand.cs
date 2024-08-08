@@ -6,6 +6,6 @@ using DoggetTelegramBot.Domain.Models.UserEntity.Enums;
 namespace DoggetTelegramBot.Application.Users.Commands.Update.MaritalStatuses
 {
     public record UpdateSpousesMaritalStatusCommand(
-        List<User> Spouses,
+        List<UserId> SpouseIds,
         MaritalStatus MaritalStatus) : ICommand<UpdateSpousesMaritalStatusResult>;
 }

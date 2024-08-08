@@ -6,7 +6,7 @@ namespace DoggetTelegramBot.Presentation.Common.Mapping.Families
     public sealed class AddToFamilyMappingConfig : IRegister
     {
         public void Register(TypeAdapterConfig config) =>
-            config.NewConfig<FamilyResult, Response>()
+            config.NewConfig<AddToFamilyResult, Response>()
                 .Map(dest => dest.Message, src => FormatAddToFamilyMessage());
 
         public string FormatAddToFamilyMessage() =>

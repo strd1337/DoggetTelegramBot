@@ -13,6 +13,9 @@ namespace DoggetTelegramBot.Application.Helpers
         public static string GetUserByTelegramId(long telegramId) =>
             $"get-user-by-telegramId-{telegramId}";
 
+        public static string GetAllUsersByTelegramIds(List<long> telegramIds) =>
+            $"get-all-users-by-telegramIds-{string.Join(",", telegramIds.Select(id => id))}";
+
         public static string GetUserPrivilegesByTelegramId(long telegramId) =>
             $"get-user-privileges-by-telegramId-{telegramId}";
 
@@ -39,5 +42,9 @@ namespace DoggetTelegramBot.Application.Helpers
 
         public static string CommandUsageByTelegramId(long telegramId, string commandName) =>
             $"command-{commandName}-usage-by-{telegramId}";
+
+
+        public static string UserMessageCountByTelegramId(long telegramId) =>
+            $"user-message-count-by-telegramId-{telegramId}";
     }
 }

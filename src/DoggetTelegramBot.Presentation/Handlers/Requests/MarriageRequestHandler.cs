@@ -1,6 +1,6 @@
 using DoggetTelegramBot.Application.Common.Services;
-using DoggetTelegramBot.Application.Marriages.Commands.Create;
-using DoggetTelegramBot.Application.Marriages.Commands.Delete;
+using DoggetTelegramBot.Application.Marriages.Commands.Marry;
+using DoggetTelegramBot.Application.Marriages.Commands.Divorce;
 using DoggetTelegramBot.Domain.Common.Constants;
 using DoggetTelegramBot.Domain.Common.Enums;
 using DoggetTelegramBot.Domain.Models.MarriageEntity.Enums;

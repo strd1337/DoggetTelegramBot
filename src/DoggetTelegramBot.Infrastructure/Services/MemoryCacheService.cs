@@ -50,6 +50,27 @@ namespace DoggetTelegramBot.Infrastructure.Services
             return Task.CompletedTask;
         }
 
+        public Task SetSlidingExpirationAsync<T>(
+            string key,
+            T value,
+            TimeSpan? expiration = null,
+            CancellationToken cancellationToken = default)
+        {
+            MemoryCacheEntryOptions cacheEntryOptions = new()
+            {
+                SlidingExpiration = expiration ?? defaultExpiration
+            };
+
+            memoryCache.Set(key, value, cacheEntryOptions);
+
+            logger.LogCommon(
+                Constants.Cache.StoreOrRetrieveMessage,
+                TelegramEvents.Message,
+                Constants.LogColors.Cache);
+
+            return Task.CompletedTask;
+        }
+
         public Task SetUsageTimeAsync(
             string key,
             DateTime usageTime,

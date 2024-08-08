@@ -28,6 +28,8 @@ namespace DoggetTelegramBot.Domain.Common.Entities
 
         public virtual void Delete() => IsDeleted = true;
 
+        public virtual void Restore() => IsDeleted = false;
+
         protected Entity()
         {
         }
