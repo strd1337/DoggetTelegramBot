@@ -19,7 +19,7 @@ using DoggetTelegramBot.Domain.Models.MarriageEntity.Enums;
 using DoggetTelegramBot.Application.Families.Common;
 using DoggetTelegramBot.Application.Families.Commands.Delete;
 
-namespace DoggetTelegramBot.Application.Marriages.Commands.Delete
+namespace DoggetTelegramBot.Application.Marriages.Commands.Divorce
 {
     public sealed class DivorceCommandHandler(
         IUnitOfWork unitOfWork,
@@ -83,7 +83,7 @@ namespace DoggetTelegramBot.Application.Marriages.Commands.Delete
 
             await marriageRepository.UpdateAsync(marriage);
 
-            await UpdateSpousesMaritalStatus(spouses, cancellationToken);
+            await UpdateSpousesMaritalStatus(spouseIds, cancellationToken);
 
             var familyResult = await DeleteFamilyAsync(spouses, cancellationToken);
 
@@ -148,7 +148,7 @@ namespace DoggetTelegramBot.Application.Marriages.Commands.Delete
         }
 
         private async Task UpdateSpousesMaritalStatus(
-            List<User> spouses,
+            List<UserId> spouseIds,
             CancellationToken cancellationToken)
         {
             logger.LogCommon(
@@ -157,7 +157,7 @@ namespace DoggetTelegramBot.Application.Marriages.Commands.Delete
                 Constants.LogColors.Update);
 
             UpdateSpousesMaritalStatusCommand command = new(
-                spouses, MaritalStatus.Divorced);
+                spouseIds, MaritalStatus.Divorced);
 
             _ = await mediator.Send(command, cancellationToken);
         }
@@ -198,7 +198,7 @@ namespace DoggetTelegramBot.Application.Marriages.Commands.Delete
                 .Select(s => s.UserId)
                 .ToList();
 
-            DeleteFamilyCommand command = new(spouseIds);
+            DeleteFamilyBySpouseIdsCommand command = new(spouseIds);
             var result = await mediator.Send(command, cancellationToken);
 
             return result.Value;

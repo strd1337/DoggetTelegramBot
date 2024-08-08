@@ -6,7 +6,7 @@ namespace DoggetTelegramBot.Presentation.Common.Mapping.Families
     public sealed class RemoveFromFamilyMappingConfig : IRegister
     {
         public void Register(TypeAdapterConfig config) =>
-            config.NewConfig<FamilyResult, Response>()
+            config.NewConfig<RemoveFromFamilyResult, Response>()
                 .Map(dest => dest.Message, src => FormatRemoveFromFamilyMessage());
 
         public string FormatRemoveFromFamilyMessage() =>

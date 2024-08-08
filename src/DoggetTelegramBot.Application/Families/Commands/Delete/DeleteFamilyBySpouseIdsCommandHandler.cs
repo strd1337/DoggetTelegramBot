@@ -7,22 +7,24 @@ using DoggetTelegramBot.Domain.Common.Enums;
 using DoggetTelegramBot.Domain.Common.Errors;
 using DoggetTelegramBot.Domain.Models.FamilyEntity;
 using ErrorOr;
+using DoggetTelegramBot.Domain.Models.FamilyEntity.Enums;
 
 namespace DoggetTelegramBot.Application.Families.Commands.Delete
 {
-    public sealed class DeleteFamilyCommandHandler(
+    public sealed class DeleteFamilyBySpouseIdsCommandHandler(
         IUnitOfWork unitOfWork,
-        IBotLogger logger) : ICommandHandler<DeleteFamilyCommand, FamilyResult>
+        IBotLogger logger) : ICommandHandler<DeleteFamilyBySpouseIdsCommand, FamilyResult>
     {
         public async Task<ErrorOr<FamilyResult>> Handle(
-            DeleteFamilyCommand request,
+            DeleteFamilyBySpouseIdsCommand request,
             CancellationToken cancellationToken)
         {
             var familyRepository = unitOfWork.GetRepository<Family, FamilyId>();
 
             var family = unitOfWork.GetRepository<Family, FamilyId>()
-                .GetWhere(f =>
-                    f.Members.All(m => request.SpouseIds.Contains(m.UserId) && !m.IsDeleted) && !f.IsDeleted,
+                .GetWhere(f => f.Members.Any(m => request.SpouseIds.Contains(m.UserId) &&
+                        m.Role == FamilyRole.Parent &&
+                        !m.IsDeleted) && !f.IsDeleted,
                     nameof(Family.Members))
                 .FirstOrDefault();
 
@@ -35,6 +37,11 @@ namespace DoggetTelegramBot.Application.Families.Commands.Delete
 
                 return Errors.Family.NotFound;
             }
+
+            logger.LogCommon(
+                Constants.Family.Messages.Retrieved(family.FamilyId),
+                TelegramEvents.Message,
+                Constants.LogColors.Get);
 
             family.Delete();
 

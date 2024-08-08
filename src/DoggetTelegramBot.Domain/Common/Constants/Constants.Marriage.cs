@@ -19,6 +19,9 @@ namespace DoggetTelegramBot.Domain.Common.Constants
                 public static string Retrieved(List<MarriageId> marriageIds) =>
                     $"Marriages {string.Join(",", marriageIds.Select(id => id.Value))} were retrieved.";
 
+                public static string Retrieved(MarriageId marriageId) =>
+                   $"Marriage {marriageId.Value} was retrieved.";
+
                 public static string NotFoundRetrieved(UserId userId) =>
                     $"Marriages were not retrieved using user id {userId.Value}.";
 
@@ -34,6 +37,14 @@ namespace DoggetTelegramBot.Domain.Common.Constants
                     isStarted ?
                     $"Divorce request started." :
                     $"Divorce request ended.";
+
+                public static string DeleteRequest(bool isStarted = true) =>
+                    isStarted ?
+                    $"Delete marriage request started." :
+                    $"Delete marriage request ended.";
+
+                public static string UpdatedSuccessfully(MarriageId marriageId) =>
+                   $"Marriage {marriageId.Value} was successfully updated.";
 
                 public static string ComposeMarryOrDivorceProposal(
                     string requesterFirstName,
@@ -82,9 +93,6 @@ namespace DoggetTelegramBot.Domain.Common.Constants
 
                     return sb.ToString();
                 }
-
-                public static string UpdatedSuccessfully(MarriageId marriageId) =>
-                   $"Marriage {marriageId.Value} was successfully updated.";
             }
 
             public static class ReplyKeys

@@ -10,8 +10,12 @@ namespace DoggetTelegramBot.Domain.Common.Errors
                 code: "Family.NotFound",
                 description: "Family is not found.");
 
+            public static Error NotFoundAny => Error.NotFound(
+                code: "Family.NotFoundAny",
+                description: "User do not have any families.");
+
             public static Error UserFamilyNotFound => Error.NotFound(
-                code: "Family.",
+                code: "Family.UserFamilyNotFound",
                 description: "You do not have a family.");
 
             public static Error NewMemberHasFamily => Error.Conflict(

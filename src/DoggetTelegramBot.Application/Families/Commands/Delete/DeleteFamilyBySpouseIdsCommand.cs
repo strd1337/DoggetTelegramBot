@@ -4,6 +4,6 @@ using DoggetTelegramBot.Domain.Models.UserEntity;
 
 namespace DoggetTelegramBot.Application.Families.Commands.Delete
 {
-    public record DeleteFamilyCommand(
+    public record DeleteFamilyBySpouseIdsCommand(
         List<UserId> SpouseIds) : ICommand<FamilyResult>;
 }

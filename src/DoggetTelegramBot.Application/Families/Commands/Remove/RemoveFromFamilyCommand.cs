@@ -5,5 +5,5 @@ namespace DoggetTelegramBot.Application.Families.Commands.Remove
 {
     public record RemoveFromFamilyCommand(
         long ParentTelegramId,
-        long MemberToRemoveTelegramId) : ICommand<FamilyResult>;
+        long MemberToRemoveTelegramId) : ICommand<RemoveFromFamilyResult>;
 }

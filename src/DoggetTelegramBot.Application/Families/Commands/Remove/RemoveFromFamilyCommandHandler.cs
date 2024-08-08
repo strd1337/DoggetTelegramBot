@@ -19,9 +19,9 @@ namespace DoggetTelegramBot.Application.Families.Commands.Remove
         IUnitOfWork unitOfWork,
         IMediator mediator,
         IBotLogger logger,
-        ITransactionService transactionService) : ICommandHandler<RemoveFromFamilyCommand, FamilyResult>
+        ITransactionService transactionService) : ICommandHandler<RemoveFromFamilyCommand, RemoveFromFamilyResult>
     {
-        public async Task<ErrorOr<FamilyResult>> Handle(
+        public async Task<ErrorOr<RemoveFromFamilyResult>> Handle(
             RemoveFromFamilyCommand request,
             CancellationToken cancellationToken)
         {
@@ -74,7 +74,7 @@ namespace DoggetTelegramBot.Application.Families.Commands.Remove
 
             await unitOfWork.SaveChangesAsync(cancellationToken);
 
-            return new FamilyResult(family.FamilyId);
+            return new RemoveFromFamilyResult(family.FamilyId);
         }
 
         private async Task<ErrorOr<Family>> GetFamilyByParentTelegramIdAsync(
