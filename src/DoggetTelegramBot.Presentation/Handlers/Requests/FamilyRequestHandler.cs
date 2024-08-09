@@ -9,6 +9,8 @@ using DoggetTelegramBot.Presentation.Helpers.Common;
 using MapsterMapper;
 using Telegram.Bot;
 using Telegram.Bot.Types;
+using LoggerConstants = DoggetTelegramBot.Domain.Common.Constants.Logger.Constants.Logger;
+using FamilyConstants = DoggetTelegramBot.Domain.Common.Constants.Family.Constants.Family;
 
 namespace DoggetTelegramBot.Presentation.Handlers.Requests
 {
@@ -23,7 +25,7 @@ namespace DoggetTelegramBot.Presentation.Handlers.Requests
             long parentTelegramId = update.Message!.From!.Id;
 
             var userResponse = await ConfirmationState<AddToFamilyStepCache>.WaitForResponseAsync(
-                parentTelegramId, Constants.Family.AddToFamilyTimeoutInSeconds);
+                parentTelegramId, FamilyConstants.AddToFamilyTimeoutInSeconds);
 
             if (userResponse is null)
             {
@@ -53,9 +55,9 @@ namespace DoggetTelegramBot.Presentation.Handlers.Requests
             }
 
             logger.LogCommon(
-                Constants.Family.Messages.AddToFamilyRequest(false),
+                FamilyConstants.Requests.AddToFamily(false),
                 TelegramEvents.Message,
-                Constants.LogColors.Request);
+                LoggerConstants.Colors.Request);
         }
     }
 }

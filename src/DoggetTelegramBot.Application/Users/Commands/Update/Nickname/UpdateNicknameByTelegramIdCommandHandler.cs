@@ -3,11 +3,12 @@ using DoggetTelegramBot.Application.Common.Interfaces;
 using DoggetTelegramBot.Application.Common.Services;
 using DoggetTelegramBot.Application.Helpers;
 using DoggetTelegramBot.Application.Users.Common;
-using DoggetTelegramBot.Domain.Common.Constants;
 using DoggetTelegramBot.Domain.Common.Enums;
 using DoggetTelegramBot.Domain.Common.Errors;
 using DoggetTelegramBot.Domain.Models.UserEntity;
 using ErrorOr;
+using LoggerConstants = DoggetTelegramBot.Domain.Common.Constants.Logger.Constants.Logger;
+using UserConstants = DoggetTelegramBot.Domain.Common.Constants.User.Constants.User;
 
 namespace DoggetTelegramBot.Application.Users.Commands.Update.Nickname
 {
@@ -30,17 +31,17 @@ namespace DoggetTelegramBot.Application.Users.Commands.Update.Nickname
             if (user is null)
             {
                 logger.LogCommon(
-                    Constants.User.Messages.NotFoundRetrieved(request.TelegramId),
+                    UserConstants.Logging.NotFoundRetrieved(request.TelegramId),
                     TelegramEvents.Register,
-                    Constants.LogColors.Get);
+                    LoggerConstants.Colors.Get);
 
                 return Errors.User.NotFound;
             }
 
             logger.LogCommon(
-                Constants.User.Messages.Retrieved(request.TelegramId),
+                UserConstants.Logging.Retrieved(request.TelegramId),
                 TelegramEvents.Message,
-                Constants.LogColors.Get);
+                LoggerConstants.Colors.Get);
 
             user.UpdateNickname(request.Nickname);
 
@@ -49,9 +50,9 @@ namespace DoggetTelegramBot.Application.Users.Commands.Update.Nickname
             await unitOfWork.SaveChangesAsync(cancellationToken);
 
             logger.LogCommon(
-                Constants.User.Messages.UpdatedSuccessfully(request.TelegramId),
+                UserConstants.Logging.UpdatedSuccessfully(request.TelegramId),
                 TelegramEvents.Message,
-                Constants.LogColors.Update);
+                LoggerConstants.Colors.Update);
 
             await RemoveKeyFromCacheAsync(user.TelegramId, cancellationToken);
 

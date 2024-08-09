@@ -2,12 +2,13 @@ using DoggetTelegramBot.Application.Common.CQRS;
 using DoggetTelegramBot.Application.Common.Interfaces;
 using DoggetTelegramBot.Application.Common.Services;
 using DoggetTelegramBot.Application.Marriages.Common;
-using DoggetTelegramBot.Domain.Common.Constants;
 using DoggetTelegramBot.Domain.Common.Enums;
 using DoggetTelegramBot.Domain.Common.Errors;
 using DoggetTelegramBot.Domain.Models.MarriageEntity;
 using ErrorOr;
 using DoggetTelegramBot.Domain.Models.MarriageEntity.Enums;
+using LoggerConstants = DoggetTelegramBot.Domain.Common.Constants.Logger.Constants.Logger;
+using MarriageConstants = DoggetTelegramBot.Domain.Common.Constants.Marriage.Constants.Marriage;
 
 namespace DoggetTelegramBot.Application.Marriages.Queries.GetAll.Information
 {
@@ -30,9 +31,9 @@ namespace DoggetTelegramBot.Application.Marriages.Queries.GetAll.Information
             if (marriages.Count == 0)
             {
                 logger.LogCommon(
-                    Constants.Marriage.Messages.NotFoundRetrieved(request.UserId),
+                    MarriageConstants.Logging.NotFoundRetrieved(request.UserId),
                     TelegramEvents.Message,
-                    Constants.LogColors.Get);
+                    LoggerConstants.Colors.Get);
 
                 return Task.FromResult<ErrorOr<GetAllMarriagesInfoResult>>(
                     Errors.Marriage.NotFound);
@@ -43,9 +44,9 @@ namespace DoggetTelegramBot.Application.Marriages.Queries.GetAll.Information
                 .ToList();
 
             logger.LogCommon(
-                Constants.Marriage.Messages.Retrieved(marriageIds),
+                MarriageConstants.Logging.Retrieved(marriageIds),
                 TelegramEvents.Message,
-                Constants.LogColors.Get);
+                LoggerConstants.Colors.Get);
 
             return Task.FromResult<ErrorOr<GetAllMarriagesInfoResult>>(
                 new GetAllMarriagesInfoResult(marriages));

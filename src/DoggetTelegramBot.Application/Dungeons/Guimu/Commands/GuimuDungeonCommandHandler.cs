@@ -4,12 +4,15 @@ using DoggetTelegramBot.Application.Common.Services;
 using DoggetTelegramBot.Application.Dungeons.Guimu.Common;
 using DoggetTelegramBot.Application.Helpers;
 using ErrorOr;
-using DoggetTelegramBot.Domain.Common.Constants;
 using DoggetTelegramBot.Application.Users.Common;
 using DoggetTelegramBot.Application.Users.Queries.Get;
 using DoggetTelegramBot.Domain.Common.Enums;
 using MediatR;
 using DoggetTelegramBot.Domain.Models.UserEntity;
+using DungeonConstants = DoggetTelegramBot.Domain.Common.Constants.Dungeon.Guimu.Constants.Dungeon;
+using LoggerConstants = DoggetTelegramBot.Domain.Common.Constants.Logger.Constants.Logger;
+using TransactionConstants = DoggetTelegramBot.Domain.Common.Constants.Transaction.Constants.Transaction;
+using UserConstants = DoggetTelegramBot.Domain.Common.Constants.User.Constants.User;
 
 namespace DoggetTelegramBot.Application.Dungeons.Guimu.Commands
 {
@@ -26,7 +29,7 @@ namespace DoggetTelegramBot.Application.Dungeons.Guimu.Commands
             var commandUsageResult = await commandUsage.CheckCommandUsageTimeAsync(
                 request.ParticipantTelegramId,
                 nameof(GuimuDungeonCommand),
-                Constants.Dungeon.Guimu.StartCommandUsageTime,
+                DungeonConstants.Guimu.StartCommandUsageTime,
                 cancellationToken);
 
             if (commandUsageResult.IsError)
@@ -60,7 +63,7 @@ namespace DoggetTelegramBot.Application.Dungeons.Guimu.Commands
                 await commandUsage.SetCommandUsageTimeAsync(
                     request.ParticipantTelegramId,
                     nameof(GuimuDungeonCommand),
-                    Constants.Dungeon.Guimu.StartCommandUsageTime,
+                    DungeonConstants.Guimu.StartCommandUsageTime,
                     cancellationToken);
             }
 
@@ -75,11 +78,11 @@ namespace DoggetTelegramBot.Application.Dungeons.Guimu.Commands
 
             return chance switch
             {
-                < Constants.Dungeon.Guimu.Rules.ZeroChanceThreshold => (0, false, true),
-                < Constants.Dungeon.Guimu.Rules.LoseChanceThreshold =>
-                    (random.Next(Constants.Dungeon.Guimu.Rules.MinLossAmount, Constants.Dungeon.Guimu.Rules.MaxLossAmount + 1), false, false),
-                < Constants.Dungeon.Guimu.Rules.SpecialCaseChanceThreshold => (Constants.Dungeon.Guimu.Rules.SpecialGainAmount, true, true),
-                _ => (random.Next(Constants.Dungeon.Guimu.Rules.MinGainAmount, Constants.Dungeon.Guimu.Rules.MaxGainAmount + 1), false, true)
+                < DungeonConstants.Guimu.Rules.ZeroChanceThreshold => (0, false, true),
+                < DungeonConstants.Guimu.Rules.LoseChanceThreshold =>
+                    (random.Next(DungeonConstants.Guimu.Rules.MinLossAmount, DungeonConstants.Guimu.Rules.MaxLossAmount + 1), false, false),
+                < DungeonConstants.Guimu.Rules.SpecialCaseChanceThreshold => (DungeonConstants.Guimu.Rules.SpecialGainAmount, true, true),
+                _ => (random.Next(DungeonConstants.Guimu.Rules.MinGainAmount, DungeonConstants.Guimu.Rules.MaxGainAmount + 1), false, true)
             };
         }
 
@@ -93,9 +96,9 @@ namespace DoggetTelegramBot.Application.Dungeons.Guimu.Commands
             if (isPositive)
             {
                 logger.LogCommon(
-                    Constants.Transaction.Messages.ExecuteRewardUser(),
+                    TransactionConstants.Requests.ExecuteRewardUser(),
                     TelegramEvents.Message,
-                    Constants.LogColors.Request);
+                    LoggerConstants.Colors.Request);
 
                 transactionResult = await transactionService.ExecuteRewardUserAsync(
                     user.UserId,
@@ -103,16 +106,16 @@ namespace DoggetTelegramBot.Application.Dungeons.Guimu.Commands
                     cancellationToken);
 
                 logger.LogCommon(
-                    Constants.Transaction.Messages.ExecuteRewardUser(false),
+                    TransactionConstants.Requests.ExecuteRewardUser(false),
                     TelegramEvents.Message,
-                    Constants.LogColors.Request);
+                    LoggerConstants.Colors.Request);
             }
             else
             {
                 logger.LogCommon(
-                   Constants.Transaction.Messages.ExecuteUserPenalty(),
+                   TransactionConstants.Requests.ExecuteUserPenalty(),
                    TelegramEvents.Message,
-                   Constants.LogColors.Request);
+                   LoggerConstants.Colors.Request);
 
                 transactionResult = await transactionService.ExecuteUserPenaltyAsync(
                     user.UserId,
@@ -120,9 +123,9 @@ namespace DoggetTelegramBot.Application.Dungeons.Guimu.Commands
                     cancellationToken);
 
                 logger.LogCommon(
-                   Constants.Transaction.Messages.ExecuteUserPenalty(false),
+                   TransactionConstants.Requests.ExecuteUserPenalty(false),
                    TelegramEvents.Message,
-                   Constants.LogColors.Request);
+                   LoggerConstants.Colors.Request);
             }
 
             return transactionResult;
@@ -133,17 +136,17 @@ namespace DoggetTelegramBot.Application.Dungeons.Guimu.Commands
             CancellationToken cancellationToken)
         {
             logger.LogCommon(
-                Constants.User.Messages.GetRequest(),
+                UserConstants.Requests.Get(),
             TelegramEvents.Message,
-                Constants.LogColors.Request);
+                LoggerConstants.Colors.Request);
 
             GetUserByTelegramIdQuery query = new(telegramId);
             var result = await mediator.Send(query, cancellationToken);
 
             logger.LogCommon(
-                Constants.User.Messages.GetRequest(false),
+                UserConstants.Requests.Get(false),
                 TelegramEvents.Message,
-                Constants.LogColors.Request);
+                LoggerConstants.Colors.Request);
 
             return result;
         }

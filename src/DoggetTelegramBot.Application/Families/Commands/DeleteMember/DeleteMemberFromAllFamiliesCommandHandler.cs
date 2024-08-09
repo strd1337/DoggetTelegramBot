@@ -7,7 +7,8 @@ using ErrorOr;
 using DoggetTelegramBot.Domain.Models.FamilyEntity.Enums;
 using DoggetTelegramBot.Domain.Common.Errors;
 using DoggetTelegramBot.Domain.Common.Enums;
-using DoggetTelegramBot.Domain.Common.Constants;
+using LoggerConstants = DoggetTelegramBot.Domain.Common.Constants.Logger.Constants.Logger;
+using FamilyConstants = DoggetTelegramBot.Domain.Common.Constants.Family.Constants.Family;
 
 namespace DoggetTelegramBot.Application.Families.Commands.DeleteMember
 {
@@ -34,9 +35,9 @@ namespace DoggetTelegramBot.Application.Families.Commands.DeleteMember
             if (families.Count == 0)
             {
                 logger.LogCommon(
-                    Constants.Family.Messages.NotFoundRetrieved(request.UserId),
+                    FamilyConstants.Logging.NotFoundRetrieved(request.UserId),
                     TelegramEvents.GroupAction,
-                    Constants.LogColors.GetAll);
+                    LoggerConstants.Colors.GetAll);
 
                 return Task.FromResult<ErrorOr<DeleteMemberFromAllFamiliesResult>>(
                     Errors.Family.NotFoundAny);
@@ -47,9 +48,9 @@ namespace DoggetTelegramBot.Application.Families.Commands.DeleteMember
                 .ToList();
 
             logger.LogCommon(
-                Constants.Family.Messages.Retrieved(familyIds),
+                FamilyConstants.Logging.Retrieved(familyIds),
                 TelegramEvents.GroupAction,
-                Constants.LogColors.GetAll);
+                LoggerConstants.Colors.GetAll);
 
             families.ForEach(family =>
             {

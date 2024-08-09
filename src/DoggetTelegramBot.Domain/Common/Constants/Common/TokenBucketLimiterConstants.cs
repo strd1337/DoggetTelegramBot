@@ -1,8 +1,8 @@
-namespace DoggetTelegramBot.Domain.Common.Constants
+namespace DoggetTelegramBot.Domain.Common.Constants.Common
 {
     public static partial class Constants
     {
-        public static class TokenBucketLimiter
+        public static partial class TokenBucketLimiter
         {
             public static class PolicyName
             {

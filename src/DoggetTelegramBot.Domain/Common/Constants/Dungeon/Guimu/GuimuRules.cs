@@ -1,13 +1,11 @@
-namespace DoggetTelegramBot.Domain.Common.Constants
+namespace DoggetTelegramBot.Domain.Common.Constants.Dungeon.Guimu
 {
     public static partial class Constants
     {
-        public static class Dungeon
+        public static partial class Dungeon
         {
-            public static class Guimu
+            public static partial class Guimu
             {
-                public static readonly TimeSpan StartCommandUsageTime = TimeSpan.FromHours(4);
-
                 public static class Rules
                 {
                     public const int ZeroChanceThreshold = 15;
@@ -22,19 +20,6 @@ namespace DoggetTelegramBot.Domain.Common.Constants
 
                     public const int SpecialGainAmount = 50;
                 }
-
-                public static class Messages
-                {
-                    public static string Start(bool isStarted = true) =>
-                        isStarted ?
-                        "The Guimu dungeon game has started." :
-                        "The Guimu dungeon game has ended.";
-                }
-            }
-
-            public static class ReplyKeys
-            {
-                public const string Guimu = "/guimu";
             }
         }
     }

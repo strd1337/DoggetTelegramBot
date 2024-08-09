@@ -1,7 +1,6 @@
 using DoggetTelegramBot.Application.Common.Services;
 using DoggetTelegramBot.Application.Helpers;
 using DoggetTelegramBot.Application.Users.Queries.Get.Privileges;
-using DoggetTelegramBot.Domain.Common.Constants;
 using DoggetTelegramBot.Domain.Common.Enums;
 using DoggetTelegramBot.Domain.Models.UserEntity.Enums;
 using DoggetTelegramBot.Infrastructure.BotManagement.Common.Handlers;
@@ -9,6 +8,9 @@ using PRTelegramBot.Models;
 using Telegram.Bot;
 using Telegram.Bot.Types;
 using Helpers = PRTelegramBot.Helpers;
+using LoggerConstants = DoggetTelegramBot.Domain.Common.Constants.Logger.Constants.Logger;
+using UserConstants = DoggetTelegramBot.Domain.Common.Constants.User.Constants.User;
+using ErrorConstants = DoggetTelegramBot.Domain.Common.Constants.Error.Constants.Errors;
 
 namespace DoggetTelegramBot.Infrastructure.BotManagement.Events
 {
@@ -23,9 +25,9 @@ namespace DoggetTelegramBot.Infrastructure.BotManagement.Events
             int? flags = null)
         {
             logger.LogCommon(
-                Constants.User.Messages.CheckPrivilegeRequest(),
+                UserConstants.Requests.CheckPrivilege(),
                 TelegramEvents.Message,
-                Constants.LogColors.Request);
+                LoggerConstants.Colors.Request);
 
             long? telegramId = update.Message?.From?.Id;
 
@@ -40,7 +42,7 @@ namespace DoggetTelegramBot.Infrastructure.BotManagement.Events
                     botClient,
                     update,
                     logger,
-                    Constants.LogColors.CheckPrivileges,
+                    LoggerConstants.Colors.CheckPrivileges,
                     options);
 
                 return;
@@ -56,23 +58,23 @@ namespace DoggetTelegramBot.Infrastructure.BotManagement.Events
                 if (PrivilegeHelper.HasRequiredPrivilege(privileges, (UserPrivilege)flags))
                 {
                     logger.LogCommon(
-                       Constants.User.Messages.AccessedSuccessfully(telegramId.Value),
+                       UserConstants.Logging.AccessedSuccessfully(telegramId.Value),
                        TelegramEvents.Message,
-                       Constants.LogColors.CheckPrivileges);
+                       LoggerConstants.Colors.CheckPrivileges);
 
                     await callback(botClient, update);
                 }
                 else
                 {
                     logger.LogCommon(
-                      Constants.User.Messages.FailedAccess(telegramId.Value),
+                      UserConstants.Logging.FailedAccess(telegramId.Value),
                       TelegramEvents.Message,
-                      Constants.LogColors.CheckPrivileges);
+                      LoggerConstants.Colors.CheckPrivileges);
 
                     await Helpers.Message.Send(
                        botClient,
                        update,
-                       Constants.ErrorMessage.NotAllowedFunction);
+                       ErrorConstants.Messages.NotAllowedFunction);
                 }
             }
             else
@@ -80,13 +82,13 @@ namespace DoggetTelegramBot.Infrastructure.BotManagement.Events
                 await Helpers.Message.Send(
                       botClient,
                       update,
-                      Constants.ErrorMessage.NotAllowedFunction);
+                      ErrorConstants.Messages.NotAllowedFunction);
             }
 
             logger.LogCommon(
-               Constants.User.Messages.CheckPrivilegeRequest(false),
+               UserConstants.Requests.CheckPrivilege(false),
                TelegramEvents.Message,
-               Constants.LogColors.Request);
+               LoggerConstants.Colors.Request);
         }
     }
 }

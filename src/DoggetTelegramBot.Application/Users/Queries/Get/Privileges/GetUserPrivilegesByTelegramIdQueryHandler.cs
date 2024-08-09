@@ -6,7 +6,8 @@ using DoggetTelegramBot.Domain.Common.Errors;
 using DoggetTelegramBot.Application.Users.Common;
 using DoggetTelegramBot.Domain.Common.Enums;
 using DoggetTelegramBot.Application.Common.Services;
-using DoggetTelegramBot.Domain.Common.Constants;
+using LoggerConstants = DoggetTelegramBot.Domain.Common.Constants.Logger.Constants.Logger;
+using UserConstants = DoggetTelegramBot.Domain.Common.Constants.User.Constants.User;
 
 namespace DoggetTelegramBot.Application.Users.Queries.Get.Privileges
 {
@@ -29,9 +30,9 @@ namespace DoggetTelegramBot.Application.Users.Queries.Get.Privileges
             if (user is null)
             {
                 logger.LogCommon(
-                    Constants.User.Messages.NotFoundRetrieved(request.TelegramId),
+                    UserConstants.Logging.NotFoundRetrieved(request.TelegramId),
                     TelegramEvents.Message,
-                    Constants.LogColors.Get);
+                    LoggerConstants.Colors.Get);
 
                 return Task.FromResult<ErrorOr<GetUserPrivilegesResult>>(
                     Errors.User.NotFound);
@@ -39,9 +40,9 @@ namespace DoggetTelegramBot.Application.Users.Queries.Get.Privileges
             else
             {
                 logger.LogCommon(
-                    Constants.User.Messages.Retrieved(request.TelegramId),
+                    UserConstants.Logging.Retrieved(request.TelegramId),
                     TelegramEvents.Message,
-                    Constants.LogColors.Get);
+                    LoggerConstants.Colors.Get);
 
                 return Task.FromResult<ErrorOr<GetUserPrivilegesResult>>(
                     new GetUserPrivilegesResult([.. user.Privileges]));

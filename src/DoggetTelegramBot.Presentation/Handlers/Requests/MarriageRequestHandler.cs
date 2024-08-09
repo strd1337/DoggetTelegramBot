@@ -10,6 +10,8 @@ using DoggetTelegramBot.Presentation.Helpers.Common;
 using MapsterMapper;
 using Telegram.Bot;
 using Telegram.Bot.Types;
+using LoggerConstants = DoggetTelegramBot.Domain.Common.Constants.Logger.Constants.Logger;
+using MarriageConstants = DoggetTelegramBot.Domain.Common.Constants.Marriage.Constants.Marriage;
 
 namespace DoggetTelegramBot.Presentation.Handlers.Requests
 {
@@ -66,15 +68,15 @@ namespace DoggetTelegramBot.Presentation.Handlers.Requests
                     message.Chat.Id,
                     message.MessageId,
                     message.ReplyToMessage!.MessageId,
-                    Constants.Marriage.Messages.DenyMarryOrDivorceRequest(
+                    MarriageConstants.Messages.DenyMarryOrDivorceRequest(
                         message.ReplyToMessage.From!.FirstName,
                         message.ReplyToMessage.From!.Username));
             }
 
             logger.LogCommon(
-                Constants.Marriage.Messages.MarryRequest(false),
+                MarriageConstants.Requests.Marry(false),
                 TelegramEvents.Message,
-                Constants.LogColors.Request);
+                LoggerConstants.Colors.Request);
         }
 
         public async Task HandleDivorceAsync(
@@ -122,16 +124,16 @@ namespace DoggetTelegramBot.Presentation.Handlers.Requests
                     message.Chat.Id,
                     message.MessageId,
                     message.ReplyToMessage!.MessageId,
-                    Constants.Marriage.Messages.DenyMarryOrDivorceRequest(
+                    MarriageConstants.Messages.DenyMarryOrDivorceRequest(
                         message.ReplyToMessage.From!.FirstName,
                         message.ReplyToMessage.From!.Username,
                         false));
             }
 
             logger.LogCommon(
-                Constants.Marriage.Messages.DivorceRequest(false),
+                MarriageConstants.Requests.Divorce(false),
                 TelegramEvents.Message,
-                Constants.LogColors.Request);
+                LoggerConstants.Colors.Request);
         }
     }
 }

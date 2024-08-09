@@ -3,12 +3,13 @@ using DoggetTelegramBot.Application.Common.Interfaces;
 using DoggetTelegramBot.Application.Common.Services;
 using DoggetTelegramBot.Application.Users.Commands.Register;
 using DoggetTelegramBot.Application.Users.Commands.Update.Details;
-using DoggetTelegramBot.Domain.Common.Constants;
 using DoggetTelegramBot.Domain.Common.Enums;
 using DoggetTelegramBot.Domain.Models.UserEntity;
 using ErrorOr;
 using MediatR;
 using PRTelegramBot.Models.Enums;
+using LoggerConstants = DoggetTelegramBot.Domain.Common.Constants.Logger.Constants.Logger;
+using UserConstants = DoggetTelegramBot.Domain.Common.Constants.User.Constants.User;
 
 namespace DoggetTelegramBot.Application.Users.Queries.Get.Existence
 {
@@ -36,9 +37,9 @@ namespace DoggetTelegramBot.Application.Users.Queries.Get.Existence
             if (user is null)
             {
                 logger.LogCommon(
-                    Constants.User.Messages.NotFoundRetrieved(request.TelegramId),
+                    UserConstants.Logging.NotFoundRetrieved(request.TelegramId),
                     TelegramEvents.Register,
-                    Constants.LogColors.Get);
+                    LoggerConstants.Colors.Get);
 
                 RegisterUserCommand command = new(
                     request.TelegramId,
@@ -50,18 +51,18 @@ namespace DoggetTelegramBot.Application.Users.Queries.Get.Existence
             else
             {
                 logger.LogCommon(
-                    Constants.User.Messages.Retrieved(request.TelegramId),
+                    UserConstants.Logging.Retrieved(request.TelegramId),
                     TelegramEvents.Register,
-                    Constants.LogColors.Get);
+                    LoggerConstants.Colors.Get);
 
                 if (user.FirstName != request.FirstName ||
                     user.Username != request.Username ||
                     user.IsDeleted is true)
                 {
                     logger.LogCommon(
-                       Constants.User.Messages.UpdateRequest(),
+                       UserConstants.Requests.Update(),
                        TelegramEvents.Register,
-                       Constants.LogColors.Request);
+                       LoggerConstants.Colors.Request);
 
                     UpdateUserDetailsByTelegramIdCommand command = new(
                         request.TelegramId,
@@ -72,9 +73,9 @@ namespace DoggetTelegramBot.Application.Users.Queries.Get.Existence
                     var result = await mediator.Send(command, cancellationToken);
 
                     logger.LogCommon(
-                       Constants.User.Messages.UpdateRequest(false),
+                       UserConstants.Requests.Update(false),
                        TelegramEvents.Register,
-                       Constants.LogColors.Request);
+                       LoggerConstants.Colors.Request);
 
                     return result.Value;
                 }

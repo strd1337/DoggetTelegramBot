@@ -1,12 +1,12 @@
 using System.Reflection;
 using System.Threading.RateLimiting;
-using DoggetTelegramBot.Domain.Common.Constants;
 using DoggetTelegramBot.Presentation.Common.ErrorHandling;
 using DoggetTelegramBot.Presentation.Common.Services;
 using DoggetTelegramBot.Presentation.Handlers.Requests;
 using Mapster;
 using MapsterMapper;
 using Microsoft.AspNetCore.RateLimiting;
+using TokenBucketLimiterConstants = DoggetTelegramBot.Domain.Common.Constants.Common.Constants.TokenBucketLimiter;
 
 namespace DoggetTelegramBot.Presentation
 {
@@ -47,7 +47,7 @@ namespace DoggetTelegramBot.Presentation
                 rateLimiterOptions.RejectionStatusCode = StatusCodes.Status429TooManyRequests;
 
                 rateLimiterOptions.AddTokenBucketLimiter(
-                    Constants.TokenBucketLimiter.PolicyName.PerChatLimit,
+                    TokenBucketLimiterConstants.PolicyName.PerChatLimit,
                     options =>
                     {
                         options.TokenLimit = 1;
@@ -59,7 +59,7 @@ namespace DoggetTelegramBot.Presentation
                     });
 
                 rateLimiterOptions.AddTokenBucketLimiter(
-                    Constants.TokenBucketLimiter.PolicyName.GlobalLimit,
+                    TokenBucketLimiterConstants.PolicyName.GlobalLimit,
                     options =>
                     {
                         options.TokenLimit = 1;
@@ -71,7 +71,7 @@ namespace DoggetTelegramBot.Presentation
                     });
 
                 rateLimiterOptions.AddTokenBucketLimiter(
-                    Constants.TokenBucketLimiter.PolicyName.PerGroupLimit,
+                    TokenBucketLimiterConstants.PolicyName.PerGroupLimit,
                     options =>
                     {
                         options.TokenLimit = 20;

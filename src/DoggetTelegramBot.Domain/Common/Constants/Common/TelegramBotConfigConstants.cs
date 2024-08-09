@@ -1,4 +1,4 @@
-﻿namespace DoggetTelegramBot.Domain.Common.Constants
+namespace DoggetTelegramBot.Domain.Common.Constants.Common
 {
     public static partial class Constants
     {

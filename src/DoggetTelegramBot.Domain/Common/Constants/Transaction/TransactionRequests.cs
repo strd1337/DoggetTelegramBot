@@ -1,10 +1,10 @@
-namespace DoggetTelegramBot.Domain.Common.Constants
+namespace DoggetTelegramBot.Domain.Common.Constants.Transaction
 {
     public static partial class Constants
     {
-        public static class Transaction
+        public static partial class Transaction
         {
-            public static class Messages
+            public static class Requests
             {
                 public static string ExecuteTransfer(bool isStarted = true) =>
                    isStarted ?
@@ -30,14 +30,6 @@ namespace DoggetTelegramBot.Domain.Common.Constants
                    isStarted ?
                    $"Execute user penalty transaction request started." :
                    $"Execute user penalty transaction request ended.";
-            }
-
-            public static class Costs
-            {
-                public const decimal UserMessageReward = 1;
-                public const decimal PostReactionReward = 2;
-                public const decimal NewChatMemberReward = 5;
-                public const decimal MarriageReward = 1;
             }
         }
     }

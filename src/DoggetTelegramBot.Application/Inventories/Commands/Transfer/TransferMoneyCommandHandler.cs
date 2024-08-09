@@ -6,13 +6,16 @@ using DoggetTelegramBot.Application.Inventories.Commands.Transfer;
 using DoggetTelegramBot.Application.Inventories.Common;
 using DoggetTelegramBot.Application.Users.Common;
 using DoggetTelegramBot.Application.Users.Queries.GetAll.TransactionParticipants;
-using DoggetTelegramBot.Domain.Common.Constants;
 using DoggetTelegramBot.Domain.Common.Enums;
 using DoggetTelegramBot.Domain.Common.Errors;
 using DoggetTelegramBot.Domain.Models.InventoryEntity;
 using DoggetTelegramBot.Domain.Models.UserEntity;
 using ErrorOr;
 using MediatR;
+using LoggerConstants = DoggetTelegramBot.Domain.Common.Constants.Logger.Constants.Logger;
+using UserConstants = DoggetTelegramBot.Domain.Common.Constants.User.Constants.User;
+using TransactionConstants = DoggetTelegramBot.Domain.Common.Constants.Transaction.Constants.Transaction;
+using InventoryConstants = DoggetTelegramBot.Domain.Common.Constants.Inventory.Constants.Inventory;
 
 namespace DoggetTelegramBot.Application.Inventories.Commands.Trade
 {
@@ -71,17 +74,17 @@ namespace DoggetTelegramBot.Application.Inventories.Commands.Trade
             CancellationToken cancellationToken)
         {
             logger.LogCommon(
-                Constants.User.Messages.GetTransactionParticipantsRequest(),
+                UserConstants.Requests.GetTransactionParticipants(),
                 TelegramEvents.Message,
-                Constants.LogColors.Request);
+                LoggerConstants.Colors.Request);
 
             GetTransactionParticipantsByTelegramIdsQuery query = new(toTelegramId, fromTelegramId);
             var result = await mediator.Send(query, cancellationToken);
 
             logger.LogCommon(
-                Constants.User.Messages.GetTransactionParticipantsRequest(false),
+                UserConstants.Requests.GetTransactionParticipants(false),
                 TelegramEvents.Message,
-                Constants.LogColors.Request);
+                LoggerConstants.Colors.Request);
 
             return result;
         }
@@ -93,17 +96,17 @@ namespace DoggetTelegramBot.Application.Inventories.Commands.Trade
            CancellationToken cancellationToken)
         {
             logger.LogCommon(
-                Constants.Transaction.Messages.ExecuteTransfer(),
+                TransactionConstants.Requests.ExecuteTransfer(),
                 TelegramEvents.Message,
-                Constants.LogColors.Request);
+                LoggerConstants.Colors.Request);
 
             var transferResult = await transactionService.ExecuteTransferFundsAsync(
                 fromUserId, toUserId, amount, cancellationToken);
 
             logger.LogCommon(
-                Constants.Transaction.Messages.ExecuteTransfer(false),
+                TransactionConstants.Requests.ExecuteTransfer(false),
                 TelegramEvents.Message,
-                Constants.LogColors.Request);
+                LoggerConstants.Colors.Request);
 
             return transferResult;
         }
@@ -113,9 +116,9 @@ namespace DoggetTelegramBot.Application.Inventories.Commands.Trade
             CancellationToken cancellationToken)
         {
             logger.LogCommon(
-                Constants.Inventory.Messages.GetInformationRequest(),
+                InventoryConstants.Requests.GetInformation(),
                 TelegramEvents.Message,
-                Constants.LogColors.Request);
+                LoggerConstants.Colors.Request);
 
             var inventory = await unitOfWork.GetRepository<Inventory, InventoryId>()
                 .FirstOrDefaultAsync(i => i.InventoryId == fromInventoryId, cancellationToken);
@@ -126,9 +129,9 @@ namespace DoggetTelegramBot.Application.Inventories.Commands.Trade
             }
 
             logger.LogCommon(
-                Constants.Inventory.Messages.GetInformationRequest(false),
+                InventoryConstants.Requests.GetInformation(false),
                 TelegramEvents.Message,
-                Constants.LogColors.Request);
+                LoggerConstants.Colors.Request);
 
             return inventory.YuanBalance;
         }

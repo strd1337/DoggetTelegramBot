@@ -6,8 +6,9 @@ using DoggetTelegramBot.Domain.Common.Errors;
 using DoggetTelegramBot.Domain.Models.UserEntity;
 using ErrorOr;
 using DoggetTelegramBot.Domain.Common.Enums;
-using DoggetTelegramBot.Domain.Common.Constants;
 using DoggetTelegramBot.Application.DTOs;
+using LoggerConstants = DoggetTelegramBot.Domain.Common.Constants.Logger.Constants.Logger;
+using UserConstants = DoggetTelegramBot.Domain.Common.Constants.User.Constants.User;
 
 namespace DoggetTelegramBot.Application.Users.Queries.GetAll.TransactionParticipants
 {
@@ -42,17 +43,17 @@ namespace DoggetTelegramBot.Application.Users.Queries.GetAll.TransactionParticip
             if ((request.FromTelegramId is not null && fromUser is null) || toUser is null)
             {
                 logger.LogCommon(
-                   Constants.User.Messages.NotFoundRetrieved(telegramIds),
+                   UserConstants.Logging.NotFoundRetrieved(telegramIds),
                    TelegramEvents.Message,
-                   Constants.LogColors.GetAll);
+                   LoggerConstants.Colors.GetAll);
 
                 return Task.FromResult<ErrorOr<GetTransactionParticipantsResult>>(Errors.User.SomeNotFound);
             }
 
             logger.LogCommon(
-                Constants.User.Messages.Retrieved(telegramIds),
+                UserConstants.Logging.Retrieved(telegramIds),
                 TelegramEvents.Message,
-                Constants.LogColors.GetAll);
+                LoggerConstants.Colors.GetAll);
 
             return Task.FromResult<ErrorOr<GetTransactionParticipantsResult>>(
                 new GetTransactionParticipantsResult(toUser, fromUser));

@@ -4,12 +4,13 @@ using DoggetTelegramBot.Application.Common.Services;
 using DoggetTelegramBot.Application.Inventories.Common;
 using DoggetTelegramBot.Application.Users.Common;
 using DoggetTelegramBot.Application.Users.Queries.Get;
-using DoggetTelegramBot.Domain.Common.Constants;
 using DoggetTelegramBot.Domain.Common.Enums;
 using DoggetTelegramBot.Domain.Common.Errors;
 using DoggetTelegramBot.Domain.Models.InventoryEntity;
 using ErrorOr;
 using MediatR;
+using LoggerConstants = DoggetTelegramBot.Domain.Common.Constants.Logger.Constants.Logger;
+using UserConstants = DoggetTelegramBot.Domain.Common.Constants.User.Constants.User;
 
 namespace DoggetTelegramBot.Application.Inventories.Queries.Get.Info
 {
@@ -46,17 +47,17 @@ namespace DoggetTelegramBot.Application.Inventories.Queries.Get.Info
             CancellationToken cancellationToken)
         {
             logger.LogCommon(
-                Constants.User.Messages.GetRequest(),
+                UserConstants.Requests.Get(),
                 TelegramEvents.Message,
-                Constants.LogColors.Request);
+                LoggerConstants.Colors.Request);
 
             GetUserByTelegramIdQuery query = new(telegramId);
             var result = await mediator.Send(query, cancellationToken);
 
             logger.LogCommon(
-                Constants.User.Messages.GetRequest(true),
+                UserConstants.Requests.Get(true),
                 TelegramEvents.Message,
-                Constants.LogColors.Request);
+                LoggerConstants.Colors.Request);
 
             return result;
         }

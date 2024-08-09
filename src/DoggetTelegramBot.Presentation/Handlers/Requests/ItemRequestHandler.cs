@@ -10,6 +10,8 @@ using DoggetTelegramBot.Presentation.Helpers.Common;
 using MapsterMapper;
 using Telegram.Bot;
 using Telegram.Bot.Types;
+using LoggerConstants = DoggetTelegramBot.Domain.Common.Constants.Logger.Constants.Logger;
+using ItemConstants = DoggetTelegramBot.Domain.Common.Constants.Item.Constants.Item;
 
 namespace DoggetTelegramBot.Presentation.Handlers.Requests
 {
@@ -24,7 +26,7 @@ namespace DoggetTelegramBot.Presentation.Handlers.Requests
             long userTelegramId = update.Message!.From!.Id;
 
             var userResponse = await ConfirmationState<BuyItemStepCache>.WaitForResponseAsync(
-                userTelegramId, Constants.Item.PurchaseTimeoutInSeconds);
+                userTelegramId, ItemConstants.PurchaseTimeoutInSeconds);
 
             if (userResponse is null)
             {
@@ -54,9 +56,9 @@ namespace DoggetTelegramBot.Presentation.Handlers.Requests
             }
 
             logger.LogCommon(
-                Constants.Item.Messages.PurchaseRequest(false),
+                ItemConstants.Requests.Purchase(false),
                 TelegramEvents.Message,
-                Constants.LogColors.Request);
+                LoggerConstants.Colors.Request);
         }
 
         public async Task HandleAddAsync(ITelegramBotClient botClient, Update update, Message message)
@@ -64,7 +66,7 @@ namespace DoggetTelegramBot.Presentation.Handlers.Requests
             long userTelegramId = update.Message!.From!.Id;
 
             var userResponse = await ConfirmationState<AddItemsStepCache>.WaitForResponseAsync(
-                userTelegramId, Constants.Item.AddTimeoutInSeconds);
+                userTelegramId, ItemConstants.AddTimeoutInSeconds);
 
             if (userResponse is null)
             {
@@ -92,9 +94,9 @@ namespace DoggetTelegramBot.Presentation.Handlers.Requests
             }
 
             logger.LogCommon(
-                Constants.Item.Messages.AddRequest(false),
+                ItemConstants.Requests.Add(false),
                 TelegramEvents.Message,
-                Constants.LogColors.Request);
+                LoggerConstants.Colors.Request);
         }
     }
 }

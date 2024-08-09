@@ -2,11 +2,12 @@ using DoggetTelegramBot.Application.Common.CQRS;
 using DoggetTelegramBot.Application.Common.Interfaces;
 using DoggetTelegramBot.Application.Common.Services;
 using DoggetTelegramBot.Application.Families.Common;
-using DoggetTelegramBot.Domain.Common.Constants;
 using DoggetTelegramBot.Domain.Common.Enums;
 using DoggetTelegramBot.Domain.Common.Errors;
 using DoggetTelegramBot.Domain.Models.FamilyEntity;
 using ErrorOr;
+using LoggerConstants = DoggetTelegramBot.Domain.Common.Constants.Logger.Constants.Logger;
+using FamilyConstants = DoggetTelegramBot.Domain.Common.Constants.Family.Constants.Family;
 
 namespace DoggetTelegramBot.Application.Families.Queries.GetAll.Information
 {
@@ -30,9 +31,9 @@ namespace DoggetTelegramBot.Application.Families.Queries.GetAll.Information
             if (families.Count == 0)
             {
                 logger.LogCommon(
-                    Constants.Family.Messages.NotFoundRetrieved(request.UserId),
+                    FamilyConstants.Logging.NotFoundRetrieved(request.UserId),
                     TelegramEvents.Message,
-                    Constants.LogColors.GetAll);
+                    LoggerConstants.Colors.GetAll);
 
                 return Task.FromResult<ErrorOr<GetAllFamiliesInfoResult>>(
                     Errors.Family.NotFound);
@@ -41,9 +42,9 @@ namespace DoggetTelegramBot.Application.Families.Queries.GetAll.Information
             List<FamilyId> familyIds = [.. families.Select(f => f.FamilyId)];
 
             logger.LogCommon(
-                Constants.Family.Messages.Retrieved(familyIds),
+                FamilyConstants.Logging.Retrieved(familyIds),
                 TelegramEvents.Message,
-                Constants.LogColors.GetAll);
+                LoggerConstants.Colors.GetAll);
 
             return Task.FromResult<ErrorOr<GetAllFamiliesInfoResult>>(
                     new GetAllFamiliesInfoResult([.. families]));

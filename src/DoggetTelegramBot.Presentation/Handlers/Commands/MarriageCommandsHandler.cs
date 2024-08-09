@@ -6,6 +6,7 @@ using PRTelegramBot.Models.CallbackCommands;
 using PRTelegramBot.Models.InlineButtons;
 using Telegram.Bot;
 using Telegram.Bot.Types;
+using UserConstants = DoggetTelegramBot.Domain.Common.Constants.User.Constants.User;
 
 namespace DoggetTelegramBot.Presentation.Handlers.Commands
 {
@@ -33,8 +34,8 @@ namespace DoggetTelegramBot.Presentation.Handlers.Commands
             ConfirmationState<bool>.SetUserResponse(currentUser, userChoice);
 
             await botClient.AnswerCallbackQueryAsync(
-                    update.CallbackQuery.Id,
-                    Constants.User.Messages.SendChoice(userChoice));
+                update.CallbackQuery.Id,
+                UserConstants.Requests.SendChoice(userChoice));
         }
     }
 }

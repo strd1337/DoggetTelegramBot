@@ -2,10 +2,11 @@ using DoggetTelegramBot.Application.Common.CQRS;
 using DoggetTelegramBot.Application.Common.Interfaces;
 using DoggetTelegramBot.Application.Common.Services;
 using DoggetTelegramBot.Application.Users.Common;
-using DoggetTelegramBot.Domain.Common.Constants;
 using DoggetTelegramBot.Domain.Common.Enums;
 using DoggetTelegramBot.Domain.Models.UserEntity;
 using ErrorOr;
+using LoggerConstants = DoggetTelegramBot.Domain.Common.Constants.Logger.Constants.Logger;
+using UserConstants = DoggetTelegramBot.Domain.Common.Constants.User.Constants.User;
 
 namespace DoggetTelegramBot.Application.Users.Commands.Update.MaritalStatuses
 {
@@ -26,9 +27,9 @@ namespace DoggetTelegramBot.Application.Users.Commands.Update.MaritalStatuses
             List<long> telegramIds = spouses.Select(s => s.TelegramId).ToList();
 
             logger.LogCommon(
-                Constants.User.Messages.Retrieved(telegramIds),
+                UserConstants.Logging.Retrieved(telegramIds),
                 TelegramEvents.Message,
-                Constants.LogColors.Get);
+                LoggerConstants.Colors.Get);
 
             spouses.ForEach(s => s.UpdateMaritalStatus(request.MaritalStatus));
 

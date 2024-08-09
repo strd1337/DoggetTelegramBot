@@ -2,12 +2,13 @@ using DoggetTelegramBot.Application.Common.CQRS;
 using DoggetTelegramBot.Application.Common.Interfaces;
 using DoggetTelegramBot.Application.Common.Services;
 using DoggetTelegramBot.Application.Users.Common;
-using DoggetTelegramBot.Domain.Common.Constants;
 using DoggetTelegramBot.Domain.Common.Enums;
 using DoggetTelegramBot.Domain.Common.Errors;
 using DoggetTelegramBot.Domain.Models.UserEntity;
 using DoggetTelegramBot.Domain.Models.UserEntity.Enums;
 using ErrorOr;
+using LoggerConstants = DoggetTelegramBot.Domain.Common.Constants.Logger.Constants.Logger;
+using UserConstants = DoggetTelegramBot.Domain.Common.Constants.User.Constants.User;
 
 namespace DoggetTelegramBot.Application.Users.Queries.GetAll.Spouses
 {
@@ -39,9 +40,9 @@ namespace DoggetTelegramBot.Application.Users.Queries.GetAll.Spouses
             }
 
             logger.LogCommon(
-                Constants.User.Messages.Retrieved(request.TelegramIds),
+                UserConstants.Logging.Retrieved(request.TelegramIds),
                 TelegramEvents.Message,
-                Constants.LogColors.GetAll);
+                LoggerConstants.Colors.GetAll);
 
             return new GetSpousesResult(eligibleSpouses);
         }
@@ -58,11 +59,11 @@ namespace DoggetTelegramBot.Application.Users.Queries.GetAll.Spouses
             string errorDescription,
             bool isGetMarried)
         {
-            string errorMessage = Constants.User.Messages.NotFoundRetrieved(
+            string errorMessage = UserConstants.Logging.NotFoundRetrieved(
                 spouseIds, errorDescription);
 
             var eventType = TelegramEvents.Message;
-            var logColor = Constants.LogColors.GetAll;
+            var logColor = LoggerConstants.Colors.GetAll;
 
             logger.LogCommon(errorMessage, eventType, logColor);
 

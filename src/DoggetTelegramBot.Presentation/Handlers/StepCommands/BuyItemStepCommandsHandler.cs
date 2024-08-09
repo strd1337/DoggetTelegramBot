@@ -1,4 +1,3 @@
-using DoggetTelegramBot.Domain.Common.Constants;
 using DoggetTelegramBot.Domain.Models.ItemEntity.Enums;
 using DoggetTelegramBot.Presentation.Handlers.Common.Caches;
 using DoggetTelegramBot.Presentation.Handlers.Common.Enums;
@@ -11,6 +10,7 @@ using PRTelegramBot.Models.CallbackCommands;
 using PRTelegramBot.Models.InlineButtons;
 using Telegram.Bot;
 using Telegram.Bot.Types;
+using ItemConstants = DoggetTelegramBot.Domain.Common.Constants.Item.Constants.Item;
 
 namespace DoggetTelegramBot.Presentation.Handlers.StepCommands
 {
@@ -37,7 +37,7 @@ namespace DoggetTelegramBot.Presentation.Handlers.StepCommands
             await PRTelegramBot.Helpers.Message.Edit(
                 botClient,
                 update,
-                Constants.Item.Messages.Purchase.SelectItemServerNameRequest(userChoice),
+                ItemConstants.Purchase.Messages.SelectItemServerNameRequest(userChoice),
                 selectServerNameMessageOptions);
         }
 
@@ -67,7 +67,7 @@ namespace DoggetTelegramBot.Presentation.Handlers.StepCommands
             await PRTelegramBot.Helpers.Message.Edit(
                 botClient,
                 update,
-                Constants.Item.Messages.SelectItemAmountTypeRequest(userChoice),
+                ItemConstants.Messages.SelectItemAmountTypeRequest(userChoice),
                 selectItemAmountTypeMessageOptions);
         }
 
@@ -96,7 +96,7 @@ namespace DoggetTelegramBot.Presentation.Handlers.StepCommands
             await PRTelegramBot.Helpers.Message.Edit(
                 botClient,
                 update,
-                Constants.Item.Messages.Purchase.SuccessfulConfirmation(
+                ItemConstants.Purchase.Messages.SuccessfulConfirmation(
                     cache.Type, cache.ServerName, cache.AmountType));
 
             ConfirmationState<BuyItemStepCache>.SetUserResponse(update.CallbackQuery!.From!.Id, cache);

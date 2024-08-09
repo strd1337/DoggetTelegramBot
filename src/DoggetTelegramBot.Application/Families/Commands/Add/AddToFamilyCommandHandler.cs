@@ -4,7 +4,6 @@ using DoggetTelegramBot.Application.Common.Services;
 using DoggetTelegramBot.Application.Families.Common;
 using DoggetTelegramBot.Application.Users.Common;
 using DoggetTelegramBot.Application.Users.Queries.Get;
-using DoggetTelegramBot.Domain.Common.Constants;
 using DoggetTelegramBot.Domain.Common.Enums;
 using DoggetTelegramBot.Domain.Common.Errors;
 using DoggetTelegramBot.Domain.Models.FamilyEntity;
@@ -12,6 +11,10 @@ using DoggetTelegramBot.Domain.Models.FamilyEntity.Enums;
 using DoggetTelegramBot.Domain.Models.UserEntity;
 using ErrorOr;
 using MediatR;
+using LoggerConstants = DoggetTelegramBot.Domain.Common.Constants.Logger.Constants.Logger;
+using UserConstants = DoggetTelegramBot.Domain.Common.Constants.User.Constants.User;
+using TransactionConstants = DoggetTelegramBot.Domain.Common.Constants.Transaction.Constants.Transaction;
+using FamilyConstants = DoggetTelegramBot.Domain.Common.Constants.Family.Constants.Family;
 
 namespace DoggetTelegramBot.Application.Families.Commands.Add
 {
@@ -150,17 +153,17 @@ namespace DoggetTelegramBot.Application.Families.Commands.Add
             CancellationToken cancellationToken)
         {
             logger.LogCommon(
-                Constants.User.Messages.GetRequest(),
+                UserConstants.Requests.Get(),
                 TelegramEvents.Message,
-                Constants.LogColors.Request);
+                LoggerConstants.Colors.Request);
 
             GetUserByTelegramIdQuery query = new(telegramId);
             var result = await mediator.Send(query, cancellationToken);
 
             logger.LogCommon(
-                Constants.User.Messages.GetRequest(false),
+                UserConstants.Requests.Get(false),
                 TelegramEvents.Message,
-                Constants.LogColors.Request);
+                LoggerConstants.Colors.Request);
 
             return result;
         }
@@ -171,9 +174,9 @@ namespace DoggetTelegramBot.Application.Families.Commands.Add
            CancellationToken cancellationToken)
         {
             logger.LogCommon(
-                Constants.Transaction.Messages.ExecuteServiceFee(),
+                TransactionConstants.Requests.ExecuteServiceFee(),
                 TelegramEvents.Message,
-                Constants.LogColors.Request);
+                LoggerConstants.Colors.Request);
 
             var transactionResult = await transactionService.ExecuteServiceFeeAsync(
                 spouseIds,
@@ -181,16 +184,16 @@ namespace DoggetTelegramBot.Application.Families.Commands.Add
                 cancellationToken);
 
             logger.LogCommon(
-                Constants.Transaction.Messages.ExecuteServiceFee(false),
+                TransactionConstants.Requests.ExecuteServiceFee(false),
                 TelegramEvents.Message,
-                Constants.LogColors.Request);
+                LoggerConstants.Colors.Request);
 
             return transactionResult;
         }
 
         private static decimal GetServiceFeeAmount(FamilyRole familyRole) =>
             familyRole is FamilyRole.Cat or FamilyRole.Dog ?
-            Constants.Family.Costs.AddPet :
-            Constants.Family.Costs.AddChild;
+            FamilyConstants.Costs.AddPet :
+            FamilyConstants.Costs.AddChild;
     }
 }

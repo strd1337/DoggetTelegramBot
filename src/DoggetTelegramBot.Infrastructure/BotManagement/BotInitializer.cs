@@ -1,6 +1,7 @@
 using DoggetTelegramBot.Application.Common.Services;
 using DoggetTelegramBot.Infrastructure.Configs;
 using Microsoft.Extensions.Options;
+using PRTelegramBot.Configs;
 using PRTelegramBot.Core;
 using Telegram.Bot.Polling;
 
@@ -18,6 +19,7 @@ namespace DoggetTelegramBot.Infrastructure.BotManagement
             var bot = new PRBotBuilder(config.Token)
                 .SetClearUpdatesOnStart(config.ClearUpdatesOnStart)
                 .SetBotId(config.BotId)
+                .AddConfigPaths(GetConfigPaths())
                 .AddAdmins(config.Admins)
                 .AddUsersWhiteList(config.WhiteListUsers)
                 .AddRecevingOptions(new ReceiverOptions
@@ -42,6 +44,13 @@ namespace DoggetTelegramBot.Infrastructure.BotManagement
             bot.Events.MessageEvents.OnChatMemberLeftHandle += dispatcher.OnChatMemberLeft;
 
             await bot.Start();
+        }
+
+        public static Dictionary<string, string> GetConfigPaths()
+        {
+            var dictionary = new Dictionary<string, string>();
+            dictionary.Add("commands", ".\\Configs\\commands.json");
+            return dictionary;
         }
     }
 }

@@ -1,7 +1,6 @@
 using DoggetTelegramBot.Application.Common.Services;
 using DoggetTelegramBot.Application.Users.Commands.Delete;
 using DoggetTelegramBot.Application.Users.Queries.Get.Existence;
-using DoggetTelegramBot.Domain.Common.Constants;
 using DoggetTelegramBot.Domain.Common.Enums;
 using DoggetTelegramBot.Domain.Models.TransactionEntity.Enums;
 using DoggetTelegramBot.Infrastructure.BotManagement.Common.Handlers;
@@ -9,6 +8,10 @@ using PRTelegramBot.Models;
 using PRTelegramBot.Models.Enums;
 using Telegram.Bot;
 using Telegram.Bot.Types;
+using LoggerConstants = DoggetTelegramBot.Domain.Common.Constants.Logger.Constants.Logger;
+using UserConstants = DoggetTelegramBot.Domain.Common.Constants.User.Constants.User;
+using TransactionConstants = DoggetTelegramBot.Domain.Common.Constants.Transaction.Constants.Transaction;
+using ErrorConstants = DoggetTelegramBot.Domain.Common.Constants.Error.Constants.Errors;
 
 namespace DoggetTelegramBot.Infrastructure.BotManagement.Events
 {
@@ -21,21 +24,21 @@ namespace DoggetTelegramBot.Infrastructure.BotManagement.Events
             Update update)
         {
             logger.LogCommon(
-                Constants.User.Messages.CheckExistenceRequest(),
+                UserConstants.Requests.CheckExistence(),
                 TelegramEvents.Message,
-                Constants.LogColors.Request);
+                LoggerConstants.Colors.Request);
 
             if (update.Message?.From is null && update.CallbackQuery?.From is null)
             {
                 logger.LogCommon(
-                     Constants.ErrorMessage.MissingInformation,
+                     ErrorConstants.Messages.MissingInformation,
                      TelegramEvents.Message,
-                     Constants.LogColors.PreUpdate);
+                     LoggerConstants.Colors.PreUpdate);
 
                 logger.LogCommon(
-                    Constants.User.Messages.CheckExistenceRequest(false),
+                    UserConstants.Requests.CheckExistence(false),
                     TelegramEvents.Message,
-                    Constants.LogColors.Request);
+                    LoggerConstants.Colors.Request);
 
                 return UpdateResult.Stop;
             }
@@ -43,9 +46,9 @@ namespace DoggetTelegramBot.Infrastructure.BotManagement.Events
             if (update.Message?.From?.Id == botClient.BotId)
             {
                 logger.LogCommon(
-                   Constants.User.Messages.CheckExistenceRequest(false),
+                   UserConstants.Requests.CheckExistence(false),
                    TelegramEvents.Message,
-                   Constants.LogColors.Request);
+                   LoggerConstants.Colors.Request);
 
                 return UpdateResult.Stop;
             }
@@ -75,14 +78,14 @@ namespace DoggetTelegramBot.Infrastructure.BotManagement.Events
             var result = await scopeService.Send(query);
 
             logger.LogCommon(
-                    Constants.User.Messages.SuccessExistence(userTelegramId),
-                    TelegramEvents.Message,
-                    Constants.LogColors.PreUpdate);
+                UserConstants.Logging.SuccessExistence(userTelegramId),
+                TelegramEvents.Message,
+                LoggerConstants.Colors.PreUpdate);
 
             logger.LogCommon(
-                Constants.User.Messages.CheckExistenceRequest(false),
+                UserConstants.Requests.CheckExistence(false),
                 TelegramEvents.Message,
-                Constants.LogColors.Request);
+                LoggerConstants.Colors.Request);
 
             return result.Value;
         }
@@ -97,9 +100,9 @@ namespace DoggetTelegramBot.Infrastructure.BotManagement.Events
             }
 
             logger.LogCommon(
-                Constants.User.Messages.AddNewChatMemberRequest(),
+                UserConstants.Requests.AddNewChatMember(),
                 TelegramEvents.GroupAction,
-                Constants.LogColors.Request);
+                LoggerConstants.Colors.Request);
 
             OptionMessage options = new()
             {
@@ -114,15 +117,15 @@ namespace DoggetTelegramBot.Infrastructure.BotManagement.Events
                     botClient,
                     update,
                     logger,
-                    Constants.LogColors.Problem,
+                    LoggerConstants.Colors.Problem,
                     options);
 
                 return UpdateResult.Continue;
             }
 
             long userTelegramId = telegramId.Value;
-            decimal amount = Constants.Transaction.Costs.NewChatMemberReward;
-            string successMessage = Constants.User.Messages.RewardSentSuccessfully(
+            decimal amount = TransactionConstants.Costs.NewChatMemberReward;
+            string successMessage = UserConstants.Messages.RewardSentSuccessfully(
                 amount,
                 RewardType.NewChatMember);
 
@@ -137,9 +140,9 @@ namespace DoggetTelegramBot.Infrastructure.BotManagement.Events
                 successMessage);
 
             logger.LogCommon(
-                Constants.User.Messages.AddNewChatMemberRequest(false),
+                UserConstants.Requests.AddNewChatMember(false),
                 TelegramEvents.GroupAction,
-                Constants.LogColors.Request);
+                LoggerConstants.Colors.Request);
 
             return UpdateResult.Continue;
         }
@@ -154,26 +157,26 @@ namespace DoggetTelegramBot.Infrastructure.BotManagement.Events
             }
 
             logger.LogCommon(
-                Constants.User.Messages.ChatMemberLeftRequest(),
+                UserConstants.Requests.ChatMemberLeft(),
                 TelegramEvents.GroupAction,
-                Constants.LogColors.Request);
+                LoggerConstants.Colors.Request);
 
             long? telegramId = update.Message?.From?.Id;
 
             if (telegramId is null)
             {
                 logger.LogCommon(
-                    Constants.ErrorMessage.MissingInformation,
+                    ErrorConstants.Messages.MissingInformation,
                     TelegramEvents.GroupAction,
-                    Constants.LogColors.Problem);
+                    LoggerConstants.Colors.Problem);
 
                 return UpdateResult.Continue;
             }
 
             logger.LogCommon(
-                Constants.User.Messages.DeleteRequest(),
+                UserConstants.Requests.Delete(),
                 TelegramEvents.GroupAction,
-                Constants.LogColors.Request);
+                LoggerConstants.Colors.Request);
 
             long userTelegramId = telegramId.Value;
 
@@ -182,14 +185,14 @@ namespace DoggetTelegramBot.Infrastructure.BotManagement.Events
             var result = await scopeService.Send(command);
 
             logger.LogCommon(
-                Constants.User.Messages.DeleteRequest(false),
+                UserConstants.Requests.Delete(false),
                 TelegramEvents.GroupAction,
-                Constants.LogColors.Request);
+                LoggerConstants.Colors.Request);
 
             logger.LogCommon(
-                Constants.User.Messages.ChatMemberLeftRequest(false),
+                UserConstants.Requests.ChatMemberLeft(false),
                 TelegramEvents.GroupAction,
-                Constants.LogColors.Request);
+                LoggerConstants.Colors.Request);
 
             return result.IsError ? UpdateResult.Stop : UpdateResult.Continue;
         }
