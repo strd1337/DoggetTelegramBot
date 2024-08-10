@@ -39,7 +39,9 @@ namespace DoggetTelegramBot.Domain.Common.Constants.Marriage
                         CultureInfo.InvariantCulture,
                         $"{(requesterUsername is not null ? $"@{requesterUsername}" : requesterFirstName)}? "));
 
-                    sb.Append(Formatters.FormatChoosingTimeIntoString());
+                    sb.Append(isGetMarried ?
+                        Formatters.FormatChoosingTimeIntoString(MarryTimeoutInSeconds) :
+                        Formatters.FormatChoosingTimeIntoString());
 
                     return sb.ToString();
                 }

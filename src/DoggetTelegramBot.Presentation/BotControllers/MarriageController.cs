@@ -4,9 +4,13 @@ using DoggetTelegramBot.Domain.Common.Enums;
 using DoggetTelegramBot.Presentation.BotCommands;
 using DoggetTelegramBot.Presentation.BotControllers.Common;
 using DoggetTelegramBot.Presentation.Common.Services;
+using DoggetTelegramBot.Presentation.Handlers.Common.Caches;
 using DoggetTelegramBot.Presentation.Handlers.Requests;
+using DoggetTelegramBot.Presentation.Handlers.StepCommands;
 using DoggetTelegramBot.Presentation.Helpers.MenuGenerators;
 using PRTelegramBot.Attributes;
+using PRTelegramBot.Extensions;
+using PRTelegramBot.Models;
 using PRTelegramBot.Models.Enums;
 using Telegram.Bot;
 using Telegram.Bot.Types;
@@ -47,17 +51,25 @@ namespace DoggetTelegramBot.Presentation.BotControllers
                 return;
             }
 
-            var menu = MarriageMenuGenerator.GenerateConfirmationMenu(update);
+            MarryStepCache cache = new();
+
+            StepTelegram handler = new(
+                MarryStepCommandsHandler.SelectConfirmationType,
+                cache);
+
+            update.RegisterStepHandler(handler);
+
+            var confirmationMenu = MarryMenuGenerator.GenerateConfirmationMenu(update);
 
             var message = await SendMessage(
                 botClient,
                 update,
                 MarriageConstants.Messages.ComposeMarryOrDivorceProposal(
-                    update.Message.From!.FirstName,
+                    update.Message!.From!.FirstName,
                     update.Message.From!.Username,
-                    update.Message.ReplyToMessage.From!.FirstName,
+                    update.Message.ReplyToMessage!.From!.FirstName,
                     update.Message.ReplyToMessage.From.Username),
-                menu);
+                confirmationMenu);
 
             _ = requestHandler.HandleGetMarriedAsync(botClient, update, message);
         }
@@ -88,7 +100,7 @@ namespace DoggetTelegramBot.Presentation.BotControllers
                 return;
             }
 
-            var menu = MarriageMenuGenerator.GenerateConfirmationMenu(update);
+            var menu = DivorceMenuGenerator.GenerateConfirmationMenu(update);
 
             var message = await SendMessage(
                 botClient,

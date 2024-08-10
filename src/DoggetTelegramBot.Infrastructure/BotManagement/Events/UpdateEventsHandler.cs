@@ -42,7 +42,7 @@ namespace DoggetTelegramBot.Infrastructure.BotManagement.Events
 
                 return UpdateResult.Stop;
             }
-
+            //TO DO: REMOVE
             if (update.Message?.From?.Id == botClient.BotId)
             {
                 logger.LogCommon(

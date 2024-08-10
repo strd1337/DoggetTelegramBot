@@ -18,6 +18,11 @@ namespace DoggetTelegramBot.Presentation.Handlers.StepCommands
         [InlineCallbackHandler<AddToFamilyStepCommands>(AddToFamilyStepCommands.SelectFamilyRole)]
         public static async Task SelectFamilyRole(ITelegramBotClient botClient, Update update)
         {
+            if (!await CallbackQueryHelper.IsUserAllowedAsync(botClient, update))
+            {
+                return;
+            }
+
             InlineCallback<EntityTCommand<FamilyRole>>? command = InlineCallback<EntityTCommand<FamilyRole>>
                  .GetCommandByCallbackOrNull(update.CallbackQuery!.Data!);
 

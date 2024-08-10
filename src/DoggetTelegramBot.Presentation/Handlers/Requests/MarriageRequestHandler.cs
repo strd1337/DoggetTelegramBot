@@ -3,7 +3,6 @@ using DoggetTelegramBot.Application.Marriages.Commands.Marry;
 using DoggetTelegramBot.Application.Marriages.Commands.Divorce;
 using DoggetTelegramBot.Domain.Common.Constants;
 using DoggetTelegramBot.Domain.Common.Enums;
-using DoggetTelegramBot.Domain.Models.MarriageEntity.Enums;
 using DoggetTelegramBot.Presentation.Common.Mapping;
 using DoggetTelegramBot.Presentation.Common.Services;
 using DoggetTelegramBot.Presentation.Helpers.Common;
@@ -12,6 +11,8 @@ using Telegram.Bot;
 using Telegram.Bot.Types;
 using LoggerConstants = DoggetTelegramBot.Domain.Common.Constants.Logger.Constants.Logger;
 using MarriageConstants = DoggetTelegramBot.Domain.Common.Constants.Marriage.Constants.Marriage;
+using DoggetTelegramBot.Presentation.Handlers.Common.Caches;
+using DoggetTelegramBot.Presentation.Handlers.Common.Enums;
 
 namespace DoggetTelegramBot.Presentation.Handlers.Requests
 {
@@ -26,10 +27,11 @@ namespace DoggetTelegramBot.Presentation.Handlers.Requests
             Update update,
             Message message)
         {
-            bool? userResponse = await ConfirmationState<bool>.WaitForResponseAsync(
-                update.Message!.ReplyToMessage!.From!.Id);
+            var userResponse = await ConfirmationState<MarryStepCache>.WaitForResponseAsync(
+                update.Message!.ReplyToMessage!.From!.Id,
+                MarriageConstants.MarryTimeoutInSeconds);
 
-            if (userResponse.HasValue && !userResponse.Value)
+            if (userResponse is null)
             {
                 await botService.EditMessage(
                     botClient,
@@ -38,7 +40,7 @@ namespace DoggetTelegramBot.Presentation.Handlers.Requests
                     message.ReplyToMessage!.MessageId,
                     Constants.Messages.TimeExpired);
             }
-            else if (userResponse.Value)
+            else if (userResponse.ConfirmationCommand is MarriageConfirmationCommands.Yes)
             {
                 List<long> spouses =
                 [
@@ -47,18 +49,16 @@ namespace DoggetTelegramBot.Presentation.Handlers.Requests
                 ];
 
                 MarryCommand command = new(
-                    MarriageType.Civil,
+                    userResponse.MarriageType,
                     spouses);
 
                 var result = await scopeService.Send(command);
 
                 var response = result.Match(mapper.Map<Response>, botService.Problem);
 
-                await botService.EditMessage(
+                await botService.SendMessage(
                     botClient,
-                    message.Chat.Id,
-                    message.MessageId,
-                    message.ReplyToMessage!.MessageId,
+                    update,
                     response.Message);
             }
             else

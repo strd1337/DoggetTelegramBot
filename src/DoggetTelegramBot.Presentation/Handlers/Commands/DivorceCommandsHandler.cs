@@ -1,4 +1,3 @@
-using DoggetTelegramBot.Domain.Common.Constants;
 using DoggetTelegramBot.Presentation.Handlers.Common.Enums;
 using DoggetTelegramBot.Presentation.Helpers.Common;
 using PRTelegramBot.Attributes;
@@ -10,28 +9,21 @@ using UserConstants = DoggetTelegramBot.Domain.Common.Constants.User.Constants.U
 
 namespace DoggetTelegramBot.Presentation.Handlers.Commands
 {
-    public class MarriageCommandsHandler
+    public class DivorceCommandsHandler
     {
         [InlineCallbackHandler<MarriageConfirmationCommands>(MarriageConfirmationCommands.Yes, MarriageConfirmationCommands.No)]
         public static async Task HandleUserAgreementResponse(ITelegramBotClient botClient, Update update)
         {
-            long currentUser = update.CallbackQuery!.From!.Id;
-            long necessaryUser = update.CallbackQuery.Message!.ReplyToMessage!.From!.Id;
-
-            if (currentUser != necessaryUser)
+            if (!await CallbackQueryHelper.IsUserAllowedAsync(botClient, update))
             {
-                await botClient.AnswerCallbackQueryAsync(
-                    update.CallbackQuery.Id,
-                    Constants.Messages.NotAllowed);
-
                 return;
             }
 
             InlineCallback<EntityTCommand<bool>> command = InlineCallback<EntityTCommand<bool>>
-                .GetCommandByCallbackOrNull(update.CallbackQuery.Data!);
+                .GetCommandByCallbackOrNull(update.CallbackQuery!.Data!);
 
             bool userChoice = command.Data.EntityId;
-            ConfirmationState<bool>.SetUserResponse(currentUser, userChoice);
+            ConfirmationState<bool>.SetUserResponse(update.CallbackQuery!.From!.Id, userChoice);
 
             await botClient.AnswerCallbackQueryAsync(
                 update.CallbackQuery.Id,

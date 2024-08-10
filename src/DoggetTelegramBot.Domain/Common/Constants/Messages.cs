@@ -4,7 +4,7 @@ namespace DoggetTelegramBot.Domain.Common.Constants
     {
         public static partial class Messages
         {
-            public const string TimeExpired = "Unfortunately, time expired.";
+            public const string TimeExpired = "Unfortunately, time has expired.";
             public const string NotAllowed = "You are not allowed.";
 
             public static string NotFoundUserReply(string command) =>

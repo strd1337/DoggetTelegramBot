@@ -6,12 +6,13 @@ using PRTelegramBot.Models;
 using PRTelegramBot.Utils;
 using DoggetTelegramBot.Domain.Models.FamilyEntity.Enums;
 using PRTelegramBot.Extensions;
+using Telegram.Bot.Types;
 
 namespace DoggetTelegramBot.Presentation.Helpers.MenuGenerators
 {
     public static class AddToFamilyMenuGenerator
     {
-        public static OptionMessage GenerateFamilyRoleSelectionMenu(int maxColumn = 4)
+        public static OptionMessage GenerateFamilyRoleSelectionMenu(Update update, int maxColumn = 4)
         {
             InlineCallback<EntityTCommand<FamilyRole>> daughter = new(
                 FamilyRole.Daughter.GetDescription(),
@@ -40,6 +41,7 @@ namespace DoggetTelegramBot.Presentation.Helpers.MenuGenerators
             OptionMessage options = new()
             {
                 MenuInlineKeyboardMarkup = inlineKeyboardMenu,
+                ReplyToMessageId = update.Message?.MessageId
             };
 
             return options;

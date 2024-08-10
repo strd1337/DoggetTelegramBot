@@ -66,7 +66,7 @@ namespace DoggetTelegramBot.Presentation.BotControllers
 
             update.RegisterStepHandler(handler);
 
-            var selectFamilyRoleMenu = AddToFamilyMenuGenerator.GenerateFamilyRoleSelectionMenu();
+            var selectFamilyRoleMenu = AddToFamilyMenuGenerator.GenerateFamilyRoleSelectionMenu(update);
 
             var message = await SendMessage(
                 botClient,
