@@ -1,7 +1,7 @@
 using DoggetTelegramBot.Application.Common.CQRS;
 using DoggetTelegramBot.Application.Common.Interfaces;
 using DoggetTelegramBot.Application.Common.Services;
-using DoggetTelegramBot.Application.Helpers;
+using DoggetTelegramBot.Application.Helpers.CacheKeys;
 using DoggetTelegramBot.Application.Users.Common;
 using DoggetTelegramBot.Domain.Common.Enums;
 using DoggetTelegramBot.Domain.Common.Errors;
@@ -63,7 +63,7 @@ namespace DoggetTelegramBot.Application.Users.Commands.Update.Nickname
             long telegramId,
             CancellationToken cancellationToken)
         {
-            string key = CacheKeyGenerator.GetUserInfoByTelegramId(telegramId);
+            string key = UserCacheKeyGenerator.GetUserInfoByTelegramId(telegramId);
             await cacheService.RemoveAsync(key, cancellationToken);
         }
     }

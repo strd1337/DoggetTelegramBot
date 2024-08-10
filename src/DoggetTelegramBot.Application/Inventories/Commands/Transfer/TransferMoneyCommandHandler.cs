@@ -1,7 +1,6 @@
 using DoggetTelegramBot.Application.Common.CQRS;
 using DoggetTelegramBot.Application.Common.Interfaces;
 using DoggetTelegramBot.Application.Common.Services;
-using DoggetTelegramBot.Application.Helpers;
 using DoggetTelegramBot.Application.Inventories.Commands.Transfer;
 using DoggetTelegramBot.Application.Inventories.Common;
 using DoggetTelegramBot.Application.Users.Common;
@@ -16,6 +15,7 @@ using LoggerConstants = DoggetTelegramBot.Domain.Common.Constants.Logger.Constan
 using UserConstants = DoggetTelegramBot.Domain.Common.Constants.User.Constants.User;
 using TransactionConstants = DoggetTelegramBot.Domain.Common.Constants.Transaction.Constants.Transaction;
 using InventoryConstants = DoggetTelegramBot.Domain.Common.Constants.Inventory.Constants.Inventory;
+using DoggetTelegramBot.Application.Helpers.CacheKeys;
 
 namespace DoggetTelegramBot.Application.Inventories.Commands.Trade
 {
@@ -143,8 +143,8 @@ namespace DoggetTelegramBot.Application.Inventories.Commands.Trade
         {
             string[] keys =
             [
-                CacheKeyGenerator.GetInventoryInfoByTelegramId(fromTelegramId),
-                CacheKeyGenerator.GetInventoryInfoByTelegramId(toTelegramId),
+                InventoryCacheKeyGenerator.GetInventoryInfoByTelegramId(fromTelegramId),
+                InventoryCacheKeyGenerator.GetInventoryInfoByTelegramId(toTelegramId),
             ];
 
             var removalTasks = keys

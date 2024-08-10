@@ -1,5 +1,4 @@
 using DoggetTelegramBot.Application.Common.Services;
-using DoggetTelegramBot.Application.Helpers;
 using DoggetTelegramBot.Domain.Common.Enums;
 using DoggetTelegramBot.Domain.Models.TransactionEntity.Enums;
 using DoggetTelegramBot.Infrastructure.BotManagement.Common.Handlers;
@@ -11,6 +10,7 @@ using Telegram.Bot.Types.Enums;
 using LoggerConstants = DoggetTelegramBot.Domain.Common.Constants.Logger.Constants.Logger;
 using UserConstants = DoggetTelegramBot.Domain.Common.Constants.User.Constants.User;
 using TransactionConstants = DoggetTelegramBot.Domain.Common.Constants.Transaction.Constants.Transaction;
+using DoggetTelegramBot.Application.Helpers.CacheKeys;
 
 namespace DoggetTelegramBot.Infrastructure.BotManagement.Events
 {
@@ -55,7 +55,7 @@ namespace DoggetTelegramBot.Infrastructure.BotManagement.Events
 
             long userTelegramId = telegramId.Value;
 
-            string cacheKey = CacheKeyGenerator.UserMessageCountByTelegramId(userTelegramId);
+            string cacheKey = UserCacheKeyGenerator.UserMessageCountByTelegramId(userTelegramId);
             (bool hasValue, int messageCount) = await cacheService.TryGetValueAsync<int>(cacheKey);
 
             messageCount = hasValue ? UpdateMessageCount(messageCount) : 0;

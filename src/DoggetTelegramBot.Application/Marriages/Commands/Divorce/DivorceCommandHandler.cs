@@ -1,7 +1,6 @@
 using DoggetTelegramBot.Application.Common.CQRS;
 using DoggetTelegramBot.Application.Common.Interfaces;
 using DoggetTelegramBot.Application.Common.Services;
-using DoggetTelegramBot.Application.Helpers;
 using DoggetTelegramBot.Application.Marriages.Common;
 using DoggetTelegramBot.Application.Users.Commands.Update.MaritalStatuses;
 using DoggetTelegramBot.Application.Users.Common;
@@ -22,6 +21,7 @@ using UserConstants = DoggetTelegramBot.Domain.Common.Constants.User.Constants.U
 using TransactionConstants = DoggetTelegramBot.Domain.Common.Constants.Transaction.Constants.Transaction;
 using MarriageConstants = DoggetTelegramBot.Domain.Common.Constants.Marriage.Constants.Marriage;
 using FamilyConstants = DoggetTelegramBot.Domain.Common.Constants.Family.Constants.Family;
+using DoggetTelegramBot.Application.Helpers.CacheKeys;
 
 namespace DoggetTelegramBot.Application.Marriages.Commands.Divorce
 {
@@ -223,17 +223,17 @@ namespace DoggetTelegramBot.Application.Marriages.Commands.Divorce
 
             string[] keys =
             [
-                CacheKeyGenerator.UserExistsWithTelegramId(spouseOne.TelegramId),
-                CacheKeyGenerator.GetUserInfoByTelegramId(spouseOne.TelegramId),
-                CacheKeyGenerator.GetFamilyInfoByUserId(UserId.Create(spouseOne.UserId.Value)),
-                CacheKeyGenerator.GetAllMarriagesInfoByUserId(UserId.Create(spouseOne.UserId.Value)),
-                CacheKeyGenerator.GetInventoryInfoByTelegramId(spouseOne.TelegramId),
-                CacheKeyGenerator.UserExistsWithTelegramId(spouseTwo.TelegramId),
-                CacheKeyGenerator.GetUserInfoByTelegramId(spouseTwo.TelegramId),
-                CacheKeyGenerator.GetFamilyInfoByUserId(UserId.Create(spouseTwo.UserId.Value)),
-                CacheKeyGenerator.GetAllMarriagesInfoByUserId(UserId.Create(spouseTwo.UserId.Value)),
-                CacheKeyGenerator.GetInventoryInfoByTelegramId(spouseTwo.TelegramId),
-                CacheKeyGenerator.GetSpousesByTelegramIdsQuery(spouseIds),
+                UserCacheKeyGenerator.UserExistsWithTelegramId(spouseOne.TelegramId),
+                UserCacheKeyGenerator.GetUserInfoByTelegramId(spouseOne.TelegramId),
+                FamilyCacheKeyGenerator.GetFamilyInfoByUserId(UserId.Create(spouseOne.UserId.Value)),
+                MarriageCacheKeyGenerator.GetAllMarriagesInfoByUserId(UserId.Create(spouseOne.UserId.Value)),
+                InventoryCacheKeyGenerator.GetInventoryInfoByTelegramId(spouseOne.TelegramId),
+                UserCacheKeyGenerator.UserExistsWithTelegramId(spouseTwo.TelegramId),
+                UserCacheKeyGenerator.GetUserInfoByTelegramId(spouseTwo.TelegramId),
+                FamilyCacheKeyGenerator.GetFamilyInfoByUserId(UserId.Create(spouseTwo.UserId.Value)),
+                MarriageCacheKeyGenerator.GetAllMarriagesInfoByUserId(UserId.Create(spouseTwo.UserId.Value)),
+                InventoryCacheKeyGenerator.GetInventoryInfoByTelegramId(spouseTwo.TelegramId),
+                UserCacheKeyGenerator.GetSpousesByTelegramIdsQuery(spouseIds),
             ];
 
             var removalTasks = keys
@@ -246,7 +246,7 @@ namespace DoggetTelegramBot.Application.Marriages.Commands.Divorce
             List<long> spouseIds,
             CancellationToken cancellationToken)
         {
-            string key = CacheKeyGenerator.GetSpousesByTelegramIdsQuery(spouseIds);
+            string key = UserCacheKeyGenerator.GetSpousesByTelegramIdsQuery(spouseIds);
             await cacheService.RemoveAsync(key, cancellationToken);
         }
     }

@@ -1,7 +1,6 @@
 using DoggetTelegramBot.Application.Common.CQRS;
 using DoggetTelegramBot.Application.Common.Interfaces;
 using DoggetTelegramBot.Application.Common.Services;
-using DoggetTelegramBot.Application.Helpers;
 using DoggetTelegramBot.Application.Inventories.Commands.Update;
 using DoggetTelegramBot.Application.Inventories.Common;
 using DoggetTelegramBot.Domain.Common.Enums;
@@ -13,6 +12,7 @@ using PRTelegramBot.Models.Enums;
 using LoggerConstants = DoggetTelegramBot.Domain.Common.Constants.Logger.Constants.Logger;
 using UserConstants = DoggetTelegramBot.Domain.Common.Constants.User.Constants.User;
 using InventoryConstants = DoggetTelegramBot.Domain.Common.Constants.Inventory.Constants.Inventory;
+using DoggetTelegramBot.Application.Helpers.CacheKeys;
 
 namespace DoggetTelegramBot.Application.Users.Commands.Update.Details
 {
@@ -110,10 +110,10 @@ namespace DoggetTelegramBot.Application.Users.Commands.Update.Details
         {
             string[] keys =
             [
-                CacheKeyGenerator.UserExistsWithTelegramId(user.TelegramId),
-                CacheKeyGenerator.GetUserInfoByTelegramId(user.TelegramId),
-                CacheKeyGenerator.GetFamilyInfoByUserId(UserId.Create(user.UserId.Value)),
-                CacheKeyGenerator.GetAllMarriagesInfoByUserId(UserId.Create(user.UserId.Value))
+                UserCacheKeyGenerator.UserExistsWithTelegramId(user.TelegramId),
+                UserCacheKeyGenerator.GetUserInfoByTelegramId(user.TelegramId),
+                FamilyCacheKeyGenerator.GetFamilyInfoByUserId(UserId.Create(user.UserId.Value)),
+                MarriageCacheKeyGenerator.GetAllMarriagesInfoByUserId(UserId.Create(user.UserId.Value))
             ];
 
             var removalTasks = keys.Select(key => cacheService.RemoveAsync(key, cancellationToken));
