@@ -8,10 +8,13 @@ using PRTelegramBot.Models;
 using PRTelegramBot.Models.Enums;
 using Telegram.Bot;
 using Telegram.Bot.Types;
+using Helpers = PRTelegramBot.Helpers;
 using LoggerConstants = DoggetTelegramBot.Domain.Common.Constants.Logger.Constants.Logger;
 using UserConstants = DoggetTelegramBot.Domain.Common.Constants.User.Constants.User;
 using TransactionConstants = DoggetTelegramBot.Domain.Common.Constants.Transaction.Constants.Transaction;
 using ErrorConstants = DoggetTelegramBot.Domain.Common.Constants.Error.Constants.Errors;
+using PRTelegramBot.Extensions;
+using DoggetTelegramBot.Domain.Common.Constants;
 
 namespace DoggetTelegramBot.Infrastructure.BotManagement.Events
 {
@@ -42,13 +45,25 @@ namespace DoggetTelegramBot.Infrastructure.BotManagement.Events
 
                 return UpdateResult.Stop;
             }
-            //TO DO: REMOVE
-            if (update.Message?.From?.Id == botClient.BotId)
+
+            if (update.Message?.From?.Id == botClient.BotId ||
+                update.Message?.ReplyToMessage?.From?.Id == botClient.BotId)
             {
                 logger.LogCommon(
                    UserConstants.Requests.CheckExistence(false),
                    TelegramEvents.Message,
                    LoggerConstants.Colors.Request);
+
+                OptionMessage option = new()
+                {
+                    ReplyToMessageId = update.GetMessageId()
+                };
+
+                await Helpers.Message.Send(
+                    botClient,
+                    update,
+                    Constants.Messages.BotInteraction,
+                    option);
 
                 return UpdateResult.Stop;
             }
