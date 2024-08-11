@@ -20,6 +20,28 @@ namespace DoggetTelegramBot.Infrastructure.BotManagement.Common.Handlers
             long userTelegramId,
             string successfulMessage)
         {
+            bool isSuccess = await RewardUserAsync(
+                botClient, update, scopeService, logger, options, amount, userTelegramId);
+
+            if (isSuccess)
+            {
+                await Helpers.Message.Send(
+                    botClient,
+                    update,
+                    successfulMessage,
+                    options);
+            }
+        }
+
+        public static async Task<bool> RewardUserAsync(
+            ITelegramBotClient botClient,
+            Update update,
+            IScopeService scopeService,
+            IBotLogger logger,
+            OptionMessage options,
+            decimal amount,
+            long userTelegramId)
+        {
             RewardTransactionCommand command = new([userTelegramId], amount);
 
             var transactionResult = await scopeService.Send(command);
@@ -33,15 +55,11 @@ namespace DoggetTelegramBot.Infrastructure.BotManagement.Common.Handlers
                     transactionResult.Errors.First(),
                     logger,
                     LoggerConstants.Colors.Problem);
+
+                return false;
             }
-            else
-            {
-                await Helpers.Message.Send(
-                    botClient,
-                    update,
-                    successfulMessage,
-                    options);
-            }
+
+            return true;
         }
     }
 }

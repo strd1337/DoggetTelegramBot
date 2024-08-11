@@ -1,6 +1,5 @@
 using DoggetTelegramBot.Application.Common.Services;
 using DoggetTelegramBot.Domain.Common.Enums;
-using DoggetTelegramBot.Domain.Models.TransactionEntity.Enums;
 using DoggetTelegramBot.Infrastructure.BotManagement.Common.Handlers;
 using PRTelegramBot.Models;
 using PRTelegramBot.Models.Enums;
@@ -68,9 +67,6 @@ namespace DoggetTelegramBot.Infrastructure.BotManagement.Events
             if (messageCount >= UserConstants.MaxMessageCount)
             {
                 decimal amount = TransactionConstants.Costs.UserMessageReward;
-                string successMessage = UserConstants.Messages.RewardSentSuccessfully(
-                    amount,
-                    RewardType.MessageCount);
 
                 await RewardHandler.RewardUserAsync(
                     botClient,
@@ -79,8 +75,7 @@ namespace DoggetTelegramBot.Infrastructure.BotManagement.Events
                     logger,
                     options,
                     amount,
-                    userTelegramId,
-                    successMessage);
+                    userTelegramId);
             }
 
             logger.LogCommon(

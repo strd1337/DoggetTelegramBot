@@ -12,7 +12,6 @@ namespace DoggetTelegramBot.Domain.Common.Constants.User
                 {
                     string reason = rewardType switch
                     {
-                        RewardType.MessageCount => $"for sending {MaxMessageCount} messages.",
                         RewardType.ReactionToPost => "for reaction to a post.",
                         RewardType.NewChatMember => "for joining the chat.",
                         RewardType.MarriedUsersDaily => "for being married.",
