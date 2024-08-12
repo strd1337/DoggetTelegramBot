@@ -6,6 +6,14 @@ namespace DoggetTelegramBot.Presentation.BotCommands
         {
             public const string Marry = "+marriage";
             public const string Divorce = "+divorce";
+
+            public static readonly CommandInfo MarryCommandInfo = new(
+                Marry,
+                "Marries users.");
+
+            public static readonly CommandInfo DivorceCommandInfo = new(
+                Divorce,
+                "Divorces users.");
         }
     }
 }
