@@ -1,7 +1,8 @@
 using DoggetTelegramBot.Application.Common.Services;
-using DoggetTelegramBot.Domain.Common.Constants;
 using DoggetTelegramBot.Domain.Common.Enums;
 using Microsoft.Extensions.Caching.Memory;
+using LoggerConstants = DoggetTelegramBot.Domain.Common.Constants.Logger.Constants.Logger;
+using CacheConstants = DoggetTelegramBot.Domain.Common.Constants.Common.Constants.Cache;
 
 namespace DoggetTelegramBot.Infrastructure.Services
 {
@@ -26,9 +27,9 @@ namespace DoggetTelegramBot.Infrastructure.Services
                 });
 
             logger.LogCommon(
-                Constants.Cache.StoreOrRetrieveMessage,
+                CacheConstants.Logging.StoreOrRetrieveMessage,
                 TelegramEvents.Message,
-                Constants.LogColors.Cache);
+                LoggerConstants.Colors.Cache);
 
             return result!;
         }
@@ -42,9 +43,9 @@ namespace DoggetTelegramBot.Infrastructure.Services
                 memoryCache.Remove(key);
 
                 logger.LogCommon(
-                    Constants.Cache.RemoveMessage,
+                    CacheConstants.Logging.RemoveMessage,
                     TelegramEvents.Message,
-                    Constants.LogColors.Cache);
+                    LoggerConstants.Colors.Cache);
             }
 
             return Task.CompletedTask;
@@ -64,9 +65,9 @@ namespace DoggetTelegramBot.Infrastructure.Services
             memoryCache.Set(key, value, cacheEntryOptions);
 
             logger.LogCommon(
-                Constants.Cache.StoreOrRetrieveMessage,
+                CacheConstants.Logging.StoreOrRetrieveMessage,
                 TelegramEvents.Message,
-                Constants.LogColors.Cache);
+                LoggerConstants.Colors.Cache);
 
             return Task.CompletedTask;
         }
@@ -80,9 +81,9 @@ namespace DoggetTelegramBot.Infrastructure.Services
             memoryCache.Set(key, usageTime, expiration ?? defaultExpiration);
 
             logger.LogCommon(
-                Constants.Cache.StoreOrRetrieveMessage,
+                CacheConstants.Logging.StoreOrRetrieveMessage,
                 TelegramEvents.Message,
-                Constants.LogColors.Cache);
+                LoggerConstants.Colors.Cache);
 
             return Task.CompletedTask;
         }

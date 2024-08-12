@@ -1,9 +1,9 @@
-﻿using System.Reflection;
+using System.Reflection;
 using NLog;
 using NLog.Targets;
 using DoggetTelegramBot.Domain.Common.Enums;
 using NLog.Config;
-using DoggetTelegramBot.Domain.Common.Constants;
+using LoggerConstants = DoggetTelegramBot.Domain.Common.Constants.Logger.Constants.Logger;
 
 namespace DoggetTelegramBot.Infrastructure.Configs
 {
@@ -31,12 +31,12 @@ namespace DoggetTelegramBot.Infrastructure.Configs
                 configuration.AddRule(LogLevel.Trace, LogLevel.Fatal, logfile, type);
             }
 
-            FileTarget logError = new(Constants.Logger.ErrorName)
+            FileTarget logError = new(LoggerConstants.ErrorName)
             {
-                FileName = BaseDir + "/logs/" + Constants.Logger.ErrorName + "/log-${date:format=\\dd.\\MM.\\yyyy}.txt"
+                FileName = BaseDir + "/logs/" + LoggerConstants.ErrorName + "/log-${date:format=\\dd.\\MM.\\yyyy}.txt"
             };
 
-            configuration.AddRule(LogLevel.Trace, LogLevel.Fatal, logError, Constants.Logger.ErrorName);
+            configuration.AddRule(LogLevel.Trace, LogLevel.Fatal, logError, LoggerConstants.ErrorName);
 
             LogManager.Configuration = configuration;
         }

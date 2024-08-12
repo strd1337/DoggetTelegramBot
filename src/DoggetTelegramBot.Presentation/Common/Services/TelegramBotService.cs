@@ -1,5 +1,4 @@
 using DoggetTelegramBot.Application.Common.Services;
-using DoggetTelegramBot.Domain.Common.Constants;
 using DoggetTelegramBot.Domain.Common.Enums;
 using DoggetTelegramBot.Presentation.Common.Mapping;
 using ErrorOr;
@@ -7,6 +6,8 @@ using PRTelegramBot.Models;
 using System.Text;
 using Telegram.Bot;
 using Telegram.Bot.Types;
+using LoggerConstants = DoggetTelegramBot.Domain.Common.Constants.Logger.Constants.Logger;
+using ErrorConstants = DoggetTelegramBot.Domain.Common.Constants.Error.Constants.Errors;
 
 namespace DoggetTelegramBot.Presentation.Common.Services
 {
@@ -69,7 +70,7 @@ namespace DoggetTelegramBot.Presentation.Common.Services
                 logger.LogCommon(
                     "No errors provided",
                     TelegramEvents.Message,
-                    Constants.LogColors.Problem);
+                    LoggerConstants.Colors.Problem);
 
                 return new Response();
             }
@@ -93,7 +94,7 @@ namespace DoggetTelegramBot.Presentation.Common.Services
             logger.LogCommon(
                 validationErrorDetails.ToString(),
                 TelegramEvents.Message,
-                Constants.LogColors.Problem);
+                LoggerConstants.Colors.Problem);
 
             return new Response { Message = validationErrorMessage.ToString() };
         }
@@ -104,19 +105,19 @@ namespace DoggetTelegramBot.Presentation.Common.Services
 
             string errorMessage = statusCode switch
             {
-                StatusCodes.Status409Conflict => string.Format(null, CompositeFormat.Parse(Constants.ErrorMessage.Conflict), error.Description),
-                StatusCodes.Status400BadRequest => string.Format(null, CompositeFormat.Parse(Constants.ErrorMessage.BadRequest), error.Description),
+                StatusCodes.Status409Conflict => string.Format(null, CompositeFormat.Parse(ErrorConstants.Messages.Conflict), error.Description),
+                StatusCodes.Status400BadRequest => string.Format(null, CompositeFormat.Parse(ErrorConstants.Messages.BadRequest), error.Description),
                 StatusCodes.Status404NotFound => error.Description,
-                StatusCodes.Status401Unauthorized => Constants.ErrorMessage.Unauthorized,
+                StatusCodes.Status401Unauthorized => ErrorConstants.Messages.Unauthorized,
                 StatusCodes.Status403Forbidden => error.Description,
-                StatusCodes.Status500InternalServerError => Constants.ErrorMessage.InternalServer,
-                _ => Constants.ErrorMessage.Generic,
+                StatusCodes.Status500InternalServerError => ErrorConstants.Messages.InternalServer,
+                _ => ErrorConstants.Messages.Generic,
             };
 
             logger.LogCommon(
                 $" Error Code: {error.Code}, Description: {error.Description}",
                 TelegramEvents.Message,
-                Constants.LogColors.Problem);
+                LoggerConstants.Colors.Problem);
 
             return new Response { Message = errorMessage };
         }

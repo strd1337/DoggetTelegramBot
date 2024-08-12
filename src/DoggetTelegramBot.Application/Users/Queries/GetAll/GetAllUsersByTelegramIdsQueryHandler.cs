@@ -2,11 +2,12 @@ using DoggetTelegramBot.Application.Common.CQRS;
 using DoggetTelegramBot.Application.Common.Interfaces;
 using DoggetTelegramBot.Application.Common.Services;
 using DoggetTelegramBot.Application.Users.Common;
-using DoggetTelegramBot.Domain.Common.Constants;
 using DoggetTelegramBot.Domain.Common.Enums;
 using DoggetTelegramBot.Domain.Common.Errors;
 using DoggetTelegramBot.Domain.Models.UserEntity;
 using ErrorOr;
+using LoggerConstants = DoggetTelegramBot.Domain.Common.Constants.Logger.Constants.Logger;
+using UserConstants = DoggetTelegramBot.Domain.Common.Constants.User.Constants.User;
 
 namespace DoggetTelegramBot.Application.Users.Queries.GetAll
 {
@@ -29,17 +30,17 @@ namespace DoggetTelegramBot.Application.Users.Queries.GetAll
             if (users.Count == 0)
             {
                 logger.LogCommon(
-                    Constants.User.Messages.NotFoundRetrieved(request.TelegramIds),
+                    UserConstants.Logging.NotFoundRetrieved(request.TelegramIds),
                     TelegramEvents.Message,
-                    Constants.LogColors.GetAll);
+                    LoggerConstants.Colors.GetAll);
 
                 return Errors.User.SomeNotFound;
             }
 
             logger.LogCommon(
-                Constants.User.Messages.Retrieved(request.TelegramIds),
+                UserConstants.Logging.Retrieved(request.TelegramIds),
                 TelegramEvents.Message,
-                Constants.LogColors.GetAll);
+                LoggerConstants.Colors.GetAll);
 
             return new GetAllUsersResult(users);
         }

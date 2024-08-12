@@ -4,18 +4,22 @@ using DoggetTelegramBot.Application.Common.Services;
 using DoggetTelegramBot.Application.Transactions.Common;
 using DoggetTelegramBot.Application.Users.Common;
 using DoggetTelegramBot.Application.Users.Queries.GetAll;
-using DoggetTelegramBot.Domain.Common.Constants;
 using DoggetTelegramBot.Domain.Common.Enums;
 using DoggetTelegramBot.Domain.Models.UserEntity;
 using ErrorOr;
 using MediatR;
+using LoggerConstants = DoggetTelegramBot.Domain.Common.Constants.Logger.Constants.Logger;
+using UserConstants = DoggetTelegramBot.Domain.Common.Constants.User.Constants.User;
+using TransactionConstants = DoggetTelegramBot.Domain.Common.Constants.Transaction.Constants.Transaction;
+using DoggetTelegramBot.Application.Helpers.CacheKeys;
 
 namespace DoggetTelegramBot.Application.Transactions.Commands
 {
     public sealed class RewardTransactionCommandHandler(
         ITransactionService transactionService,
         IBotLogger logger,
-        IMediator mediator) : ICommandHandler<RewardTransactionCommand, RewardTransactionResult>
+        IMediator mediator,
+        ICacheService cacheService) : ICommandHandler<RewardTransactionCommand, RewardTransactionResult>
     {
         public async Task<ErrorOr<RewardTransactionResult>> Handle(
             RewardTransactionCommand request,
@@ -43,18 +47,25 @@ namespace DoggetTelegramBot.Application.Transactions.Commands
                 .SelectMany(r => r.Errors)
                 .ToArray();
 
-            return errors.Length != 0 ? errors : new RewardTransactionResult();
+            if (errors.Length != 0)
+            {
+                return errors;
+            }
+
+            await RemoveKeysFromCacheAsync(request.UserTelegramIds, cancellationToken);
+
+            return new RewardTransactionResult();
         }
 
         private async Task<ErrorOr<bool>> ExecuteRewardUserAsync(
-           UserId userId,
-           decimal amount,
-           CancellationToken cancellationToken)
+            UserId userId,
+            decimal amount,
+            CancellationToken cancellationToken)
         {
             logger.LogCommon(
-                Constants.Transaction.Messages.ExecuteRewardUser(),
+                TransactionConstants.Requests.ExecuteRewardUser(),
                 TelegramEvents.Message,
-                Constants.LogColors.Request);
+                LoggerConstants.Colors.Request);
 
             var transactionResult = await transactionService.ExecuteRewardUserAsync(
                 userId,
@@ -62,9 +73,9 @@ namespace DoggetTelegramBot.Application.Transactions.Commands
                 cancellationToken);
 
             logger.LogCommon(
-                Constants.Transaction.Messages.ExecuteRewardUser(false),
+                TransactionConstants.Requests.ExecuteRewardUser(false),
                 TelegramEvents.Message,
-                Constants.LogColors.Request);
+                LoggerConstants.Colors.Request);
 
             return transactionResult;
         }
@@ -74,19 +85,33 @@ namespace DoggetTelegramBot.Application.Transactions.Commands
             CancellationToken cancellationToken)
         {
             logger.LogCommon(
-                Constants.User.Messages.GetRequest(),
+                UserConstants.Requests.Get(),
             TelegramEvents.Message,
-                Constants.LogColors.Request);
+                LoggerConstants.Colors.Request);
 
             GetAllUsersByTelegramIdsQuery query = new(telegramIds);
             var result = await mediator.Send(query, cancellationToken);
 
             logger.LogCommon(
-                Constants.User.Messages.GetRequest(false),
+                UserConstants.Requests.Get(false),
                 TelegramEvents.Message,
-                Constants.LogColors.Request);
+                LoggerConstants.Colors.Request);
 
             return result;
+        }
+
+        private async Task RemoveKeysFromCacheAsync(
+            List<long> userTelegramIds,
+            CancellationToken cancellationToken)
+        {
+            List<string> keys = userTelegramIds
+                .Select(InventoryCacheKeyGenerator.GetInventoryInfoByTelegramId)
+                .ToList();
+
+            var removalTasks = keys
+                .Select(key => cacheService.RemoveAsync(key, cancellationToken));
+
+            await Task.WhenAll(removalTasks);
         }
     }
 }

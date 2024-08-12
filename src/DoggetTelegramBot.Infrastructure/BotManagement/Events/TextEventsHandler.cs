@@ -1,14 +1,15 @@
 using DoggetTelegramBot.Application.Common.Services;
-using DoggetTelegramBot.Application.Helpers;
-using DoggetTelegramBot.Domain.Common.Constants;
 using DoggetTelegramBot.Domain.Common.Enums;
-using DoggetTelegramBot.Domain.Models.TransactionEntity.Enums;
 using DoggetTelegramBot.Infrastructure.BotManagement.Common.Handlers;
 using PRTelegramBot.Models;
 using PRTelegramBot.Models.Enums;
 using Telegram.Bot;
 using Telegram.Bot.Types;
 using Telegram.Bot.Types.Enums;
+using LoggerConstants = DoggetTelegramBot.Domain.Common.Constants.Logger.Constants.Logger;
+using UserConstants = DoggetTelegramBot.Domain.Common.Constants.User.Constants.User;
+using TransactionConstants = DoggetTelegramBot.Domain.Common.Constants.Transaction.Constants.Transaction;
+using DoggetTelegramBot.Application.Helpers.CacheKeys;
 
 namespace DoggetTelegramBot.Infrastructure.BotManagement.Events
 {
@@ -21,7 +22,8 @@ namespace DoggetTelegramBot.Infrastructure.BotManagement.Events
             ITelegramBotClient botClient,
             Update update)
         {
-            if (update?.Message?.Chat.Type is not ChatType.Supergroup)
+            if (update?.Message?.Chat.Type is not ChatType.Supergroup ||
+                update?.Message.Type is not MessageType.Text)
             {
                 return UpdateResult.Continue;
             }
@@ -32,9 +34,9 @@ namespace DoggetTelegramBot.Infrastructure.BotManagement.Events
             };
 
             logger.LogCommon(
-                Constants.User.Messages.ValidMessageRewardRequest(),
+                UserConstants.Requests.ValidMessageReward(),
                 TelegramEvents.Message,
-                Constants.LogColors.Request);
+                LoggerConstants.Colors.Request);
 
             long? telegramId = update.Message?.From?.Id;
 
@@ -44,7 +46,7 @@ namespace DoggetTelegramBot.Infrastructure.BotManagement.Events
                     botClient,
                     update,
                     logger,
-                    Constants.LogColors.Problem,
+                    LoggerConstants.Colors.Problem,
                     options);
 
                 return UpdateResult.Continue;
@@ -52,7 +54,7 @@ namespace DoggetTelegramBot.Infrastructure.BotManagement.Events
 
             long userTelegramId = telegramId.Value;
 
-            string cacheKey = CacheKeyGenerator.UserMessageCountByTelegramId(userTelegramId);
+            string cacheKey = UserCacheKeyGenerator.UserMessageCountByTelegramId(userTelegramId);
             (bool hasValue, int messageCount) = await cacheService.TryGetValueAsync<int>(cacheKey);
 
             messageCount = hasValue ? UpdateMessageCount(messageCount) : 0;
@@ -60,14 +62,11 @@ namespace DoggetTelegramBot.Infrastructure.BotManagement.Events
             await cacheService.SetSlidingExpirationAsync(
                cacheKey,
                messageCount,
-               Constants.User.UserMessageActivityTimeout);
+               UserConstants.UserMessageActivityTimeout);
 
-            if (messageCount >= Constants.User.MaxMessageCount)
+            if (messageCount >= UserConstants.MaxMessageCount)
             {
-                decimal amount = Constants.Transaction.Costs.UserMessageReward;
-                string successMessage = Constants.User.Messages.RewardSentSuccessfully(
-                    amount,
-                    RewardType.MessageCount);
+                decimal amount = TransactionConstants.Costs.UserMessageReward;
 
                 await RewardHandler.RewardUserAsync(
                     botClient,
@@ -76,19 +75,18 @@ namespace DoggetTelegramBot.Infrastructure.BotManagement.Events
                     logger,
                     options,
                     amount,
-                    userTelegramId,
-                    successMessage);
+                    userTelegramId);
             }
 
             logger.LogCommon(
-                Constants.User.Messages.ValidMessageRewardRequest(false),
+                UserConstants.Requests.ValidMessageReward(false),
                 TelegramEvents.Message,
-                Constants.LogColors.Request);
+                LoggerConstants.Colors.Request);
 
             return UpdateResult.Continue;
         }
 
         private static int UpdateMessageCount(int messageCount) =>
-            messageCount < Constants.User.MaxMessageCount ? ++messageCount : 0;
+            messageCount < UserConstants.MaxMessageCount ? ++messageCount : 0;
     }
 }

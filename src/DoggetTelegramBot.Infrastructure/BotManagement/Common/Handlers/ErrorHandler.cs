@@ -1,11 +1,11 @@
 using DoggetTelegramBot.Application.Common.Services;
-using DoggetTelegramBot.Domain.Common.Constants;
 using DoggetTelegramBot.Domain.Common.Enums;
 using ErrorOr;
 using PRTelegramBot.Models;
 using Telegram.Bot;
 using Telegram.Bot.Types;
 using Helpers = PRTelegramBot.Helpers;
+using ErrorConstants = DoggetTelegramBot.Domain.Common.Constants.Error.Constants.Errors;
 
 namespace DoggetTelegramBot.Infrastructure.BotManagement.Common.Handlers
 {
@@ -18,11 +18,11 @@ namespace DoggetTelegramBot.Infrastructure.BotManagement.Common.Handlers
             ConsoleColor consoleColor,
             OptionMessage options)
         {
-            LogError(Constants.ErrorMessage.MissingInformation, logger, consoleColor);
+            LogError(ErrorConstants.Messages.MissingInformation, logger, consoleColor);
             await Helpers.Message.Send(
                 botClient,
                 update,
-                Constants.ErrorMessage.MissingInformation,
+                ErrorConstants.Messages.MissingInformation,
                 options);
         }
 

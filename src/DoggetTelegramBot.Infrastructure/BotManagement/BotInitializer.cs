@@ -24,7 +24,7 @@ namespace DoggetTelegramBot.Infrastructure.BotManagement
                 {
                     Limit = 5,
                     AllowedUpdates = [],
-                    ThrowPendingUpdates = true,
+                    DropPendingUpdates = true,
                 })
                 .SetServiceProvider(serviceProvider)
                 .Build();

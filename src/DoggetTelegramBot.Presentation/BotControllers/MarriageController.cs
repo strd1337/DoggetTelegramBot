@@ -1,14 +1,21 @@
 using DoggetTelegramBot.Application.Common.Services;
 using DoggetTelegramBot.Domain.Common.Constants;
 using DoggetTelegramBot.Domain.Common.Enums;
+using DoggetTelegramBot.Presentation.BotCommands;
 using DoggetTelegramBot.Presentation.BotControllers.Common;
 using DoggetTelegramBot.Presentation.Common.Services;
+using DoggetTelegramBot.Presentation.Handlers.Common.Caches;
 using DoggetTelegramBot.Presentation.Handlers.Requests;
+using DoggetTelegramBot.Presentation.Handlers.StepCommands;
 using DoggetTelegramBot.Presentation.Helpers.MenuGenerators;
 using PRTelegramBot.Attributes;
+using PRTelegramBot.Extensions;
+using PRTelegramBot.Models;
 using PRTelegramBot.Models.Enums;
 using Telegram.Bot;
 using Telegram.Bot.Types;
+using LoggerConstants = DoggetTelegramBot.Domain.Common.Constants.Logger.Constants.Logger;
+using MarriageConstants = DoggetTelegramBot.Domain.Common.Constants.Marriage.Constants.Marriage;
 
 namespace DoggetTelegramBot.Presentation.BotControllers
 {
@@ -18,15 +25,15 @@ namespace DoggetTelegramBot.Presentation.BotControllers
         MarriageRequestHandler requestHandler,
         ITelegramBotService botService) : BaseController(botService)
     {
-        [ReplyMenuHandler(CommandComparison.Equals, StringComparison.OrdinalIgnoreCase, Constants.Marriage.ReplyKeys.Marry)]
+        [ReplyMenuHandler(CommandComparison.Equals, StringComparison.OrdinalIgnoreCase, Commands.Marriage.Marry)]
         public async Task MarryAsync(ITelegramBotClient botClient, Update update)
         {
             logger.LogCommon(update);
 
             logger.LogCommon(
-                Constants.Marriage.Messages.MarryRequest(),
+                MarriageConstants.Requests.Marry(),
                 TelegramEvents.Message,
-                Constants.LogColors.Request);
+                LoggerConstants.Colors.Request);
 
             if (update.Message?.ReplyToMessage is null)
             {
@@ -34,40 +41,48 @@ namespace DoggetTelegramBot.Presentation.BotControllers
                     botClient,
                     update,
                     Constants.Messages.NotFoundUserReply(
-                        Constants.Marriage.ReplyKeys.Marry));
+                        Commands.Marriage.Marry));
 
                 logger.LogCommon(
-                    Constants.Marriage.Messages.MarryRequest(false),
+                    MarriageConstants.Requests.Marry(false),
                     TelegramEvents.Message,
-                    Constants.LogColors.Request);
+                    LoggerConstants.Colors.Request);
 
                 return;
             }
 
-            var menu = MarriageMenuGenerator.GenerateConfirmationMenu(update);
+            MarryStepCache cache = new();
+
+            StepTelegram handler = new(
+                MarryStepCommandsHandler.SelectConfirmationType,
+                cache);
+
+            update.RegisterStepHandler(handler);
+
+            var confirmationMenu = MarryMenuGenerator.GenerateConfirmationMenu(update);
 
             var message = await SendMessage(
                 botClient,
                 update,
-                Constants.Marriage.Messages.ComposeMarryOrDivorceProposal(
-                    update.Message.From!.FirstName,
+                MarriageConstants.Messages.ComposeMarryOrDivorceProposal(
+                    update.Message!.From!.FirstName,
                     update.Message.From!.Username,
-                    update.Message.ReplyToMessage.From!.FirstName,
+                    update.Message.ReplyToMessage!.From!.FirstName,
                     update.Message.ReplyToMessage.From.Username),
-                menu);
+                confirmationMenu);
 
             _ = requestHandler.HandleGetMarriedAsync(botClient, update, message);
         }
 
-        [ReplyMenuHandler(CommandComparison.Equals, StringComparison.OrdinalIgnoreCase, Constants.Marriage.ReplyKeys.Divorce)]
+        [ReplyMenuHandler(CommandComparison.Equals, StringComparison.OrdinalIgnoreCase, Commands.Marriage.Divorce)]
         public async Task DivorceAsync(ITelegramBotClient botClient, Update update)
         {
             logger.LogCommon(update);
 
             logger.LogCommon(
-                Constants.Marriage.Messages.DivorceRequest(),
+                MarriageConstants.Requests.Divorce(),
                 TelegramEvents.Message,
-                Constants.LogColors.Request);
+                LoggerConstants.Colors.Request);
 
             if (update.Message?.ReplyToMessage is null)
             {
@@ -75,22 +90,22 @@ namespace DoggetTelegramBot.Presentation.BotControllers
                     botClient,
                     update,
                     Constants.Messages.NotFoundUserReply(
-                        Constants.Marriage.ReplyKeys.Divorce));
+                        Commands.Marriage.Divorce));
 
                 logger.LogCommon(
-                    Constants.Marriage.Messages.DivorceRequest(false),
+                    MarriageConstants.Requests.Divorce(false),
                     TelegramEvents.Message,
-                    Constants.LogColors.Request);
+                    LoggerConstants.Colors.Request);
 
                 return;
             }
 
-            var menu = MarriageMenuGenerator.GenerateConfirmationMenu(update);
+            var menu = DivorceMenuGenerator.GenerateConfirmationMenu(update);
 
             var message = await SendMessage(
                 botClient,
                 update,
-                Constants.Marriage.Messages.ComposeMarryOrDivorceProposal(
+                MarriageConstants.Messages.ComposeMarryOrDivorceProposal(
                     update.Message.From!.FirstName,
                     update.Message.From!.Username,
                     update.Message.ReplyToMessage.From!.FirstName,

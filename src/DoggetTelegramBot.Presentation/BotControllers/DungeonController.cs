@@ -1,7 +1,7 @@
 using DoggetTelegramBot.Application.Common.Services;
 using DoggetTelegramBot.Application.Dungeons.Guimu.Commands;
-using DoggetTelegramBot.Domain.Common.Constants;
 using DoggetTelegramBot.Domain.Common.Enums;
+using DoggetTelegramBot.Presentation.BotCommands;
 using DoggetTelegramBot.Presentation.BotControllers.Common;
 using DoggetTelegramBot.Presentation.Common.Mapping;
 using DoggetTelegramBot.Presentation.Common.Services;
@@ -10,6 +10,8 @@ using PRTelegramBot.Attributes;
 using PRTelegramBot.Models.Enums;
 using Telegram.Bot;
 using Telegram.Bot.Types;
+using LoggerConstants = DoggetTelegramBot.Domain.Common.Constants.Logger.Constants.Logger;
+using DungeonConstants = DoggetTelegramBot.Domain.Common.Constants.Dungeon.Guimu.Constants.Dungeon;
 
 namespace DoggetTelegramBot.Presentation.BotControllers
 {
@@ -20,15 +22,15 @@ namespace DoggetTelegramBot.Presentation.BotControllers
         IMapper mapper,
         ITelegramBotService botService) : BaseController(botService)
     {
-        [SlashHandler(CommandComparison.Equals, StringComparison.OrdinalIgnoreCase, Constants.Dungeon.ReplyKeys.Guimu)]
+        [SlashHandler(CommandComparison.Equals, StringComparison.OrdinalIgnoreCase, Commands.Dungeon.Guimu)]
         public async Task StartGuimuAsync(ITelegramBotClient botClient, Update update)
         {
             logger.LogCommon(update);
 
             logger.LogCommon(
-                Constants.Dungeon.Guimu.Messages.Start(),
+                DungeonConstants.Guimu.Messages.Start(),
                 TelegramEvents.Message,
-                Constants.LogColors.Request);
+                LoggerConstants.Colors.Request);
 
             GuimuDungeonCommand command = new(update.Message!.From!.Id);
             var result = await scopeService.Send(command);
@@ -38,9 +40,9 @@ namespace DoggetTelegramBot.Presentation.BotControllers
             await SendReplyMessage(botClient, update, response.Message);
 
             logger.LogCommon(
-                Constants.Dungeon.Guimu.Messages.Start(false),
+                DungeonConstants.Guimu.Messages.Start(false),
                 TelegramEvents.Message,
-                Constants.LogColors.Request);
+                LoggerConstants.Colors.Request);
         }
     }
 }

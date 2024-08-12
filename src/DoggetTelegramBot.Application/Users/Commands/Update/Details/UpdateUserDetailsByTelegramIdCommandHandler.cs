@@ -1,16 +1,18 @@
 using DoggetTelegramBot.Application.Common.CQRS;
 using DoggetTelegramBot.Application.Common.Interfaces;
 using DoggetTelegramBot.Application.Common.Services;
-using DoggetTelegramBot.Application.Helpers;
 using DoggetTelegramBot.Application.Inventories.Commands.Update;
 using DoggetTelegramBot.Application.Inventories.Common;
-using DoggetTelegramBot.Domain.Common.Constants;
 using DoggetTelegramBot.Domain.Common.Enums;
 using DoggetTelegramBot.Domain.Models.InventoryEntity;
 using DoggetTelegramBot.Domain.Models.UserEntity;
 using ErrorOr;
 using MediatR;
 using PRTelegramBot.Models.Enums;
+using LoggerConstants = DoggetTelegramBot.Domain.Common.Constants.Logger.Constants.Logger;
+using UserConstants = DoggetTelegramBot.Domain.Common.Constants.User.Constants.User;
+using InventoryConstants = DoggetTelegramBot.Domain.Common.Constants.Inventory.Constants.Inventory;
+using DoggetTelegramBot.Application.Helpers.CacheKeys;
 
 namespace DoggetTelegramBot.Application.Users.Commands.Update.Details
 {
@@ -48,9 +50,9 @@ namespace DoggetTelegramBot.Application.Users.Commands.Update.Details
                 if (inventoryResult.IsError)
                 {
                     logger.LogCommon(
-                        Constants.Inventory.Messages.UpdateRequest(false),
+                        InventoryConstants.Requests.Update(false),
                         TelegramEvents.Register,
-                        Constants.LogColors.Request);
+                        LoggerConstants.Colors.Request);
 
                     return UpdateResult.Stop;
                 }
@@ -65,19 +67,19 @@ namespace DoggetTelegramBot.Application.Users.Commands.Update.Details
             await unitOfWork.SaveChangesAsync(cancellationToken);
 
             logger.LogCommon(
-                Constants.Inventory.Messages.UpdatedSuccessfully(user.InventoryId),
+                InventoryConstants.Logging.UpdatedSuccessfully(user.InventoryId),
                 TelegramEvents.Register,
-                Constants.LogColors.Update);
+                LoggerConstants.Colors.Update);
 
             logger.LogCommon(
-                Constants.Inventory.Messages.UpdateRequest(false),
+                InventoryConstants.Requests.Update(false),
                 TelegramEvents.Register,
-                Constants.LogColors.Request);
+                LoggerConstants.Colors.Request);
 
             logger.LogCommon(
-                Constants.User.Messages.UpdatedSuccessfully(request.TelegramId),
+                UserConstants.Logging.UpdatedSuccessfully(request.TelegramId),
                 TelegramEvents.Register,
-                Constants.LogColors.Update);
+                LoggerConstants.Colors.Update);
 
             await RemoveKeysFromCacheAsync(user, cancellationToken);
 
@@ -91,9 +93,9 @@ namespace DoggetTelegramBot.Application.Users.Commands.Update.Details
             CancellationToken cancellationToken)
         {
             logger.LogCommon(
-                Constants.Inventory.Messages.UpdateRequest(),
+                InventoryConstants.Requests.Update(),
                 TelegramEvents.Register,
-                Constants.LogColors.Request);
+                LoggerConstants.Colors.Request);
 
             UpdateInventoryByInventoryIdCommand command = new(inventoryId, amount, isDeleted);
 
@@ -108,10 +110,10 @@ namespace DoggetTelegramBot.Application.Users.Commands.Update.Details
         {
             string[] keys =
             [
-                CacheKeyGenerator.UserExistsWithTelegramId(user.TelegramId),
-                CacheKeyGenerator.GetUserInfoByTelegramId(user.TelegramId),
-                CacheKeyGenerator.GetFamilyInfoByUserId(UserId.Create(user.UserId.Value)),
-                CacheKeyGenerator.GetAllMarriagesInfoByUserId(UserId.Create(user.UserId.Value))
+                UserCacheKeyGenerator.UserExistsWithTelegramId(user.TelegramId),
+                UserCacheKeyGenerator.GetUserInfoByTelegramId(user.TelegramId),
+                FamilyCacheKeyGenerator.GetFamilyInfoByUserId(UserId.Create(user.UserId.Value)),
+                MarriageCacheKeyGenerator.GetAllMarriagesInfoByUserId(UserId.Create(user.UserId.Value))
             ];
 
             var removalTasks = keys.Select(key => cacheService.RemoveAsync(key, cancellationToken));

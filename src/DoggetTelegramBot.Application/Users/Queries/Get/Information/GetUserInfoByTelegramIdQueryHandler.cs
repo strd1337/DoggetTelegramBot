@@ -5,12 +5,15 @@ using DoggetTelegramBot.Application.DTOs;
 using DoggetTelegramBot.Application.Families.Queries.GetAll.Information;
 using DoggetTelegramBot.Application.Marriages.Queries.GetAll.Information;
 using DoggetTelegramBot.Application.Users.Common;
-using DoggetTelegramBot.Domain.Common.Constants;
 using DoggetTelegramBot.Domain.Common.Enums;
 using DoggetTelegramBot.Domain.Common.Errors;
 using DoggetTelegramBot.Domain.Models.UserEntity;
 using ErrorOr;
 using MediatR;
+using LoggerConstants = DoggetTelegramBot.Domain.Common.Constants.Logger.Constants.Logger;
+using UserConstants = DoggetTelegramBot.Domain.Common.Constants.User.Constants.User;
+using MarriageConstants = DoggetTelegramBot.Domain.Common.Constants.Marriage.Constants.Marriage;
+using FamilyConstants = DoggetTelegramBot.Domain.Common.Constants.Family.Constants.Family;
 
 namespace DoggetTelegramBot.Application.Users.Queries.Get.Information
 {
@@ -42,17 +45,17 @@ namespace DoggetTelegramBot.Application.Users.Queries.Get.Information
             if (user is null)
             {
                 logger.LogCommon(
-                    Constants.User.Messages.NotFoundRetrieved(request.TelegramId),
+                    UserConstants.Logging.NotFoundRetrieved(request.TelegramId),
                     TelegramEvents.Message,
-                    Constants.LogColors.Get);
+                    LoggerConstants.Colors.Get);
 
                 return Errors.User.NotFound;
             }
 
             logger.LogCommon(
-                Constants.User.Messages.Retrieved(request.TelegramId),
+                UserConstants.Logging.Retrieved(request.TelegramId),
                 TelegramEvents.Message,
-                Constants.LogColors.Get);
+                LoggerConstants.Colors.Get);
 
             var marriages = await GetUserMarriagesInfoAsync(
                 user.UserId,
@@ -78,9 +81,9 @@ namespace DoggetTelegramBot.Application.Users.Queries.Get.Information
             CancellationToken cancellationToken)
         {
             logger.LogCommon(
-                Constants.Marriage.Messages.GetInformationRequest(),
+                MarriageConstants.Requests.GetInformation(),
                 TelegramEvents.Message,
-                Constants.LogColors.Request);
+                LoggerConstants.Colors.Request);
 
             GetAllMarriagesInfoByUserIdQuery query = new(userId);
             var result = await mediator.Send(query, cancellationToken);
@@ -111,9 +114,9 @@ namespace DoggetTelegramBot.Application.Users.Queries.Get.Information
             }
 
             logger.LogCommon(
-                Constants.Marriage.Messages.GetInformationRequest(false),
+                MarriageConstants.Requests.GetInformation(false),
                 TelegramEvents.Message,
-                Constants.LogColors.Request);
+                LoggerConstants.Colors.Request);
 
             return marriages;
         }
@@ -124,9 +127,9 @@ namespace DoggetTelegramBot.Application.Users.Queries.Get.Information
            CancellationToken cancellationToken)
         {
             logger.LogCommon(
-               Constants.Family.Messages.GetAllInformationRequest(),
+               FamilyConstants.Requests.GetAllInformation(),
                TelegramEvents.Message,
-               Constants.LogColors.Request);
+               LoggerConstants.Colors.Request);
 
             GetAllFamiliesInfoByUserIdQuery query = new(userId);
             var result = await mediator.Send(query, cancellationToken);
@@ -176,9 +179,9 @@ namespace DoggetTelegramBot.Application.Users.Queries.Get.Information
             }
 
             logger.LogCommon(
-                Constants.Family.Messages.GetAllInformationRequest(false),
+                FamilyConstants.Requests.GetAllInformation(false),
                 TelegramEvents.Message,
-                Constants.LogColors.Request);
+                LoggerConstants.Colors.Request);
 
             return families;
         }

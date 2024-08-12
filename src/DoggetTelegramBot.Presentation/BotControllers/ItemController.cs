@@ -1,8 +1,8 @@
 using DoggetTelegramBot.Application.Common.Services;
 using DoggetTelegramBot.Application.Items.Queries.Server;
-using DoggetTelegramBot.Domain.Common.Constants;
 using DoggetTelegramBot.Domain.Common.Enums;
 using DoggetTelegramBot.Domain.Models.UserEntity.Enums;
+using DoggetTelegramBot.Presentation.BotCommands;
 using DoggetTelegramBot.Presentation.BotControllers.Common;
 using DoggetTelegramBot.Presentation.Common.Services;
 using DoggetTelegramBot.Presentation.Handlers.Common.Caches;
@@ -16,6 +16,8 @@ using PRTelegramBot.Models.Enums;
 using Telegram.Bot;
 using Telegram.Bot.Types;
 using Telegram.Bot.Types.Enums;
+using LoggerConstants = DoggetTelegramBot.Domain.Common.Constants.Logger.Constants.Logger;
+using ItemConstants = DoggetTelegramBot.Domain.Common.Constants.Item.Constants.Item;
 
 namespace DoggetTelegramBot.Presentation.BotControllers
 {
@@ -26,16 +28,16 @@ namespace DoggetTelegramBot.Presentation.BotControllers
         ITelegramBotService botService,
         ItemRequestHandler requestHandler) : BaseController(botService)
     {
-        [ReplyMenuHandler(CommandComparison.Equals, StringComparison.OrdinalIgnoreCase, Constants.Item.ReplyKeys.Purchase)]
+        [ReplyMenuHandler(CommandComparison.Equals, StringComparison.OrdinalIgnoreCase, Commands.Item.Purchase)]
         [RequiredTypeChat(ChatType.Private)]
         public async Task PurchaseAsync(ITelegramBotClient botClient, Update update)
         {
             logger.LogCommon(update);
 
             logger.LogCommon(
-                Constants.Item.Messages.PurchaseRequest(),
+                ItemConstants.Requests.Purchase(),
                 TelegramEvents.Message,
-                Constants.LogColors.Request);
+                LoggerConstants.Colors.Request);
 
             var serverNames = await GetServerNamesAsync();
 
@@ -44,12 +46,12 @@ namespace DoggetTelegramBot.Presentation.BotControllers
                 await SendMessage(
                     botClient,
                     update,
-                    Constants.Item.Messages.Purchase.ServerNamesNotFound);
+                    ItemConstants.Purchase.Messages.ServerNamesNotFound);
 
                 logger.LogCommon(
-                    Constants.Item.Messages.PurchaseRequest(false),
+                    ItemConstants.Requests.Purchase(false),
                     TelegramEvents.Message,
-                    Constants.LogColors.Request);
+                    LoggerConstants.Colors.Request);
 
                 return;
             }
@@ -68,13 +70,13 @@ namespace DoggetTelegramBot.Presentation.BotControllers
             var message = await SendMessage(
                 botClient,
                 update,
-                Constants.Item.Messages.SelectItemTypeRequest(),
+                ItemConstants.Messages.SelectItemTypeRequest(),
                 selectItemTypeMessageOptions);
 
             _ = requestHandler.HandlePurchaseAsync(botClient, update, message);
         }
 
-        [ReplyMenuHandler(CommandComparison.Equals, StringComparison.OrdinalIgnoreCase, Constants.Item.ReplyKeys.Add)]
+        [ReplyMenuHandler(CommandComparison.Equals, StringComparison.OrdinalIgnoreCase, Commands.Item.Add)]
         [RequiredTypeChat(ChatType.Private)]
         [Access((int)UserPrivilege.Admin)]
         public async Task AddAsync(ITelegramBotClient botClient, Update update)
@@ -82,9 +84,9 @@ namespace DoggetTelegramBot.Presentation.BotControllers
             logger.LogCommon(update);
 
             logger.LogCommon(
-                Constants.Item.Messages.AddRequest(),
+                ItemConstants.Requests.Add(),
                 TelegramEvents.Message,
-                Constants.LogColors.Request);
+                LoggerConstants.Colors.Request);
 
             var serverNames = await GetServerNamesAsync();
 
@@ -102,7 +104,7 @@ namespace DoggetTelegramBot.Presentation.BotControllers
             var message = await SendMessage(
                 botClient,
                 update,
-                Constants.Item.Messages.SelectItemTypeRequest(false),
+                ItemConstants.Messages.SelectItemTypeRequest(false),
                 selectItemTypeMessageOptions);
 
             _ = requestHandler.HandleAddAsync(botClient, update, message);
@@ -111,17 +113,17 @@ namespace DoggetTelegramBot.Presentation.BotControllers
         private async Task<List<string>> GetServerNamesAsync()
         {
             logger.LogCommon(
-                Constants.Item.Messages.GetAllItemServerNamesRequest(),
+                ItemConstants.Requests.GetAllItemServerNames(),
                 TelegramEvents.Message,
-                Constants.LogColors.Request);
+                LoggerConstants.Colors.Request);
 
             GetAllItemServerNamesQuery query = new();
             var serverNamesResult = await service.Send(query);
 
             logger.LogCommon(
-                Constants.Item.Messages.GetAllItemServerNamesRequest(false),
+                ItemConstants.Requests.GetAllItemServerNames(false),
                 TelegramEvents.Message,
-                Constants.LogColors.Request);
+                LoggerConstants.Colors.Request);
 
             return serverNamesResult.Value.ServerNames;
         }

@@ -5,7 +5,6 @@ using DoggetTelegramBot.Application.Helpers;
 using DoggetTelegramBot.Application.Items.Common;
 using ErrorOr;
 using DoggetTelegramBot.Domain.Common.Errors;
-using DoggetTelegramBot.Domain.Common.Constants;
 using DoggetTelegramBot.Domain.Common.Enums;
 using DoggetTelegramBot.Domain.Models.UserEntity;
 using DoggetTelegramBot.Application.Users.Common;
@@ -13,6 +12,11 @@ using MediatR;
 using DoggetTelegramBot.Application.Users.Queries.Get;
 using DoggetTelegramBot.Domain.Models.ItemEntity;
 using DoggetTelegramBot.Domain.Models.ItemEntity.Enums;
+using LoggerConstants = DoggetTelegramBot.Domain.Common.Constants.Logger.Constants.Logger;
+using UserConstants = DoggetTelegramBot.Domain.Common.Constants.User.Constants.User;
+using TransactionConstants = DoggetTelegramBot.Domain.Common.Constants.Transaction.Constants.Transaction;
+using ItemConstants = DoggetTelegramBot.Domain.Common.Constants.Item.Constants.Item;
+using DoggetTelegramBot.Application.Helpers.CacheKeys;
 
 namespace DoggetTelegramBot.Application.Items.Commands.Purchase
 {
@@ -51,7 +55,7 @@ namespace DoggetTelegramBot.Application.Items.Commands.Purchase
             var commandUsageResult = await commandUsage.CheckCommandUsageTimeAsync(
                 request.TelegramId,
                 nameof(PurchaseItemCommand),
-                Constants.Item.PurchaseUsageTime,
+                ItemConstants.PurchaseUsageTime,
                 cancellationToken);
 
             if (commandUsageResult.IsError)
@@ -80,7 +84,7 @@ namespace DoggetTelegramBot.Application.Items.Commands.Purchase
             await commandUsage.SetCommandUsageTimeAsync(
                 request.TelegramId,
                 nameof(PurchaseItemCommand),
-                Constants.Item.PurchaseUsageTime,
+                ItemConstants.PurchaseUsageTime,
                 cancellationToken);
 
             return new PurchaseItemResult(item.Value);
@@ -103,9 +107,9 @@ namespace DoggetTelegramBot.Application.Items.Commands.Purchase
             await unitOfWork.SaveChangesAsync(cancellationToken);
 
             logger.LogCommon(
-                Constants.Item.Messages.Updated(item.ItemId),
+                ItemConstants.Logging.Updated(item.ItemId),
                 TelegramEvents.Message,
-                Constants.LogColors.Update);
+                LoggerConstants.Colors.Update);
         }
 
         private async Task<ErrorOr<Item>> GetItemAsync(
@@ -116,9 +120,9 @@ namespace DoggetTelegramBot.Application.Items.Commands.Purchase
             CancellationToken cancellationToken)
         {
             logger.LogCommon(
-                Constants.Item.Messages.GetRequest(),
+                ItemConstants.Requests.Get(),
                 TelegramEvents.Message,
-                Constants.LogColors.Request);
+                LoggerConstants.Colors.Request);
 
             var item = amountType is not null ?
                 await repository.FirstOrDefaultAsync(
@@ -139,9 +143,9 @@ namespace DoggetTelegramBot.Application.Items.Commands.Purchase
             }
 
             logger.LogCommon(
-                Constants.Item.Messages.GetRequest(false),
+                ItemConstants.Requests.Get(false),
                 TelegramEvents.Message,
-                Constants.LogColors.Request);
+                LoggerConstants.Colors.Request);
 
             return item;
         }
@@ -152,9 +156,9 @@ namespace DoggetTelegramBot.Application.Items.Commands.Purchase
             CancellationToken cancellationToken)
         {
             logger.LogCommon(
-                Constants.Transaction.Messages.ExecutePurchase(),
+                TransactionConstants.Requests.ExecutePurchase(),
                 TelegramEvents.Message,
-                Constants.LogColors.Request);
+                LoggerConstants.Colors.Request);
 
             var transactionResult = await transactionService.ExecutePurchaseItemsAsync(
                 user.UserId,
@@ -162,9 +166,9 @@ namespace DoggetTelegramBot.Application.Items.Commands.Purchase
                 cancellationToken);
 
             logger.LogCommon(
-                Constants.Transaction.Messages.ExecutePurchase(false),
+                TransactionConstants.Requests.ExecutePurchase(false),
                 TelegramEvents.Message,
-                Constants.LogColors.Request);
+                LoggerConstants.Colors.Request);
 
             return transactionResult;
         }
@@ -174,17 +178,17 @@ namespace DoggetTelegramBot.Application.Items.Commands.Purchase
             CancellationToken cancellationToken)
         {
             logger.LogCommon(
-                Constants.User.Messages.GetRequest(),
+                UserConstants.Requests.Get(),
                 TelegramEvents.Message,
-                Constants.LogColors.Request);
+                LoggerConstants.Colors.Request);
 
             GetUserByTelegramIdQuery query = new(telegramId);
             var result = await mediator.Send(query, cancellationToken);
 
             logger.LogCommon(
-                Constants.User.Messages.GetRequest(false),
+                UserConstants.Requests.Get(false),
                 TelegramEvents.Message,
-                Constants.LogColors.Request);
+                LoggerConstants.Colors.Request);
 
             return result;
         }
@@ -195,8 +199,8 @@ namespace DoggetTelegramBot.Application.Items.Commands.Purchase
         {
             string[] keys =
             [
-                CacheKeyGenerator.GetAllItemServerNames(),
-                CacheKeyGenerator.GetUserByTelegramId(user.TelegramId),
+                InventoryCacheKeyGenerator.GetAllItemServerNames(),
+                UserCacheKeyGenerator.GetUserByTelegramId(user.TelegramId),
             ];
 
             var removalTasks = keys

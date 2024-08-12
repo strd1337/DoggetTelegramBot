@@ -1,6 +1,7 @@
 using DoggetTelegramBot.Application.Common.Services;
 using ErrorOr;
 using DoggetTelegramBot.Domain.Common.Errors;
+using DoggetTelegramBot.Application.Helpers.CacheKeys;
 
 namespace DoggetTelegramBot.Application.Helpers
 {
@@ -14,7 +15,7 @@ namespace DoggetTelegramBot.Application.Helpers
             TimeSpan cooldownPeriod,
             CancellationToken cancellationToken)
         {
-            string key = CacheKeyGenerator.CommandUsageByTelegramId(telegramId, commandName);
+            string key = CommandCacheKeyGenerator.CommandUsageByTelegramId(telegramId, commandName);
 
             (bool hasValue, DateTime? cachedTime) = await cacheService
                 .TryGetValueAsync<DateTime>(key, cancellationToken);
@@ -37,7 +38,7 @@ namespace DoggetTelegramBot.Application.Helpers
             TimeSpan cooldownPeriod,
             CancellationToken cancellationToken)
         {
-            string key = CacheKeyGenerator.CommandUsageByTelegramId(telegramId, commandName);
+            string key = CommandCacheKeyGenerator.CommandUsageByTelegramId(telegramId, commandName);
 
             await cacheService.SetUsageTimeAsync(
                 key,

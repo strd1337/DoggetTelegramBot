@@ -2,6 +2,7 @@ using DoggetTelegramBot.Application.Common.Services;
 using DoggetTelegramBot.Application.Families.Commands.Remove;
 using DoggetTelegramBot.Domain.Common.Constants;
 using DoggetTelegramBot.Domain.Common.Enums;
+using DoggetTelegramBot.Presentation.BotCommands;
 using DoggetTelegramBot.Presentation.BotControllers.Common;
 using DoggetTelegramBot.Presentation.Common.Mapping;
 using DoggetTelegramBot.Presentation.Common.Services;
@@ -16,6 +17,8 @@ using PRTelegramBot.Models;
 using PRTelegramBot.Models.Enums;
 using Telegram.Bot;
 using Telegram.Bot.Types;
+using LoggerConstants = DoggetTelegramBot.Domain.Common.Constants.Logger.Constants.Logger;
+using FamilyConstants = DoggetTelegramBot.Domain.Common.Constants.Family.Constants.Family;
 
 namespace DoggetTelegramBot.Presentation.BotControllers
 {
@@ -29,15 +32,15 @@ namespace DoggetTelegramBot.Presentation.BotControllers
     {
         private readonly ITelegramBotService botService = botService;
 
-        [ReplyMenuHandler(CommandComparison.Equals, StringComparison.OrdinalIgnoreCase, Constants.Family.ReplyKeys.AddToFamily)]
+        [ReplyMenuHandler(CommandComparison.Equals, StringComparison.OrdinalIgnoreCase, Commands.Family.AddToFamily)]
         public async Task AddAsync(ITelegramBotClient botClient, Update update)
         {
             logger.LogCommon(update);
 
             logger.LogCommon(
-                Constants.Family.Messages.AddToFamilyRequest(),
+                FamilyConstants.Requests.AddToFamily(),
                 TelegramEvents.Message,
-                Constants.LogColors.Request);
+                LoggerConstants.Colors.Request);
 
             if (update.Message?.ReplyToMessage is null)
             {
@@ -45,12 +48,12 @@ namespace DoggetTelegramBot.Presentation.BotControllers
                     botClient,
                     update,
                     Constants.Messages.NotFoundUserReply(
-                        Constants.Family.ReplyKeys.AddToFamily));
+                        Commands.Family.AddToFamily));
 
                 logger.LogCommon(
-                    Constants.Family.Messages.AddToFamilyRequest(false),
+                    FamilyConstants.Requests.AddToFamily(false),
                     TelegramEvents.Message,
-                    Constants.LogColors.Request);
+                    LoggerConstants.Colors.Request);
 
                 return;
             }
@@ -63,26 +66,26 @@ namespace DoggetTelegramBot.Presentation.BotControllers
 
             update.RegisterStepHandler(handler);
 
-            var selectFamilyRoleMenu = AddToFamilyMenuGenerator.GenerateFamilyRoleSelectionMenu();
+            var selectFamilyRoleMenu = AddToFamilyMenuGenerator.GenerateFamilyRoleSelectionMenu(update);
 
             var message = await SendMessage(
                 botClient,
                 update,
-                Constants.Family.Messages.SelectFamilyRoleRequest,
+                FamilyConstants.AddTo.Messages.SelectFamilyRoleRequest,
                 selectFamilyRoleMenu);
 
             _ = requestHandler.HandleAddToFamilyAsync(botClient, update, message);
         }
 
-        [ReplyMenuHandler(CommandComparison.Equals, StringComparison.OrdinalIgnoreCase, Constants.Family.ReplyKeys.RemoveFromFamily)]
+        [ReplyMenuHandler(CommandComparison.Equals, StringComparison.OrdinalIgnoreCase, Commands.Family.RemoveFromFamily)]
         public async Task RemoveAsync(ITelegramBotClient botClient, Update update)
         {
             logger.LogCommon(update);
 
             logger.LogCommon(
-                Constants.Family.Messages.RemoveFromFamilyRequest(),
+                FamilyConstants.Requests.RemoveFromFamily(),
                 TelegramEvents.Message,
-                Constants.LogColors.Request);
+                LoggerConstants.Colors.Request);
 
             if (update.Message?.ReplyToMessage is null)
             {
@@ -90,7 +93,7 @@ namespace DoggetTelegramBot.Presentation.BotControllers
                     botClient,
                     update,
                     Constants.Messages.NotFoundUserReply(
-                        Constants.Family.ReplyKeys.RemoveFromFamily));
+                        Commands.Family.RemoveFromFamily));
             }
             else
             {
@@ -99,7 +102,7 @@ namespace DoggetTelegramBot.Presentation.BotControllers
 
                 RemoveFromFamilyCommand command = new(
                     parentTelegramId,
-                    142632561);//memberToRemoveTelegramId);
+                    memberToRemoveTelegramId);
 
                 var result = await scopeService.Send(command);
 
@@ -112,9 +115,9 @@ namespace DoggetTelegramBot.Presentation.BotControllers
             }
 
             logger.LogCommon(
-                Constants.Family.Messages.RemoveFromFamilyRequest(false),
+                FamilyConstants.Requests.RemoveFromFamily(false),
                 TelegramEvents.Message,
-                Constants.LogColors.Request);
+                LoggerConstants.Colors.Request);
         }
     }
 }

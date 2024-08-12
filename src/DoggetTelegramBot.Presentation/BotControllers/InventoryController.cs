@@ -3,6 +3,7 @@ using DoggetTelegramBot.Application.Inventories.Commands.Transfer;
 using DoggetTelegramBot.Application.Inventories.Queries.Get.Info;
 using DoggetTelegramBot.Domain.Common.Constants;
 using DoggetTelegramBot.Domain.Common.Enums;
+using DoggetTelegramBot.Presentation.BotCommands;
 using DoggetTelegramBot.Presentation.BotControllers.Common;
 using DoggetTelegramBot.Presentation.Common.Mapping;
 using DoggetTelegramBot.Presentation.Common.Services;
@@ -11,6 +12,8 @@ using PRTelegramBot.Attributes;
 using PRTelegramBot.Models.Enums;
 using Telegram.Bot;
 using Telegram.Bot.Types;
+using LoggerConstants = DoggetTelegramBot.Domain.Common.Constants.Logger.Constants.Logger;
+using InventoryConstants = DoggetTelegramBot.Domain.Common.Constants.Inventory.Constants.Inventory;
 
 namespace DoggetTelegramBot.Presentation.BotControllers
 {
@@ -21,15 +24,15 @@ namespace DoggetTelegramBot.Presentation.BotControllers
         IMapper mapper,
         ITelegramBotService botService) : BaseController(botService)
     {
-        [ReplyMenuHandler(CommandComparison.Equals, StringComparison.OrdinalIgnoreCase, Constants.Inventory.ReplyKeys.GetInfo)]
+        [ReplyMenuHandler(CommandComparison.Equals, StringComparison.OrdinalIgnoreCase, Commands.Inventory.GetInfo)]
         public async Task GetInfoAsync(ITelegramBotClient botClient, Update update)
         {
             logger.LogCommon(update);
 
             logger.LogCommon(
-                Constants.Inventory.Messages.GetInformationRequest(),
+                InventoryConstants.Requests.GetInformation(),
                 TelegramEvents.Message,
-                Constants.LogColors.Request);
+                LoggerConstants.Colors.Request);
 
             GetInventoryInfoByTelegramIdQuery query = new(update.Message!.From!.Id);
             var result = await service.Send(query);
@@ -39,23 +42,23 @@ namespace DoggetTelegramBot.Presentation.BotControllers
             await SendReplyMessage(botClient, update, response.Message);
 
             logger.LogCommon(
-               Constants.Inventory.Messages.GetInformationRequest(false),
+               InventoryConstants.Requests.GetInformation(false),
                TelegramEvents.Message,
-               Constants.LogColors.Request);
+               LoggerConstants.Colors.Request);
         }
 
-        [ReplyMenuHandler(CommandComparison.Contains, StringComparison.OrdinalIgnoreCase, Constants.Inventory.ReplyKeys.Transfer)]
+        [ReplyMenuHandler(CommandComparison.Contains, StringComparison.OrdinalIgnoreCase, Commands.Inventory.Transfer)]
         public async Task TransferAsync(ITelegramBotClient botClient, Update update)
         {
             logger.LogCommon(update);
 
             logger.LogCommon(
-                Constants.Inventory.Messages.TransferRequest(),
+                InventoryConstants.Requests.Transfer(),
                 TelegramEvents.Message,
-                Constants.LogColors.Request);
+                LoggerConstants.Colors.Request);
 
             string text = update.Message!.Text!
-                [Constants.Inventory.ReplyKeys.Transfer.Length..]
+                [Commands.Inventory.Transfer.Length..]
                 .Trim();
 
             if (update.Message?.ReplyToMessage is null ||
@@ -65,8 +68,8 @@ namespace DoggetTelegramBot.Presentation.BotControllers
                     botClient,
                     update,
                     Constants.Messages.NotFoundUserReply(
-                        Constants.Inventory.ReplyKeys.Transfer,
-                        Constants.Inventory.ReplyKeys.TransferKey));
+                        Commands.Inventory.Transfer,
+                        Commands.Inventory.TransferKey));
             }
             else
             {
@@ -83,9 +86,9 @@ namespace DoggetTelegramBot.Presentation.BotControllers
             }
 
             logger.LogCommon(
-               Constants.Inventory.Messages.TransferRequest(false),
+               InventoryConstants.Requests.Transfer(false),
                TelegramEvents.Message,
-               Constants.LogColors.Request);
+               LoggerConstants.Colors.Request);
         }
     }
 }

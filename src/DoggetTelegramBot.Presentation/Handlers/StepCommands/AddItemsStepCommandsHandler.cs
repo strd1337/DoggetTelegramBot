@@ -9,8 +9,8 @@ using PRTelegramBot.Models.InlineButtons;
 using PRTelegramBot.Models;
 using Telegram.Bot;
 using Telegram.Bot.Types;
-using DoggetTelegramBot.Domain.Common.Constants;
 using DoggetTelegramBot.Presentation.Helpers.Common;
+using ItemConstants = DoggetTelegramBot.Domain.Common.Constants.Item.Constants.Item;
 
 namespace DoggetTelegramBot.Presentation.Handlers.StepCommands
 {
@@ -42,7 +42,7 @@ namespace DoggetTelegramBot.Presentation.Handlers.StepCommands
             await PRTelegramBot.Helpers.Message.Send(
                 botClient,
                 update,
-                Constants.Item.Messages.Add.SelectItemServerNameRequest(userChoice),
+                ItemConstants.Add.Messages.SelectItemServerNameRequest(userChoice),
                 serverNameMessageOptions);
         }
 
@@ -62,7 +62,7 @@ namespace DoggetTelegramBot.Presentation.Handlers.StepCommands
             await PRTelegramBot.Helpers.Message.Send(
                 botClient,
                 update,
-                Constants.Item.Messages.SelectItemAmountTypeRequest(cache.ServerName),
+                ItemConstants.Messages.SelectItemAmountTypeRequest(cache.ServerName),
                 selectItemAmountTypeMessageOptions);
         }
 
@@ -89,7 +89,7 @@ namespace DoggetTelegramBot.Presentation.Handlers.StepCommands
             await PRTelegramBot.Helpers.Message.Send(
                 botClient,
                 update,
-                Constants.Item.Messages.Add.WriteValuesForAmountTypeRequest(userChoice),
+                ItemConstants.Add.Messages.WriteValuesForAmountTypeRequest(userChoice),
                 new OptionMessage { ClearMenu = true });
         }
 
@@ -117,7 +117,7 @@ namespace DoggetTelegramBot.Presentation.Handlers.StepCommands
             await PRTelegramBot.Helpers.Message.Send(
                 botClient,
                 update,
-                Constants.Item.Messages.Add.SelectMoreAmountTypesRequest,
+                ItemConstants.Add.Messages.SelectMoreAmountTypesRequest,
                 selectNextOrPreviousStepMessageOptions);
         }
 
@@ -151,7 +151,7 @@ namespace DoggetTelegramBot.Presentation.Handlers.StepCommands
             await PRTelegramBot.Helpers.Message.Send(
                 botClient,
                 update,
-                Constants.Item.Messages.Add.SelectMoreAmountTypes,
+                ItemConstants.Add.Messages.SelectMoreAmountTypes,
                 selectItemAmountTypeMessageOptions);
         }
 
@@ -164,7 +164,7 @@ namespace DoggetTelegramBot.Presentation.Handlers.StepCommands
             await PRTelegramBot.Helpers.Message.Edit(
                 botClient,
                 update,
-                Constants.Item.Messages.Add.SuccessfulConfirmation(
+                ItemConstants.Add.Messages.SuccessfulConfirmation(
                     cache.Type, cache.ServerName, cache.Values));
 
             ConfirmationState<AddItemsStepCache>.SetUserResponse(update.CallbackQuery!.From!.Id, cache);

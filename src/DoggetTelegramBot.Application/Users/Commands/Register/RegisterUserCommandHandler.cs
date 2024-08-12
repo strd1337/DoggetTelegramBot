@@ -2,13 +2,15 @@ using DoggetTelegramBot.Application.Common.CQRS;
 using DoggetTelegramBot.Application.Common.Interfaces;
 using DoggetTelegramBot.Application.Common.Services;
 using DoggetTelegramBot.Application.Inventories.Commands.Create;
-using DoggetTelegramBot.Domain.Common.Constants;
 using DoggetTelegramBot.Domain.Common.Enums;
 using DoggetTelegramBot.Domain.Models.UserEntity;
 using DoggetTelegramBot.Domain.Models.UserEntity.Enums;
 using ErrorOr;
 using MediatR;
 using PRTelegramBot.Models.Enums;
+using LoggerConstants = DoggetTelegramBot.Domain.Common.Constants.Logger.Constants.Logger;
+using UserConstants = DoggetTelegramBot.Domain.Common.Constants.User.Constants.User;
+using InventoryConstants = DoggetTelegramBot.Domain.Common.Constants.Inventory.Constants.Inventory;
 
 namespace DoggetTelegramBot.Application.Users.Commands.Register
 {
@@ -40,14 +42,14 @@ namespace DoggetTelegramBot.Application.Users.Commands.Register
             await unitOfWork.SaveChangesAsync(cancellationToken);
 
             logger.LogCommon(
-                Constants.User.Messages.Registered(user.TelegramId),
+                UserConstants.Logging.Registered(user.TelegramId),
                 TelegramEvents.Register,
-                Constants.LogColors.Register);
+                LoggerConstants.Colors.Register);
 
             logger.LogCommon(
-                Constants.Inventory.Messages.Created(user.InventoryId.Value),
+                InventoryConstants.Logging.Created(user.InventoryId.Value),
                 TelegramEvents.Register,
-                Constants.LogColors.Register);
+                LoggerConstants.Colors.Register);
 
             return UpdateResult.Continue;
         }

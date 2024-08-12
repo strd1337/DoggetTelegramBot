@@ -2,11 +2,12 @@ using DoggetTelegramBot.Application.Common.CQRS;
 using DoggetTelegramBot.Application.Common.Interfaces;
 using DoggetTelegramBot.Application.Common.Services;
 using DoggetTelegramBot.Application.Inventories.Common;
-using DoggetTelegramBot.Domain.Common.Constants;
 using DoggetTelegramBot.Domain.Common.Enums;
 using DoggetTelegramBot.Domain.Common.Errors;
 using DoggetTelegramBot.Domain.Models.InventoryEntity;
 using ErrorOr;
+using LoggerConstants = DoggetTelegramBot.Domain.Common.Constants.Logger.Constants.Logger;
+using InventoryConstants = DoggetTelegramBot.Domain.Common.Constants.Inventory.Constants.Inventory;
 
 namespace DoggetTelegramBot.Application.Inventories.Commands.Delete
 {
@@ -28,17 +29,17 @@ namespace DoggetTelegramBot.Application.Inventories.Commands.Delete
             if (inventory is null)
             {
                 logger.LogCommon(
-                    Constants.Inventory.Messages.NotFoundRetrieved(request.InventoryId),
+                    InventoryConstants.Logging.NotFoundRetrieved(request.InventoryId),
                     TelegramEvents.GroupAction,
-                    Constants.LogColors.Get);
+                    LoggerConstants.Colors.Get);
 
                 return Errors.Inventory.NotFound;
             }
 
             logger.LogCommon(
-                Constants.Inventory.Messages.Retrieved(request.InventoryId),
+                InventoryConstants.Logging.Retrieved(request.InventoryId),
                 TelegramEvents.GroupAction,
-                Constants.LogColors.Get);
+                LoggerConstants.Colors.Get);
 
             inventory.Update(request.Amount);
             inventory.Delete();

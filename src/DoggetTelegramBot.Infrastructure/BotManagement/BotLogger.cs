@@ -1,5 +1,4 @@
 using DoggetTelegramBot.Application.Common.Services;
-using DoggetTelegramBot.Domain.Common.Constants;
 using NLog;
 using System.Text;
 using Telegram.Bot.Exceptions;
@@ -9,6 +8,8 @@ using Telegram.Bot.Types.Enums;
 using PRTelegramBot.Models.EventsArgs;
 using PRTelegramBot.Core;
 using PRTelegramBot.Extensions;
+using LoggerConstants = DoggetTelegramBot.Domain.Common.Constants.Logger.Constants.Logger;
+using ErrorConstants = DoggetTelegramBot.Domain.Common.Constants.Error.Constants.Errors;
 
 namespace DoggetTelegramBot.Infrastructure.BotManagement
 {
@@ -150,14 +151,14 @@ namespace DoggetTelegramBot.Infrastructure.BotManagement
                 string.Create(CultureInfo.InvariantCulture,
                 $"Error Code: {apiEx.ErrorCode}. Error Type: {apiEx.GetType().Name}. "));
 
-            if (apiEx.Message.Contains(Constants.ErrorMessage.BotBlockedByUser) ||
-                apiEx.Message.Contains(Constants.ErrorMessage.PrivacyRestricted))
+            if (apiEx.Message.Contains(ErrorConstants.Messages.BotBlockedByUser) ||
+                apiEx.Message.Contains(ErrorConstants.Messages.PrivacyRestricted))
             {
                 errorMessage.Append(
                     string.Create(CultureInfo.InvariantCulture,
                     $"User {id.GetValueOrDefault()} has blocked the bot."));
             }
-            else if (apiEx.Message.Contains(Constants.ErrorMessage.GroupChatUpgraded))
+            else if (apiEx.Message.Contains(ErrorConstants.Messages.GroupChatUpgraded))
             {
                 errorMessage.Append(
                     string.Create(CultureInfo.InvariantCulture,
@@ -169,10 +170,10 @@ namespace DoggetTelegramBot.Infrastructure.BotManagement
 
         private async Task LogErrorMessageAsync(string errorMessage)
         {
-            if (!loggersContainer.TryGetValue(Constants.Logger.ErrorName, out var logger))
+            if (!loggersContainer.TryGetValue(LoggerConstants.ErrorName, out var logger))
             {
-                logger = LogManager.GetLogger(Constants.Logger.ErrorName);
-                loggersContainer[Constants.Logger.ErrorName] = logger;
+                logger = LogManager.GetLogger(LoggerConstants.ErrorName);
+                loggersContainer[LoggerConstants.ErrorName] = logger;
             }
 
             await Task.Run(() => logger.Error(errorMessage));

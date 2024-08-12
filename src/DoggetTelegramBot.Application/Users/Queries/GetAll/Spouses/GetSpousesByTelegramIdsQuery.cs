@@ -1,5 +1,5 @@
 using DoggetTelegramBot.Application.Common.Caching;
-using DoggetTelegramBot.Application.Helpers;
+using DoggetTelegramBot.Application.Helpers.CacheKeys;
 using DoggetTelegramBot.Application.Users.Common;
 
 namespace DoggetTelegramBot.Application.Users.Queries.GetAll.Spouses
@@ -8,7 +8,7 @@ namespace DoggetTelegramBot.Application.Users.Queries.GetAll.Spouses
         List<long> TelegramIds,
         bool IsGetMarried = true) : ICachedQuery<GetSpousesResult>
     {
-        public string CachedKey => CacheKeyGenerator.GetSpousesByTelegramIdsQuery(TelegramIds);
+        public string CachedKey => UserCacheKeyGenerator.GetSpousesByTelegramIdsQuery(TelegramIds);
 
         public TimeSpan? Expiration => null;
     }

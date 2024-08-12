@@ -2,10 +2,11 @@ using DoggetTelegramBot.Application.Common.CQRS;
 using DoggetTelegramBot.Application.Common.Interfaces;
 using DoggetTelegramBot.Application.Common.Services;
 using DoggetTelegramBot.Application.Items.Common;
-using DoggetTelegramBot.Domain.Common.Constants;
 using DoggetTelegramBot.Domain.Common.Enums;
 using DoggetTelegramBot.Domain.Models.ItemEntity;
 using ErrorOr;
+using LoggerConstants = DoggetTelegramBot.Domain.Common.Constants.Logger.Constants.Logger;
+using ItemConstants = DoggetTelegramBot.Domain.Common.Constants.Item.Constants.Item;
 
 namespace DoggetTelegramBot.Application.Items.Commands.Add
 {
@@ -34,9 +35,9 @@ namespace DoggetTelegramBot.Application.Items.Commands.Add
             await unitOfWork.SaveChangesAsync(cancellationToken);
 
             logger.LogCommon(
-               Constants.Item.Messages.Created(itemsToAdd.Select(i => i.ItemId).ToList()),
+               ItemConstants.Logging.Created(itemsToAdd.Select(i => i.ItemId).ToList()),
                TelegramEvents.Message,
-               Constants.LogColors.Create);
+               LoggerConstants.Colors.Create);
 
             return new AddItemsResult();
         }

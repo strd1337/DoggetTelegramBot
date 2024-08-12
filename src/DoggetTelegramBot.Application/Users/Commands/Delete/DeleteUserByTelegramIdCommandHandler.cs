@@ -8,13 +8,17 @@ using DoggetTelegramBot.Application.Inventories.Common;
 using DoggetTelegramBot.Application.Marriages.Commands.Delete;
 using DoggetTelegramBot.Application.Marriages.Common;
 using DoggetTelegramBot.Application.Users.Common;
-using DoggetTelegramBot.Domain.Common.Constants;
 using DoggetTelegramBot.Domain.Common.Enums;
 using DoggetTelegramBot.Domain.Common.Errors;
 using DoggetTelegramBot.Domain.Models.InventoryEntity;
 using DoggetTelegramBot.Domain.Models.UserEntity;
 using ErrorOr;
 using MediatR;
+using LoggerConstants = DoggetTelegramBot.Domain.Common.Constants.Logger.Constants.Logger;
+using UserConstants = DoggetTelegramBot.Domain.Common.Constants.User.Constants.User;
+using InventoryConstants = DoggetTelegramBot.Domain.Common.Constants.Inventory.Constants.Inventory;
+using MarriageConstants = DoggetTelegramBot.Domain.Common.Constants.Marriage.Constants.Marriage;
+using FamilyConstants = DoggetTelegramBot.Domain.Common.Constants.Family.Constants.Family;
 
 namespace DoggetTelegramBot.Application.Users.Commands.Delete
 {
@@ -37,17 +41,17 @@ namespace DoggetTelegramBot.Application.Users.Commands.Delete
             if (user is null)
             {
                 logger.LogCommon(
-                    Constants.User.Messages.NotFoundRetrieved(request.TelegramId),
+                    UserConstants.Logging.NotFoundRetrieved(request.TelegramId),
                     TelegramEvents.GroupAction,
-                    Constants.LogColors.Get);
+                    LoggerConstants.Colors.Get);
 
                 return Errors.User.NotFound;
             }
 
             logger.LogCommon(
-                Constants.User.Messages.Retrieved(request.TelegramId),
+                UserConstants.Logging.Retrieved(request.TelegramId),
                 TelegramEvents.GroupAction,
-                Constants.LogColors.Get);
+                LoggerConstants.Colors.Get);
 
             var deleteInventoryResult = await DeleteInventoryByInventoryIdAsync(
                 user.InventoryId,
@@ -83,33 +87,33 @@ namespace DoggetTelegramBot.Application.Users.Commands.Delete
             await unitOfWork.SaveChangesAsync(cancellationToken);
 
             logger.LogCommon(
-                Constants.User.Messages.UpdatedSuccessfully(request.TelegramId),
+                UserConstants.Logging.UpdatedSuccessfully(request.TelegramId),
                 TelegramEvents.GroupAction,
-                Constants.LogColors.Update);
+                LoggerConstants.Colors.Update);
 
             logger.LogCommon(
-                Constants.Inventory.Messages.UpdatedSuccessfully(user.InventoryId),
+                InventoryConstants.Logging.UpdatedSuccessfully(user.InventoryId),
                 TelegramEvents.GroupAction,
-                Constants.LogColors.Update);
+                LoggerConstants.Colors.Update);
 
             if (deleteMarriageResult.Value is not null)
             {
                 logger.LogCommon(
-                    Constants.Marriage.Messages.UpdatedSuccessfully(deleteMarriageResult.Value.MarriageId),
+                    MarriageConstants.Logging.UpdatedSuccessfully(deleteMarriageResult.Value.MarriageId),
                     TelegramEvents.GroupAction,
-                    Constants.LogColors.Update);
+                    LoggerConstants.Colors.Update);
 
                 logger.LogCommon(
-                   Constants.Family.Messages.UpdatedSuccessfully(deleteMarriageResult.Value.FamilyId),
+                   FamilyConstants.Logging.UpdatedSuccessfully(deleteMarriageResult.Value.FamilyId),
                    TelegramEvents.GroupAction,
-                   Constants.LogColors.Update);
+                   LoggerConstants.Colors.Update);
             }
             else if (deleteMemberResult is not null)
             {
                 logger.LogCommon(
-                   Constants.Family.Messages.UpdatedSuccessfully(deleteMemberResult.Value.Value.FamilyIds),
+                   FamilyConstants.Logging.UpdatedSuccessfully(deleteMemberResult.Value.Value.FamilyIds),
                    TelegramEvents.GroupAction,
-                   Constants.LogColors.Update);
+                   LoggerConstants.Colors.Update);
             }
 
             return new DeleteUserResult();
@@ -120,18 +124,18 @@ namespace DoggetTelegramBot.Application.Users.Commands.Delete
             CancellationToken cancellationToken)
         {
             logger.LogCommon(
-                Constants.Inventory.Messages.UpdateRequest(),
+                InventoryConstants.Requests.Update(),
                 TelegramEvents.GroupAction,
-                Constants.LogColors.Request);
+                LoggerConstants.Colors.Request);
 
             DeleteInventoryByInventoryIdCommand command = new(inventoryId);
 
             var result = await mediator.Send(command, cancellationToken);
 
             logger.LogCommon(
-                Constants.Inventory.Messages.UpdateRequest(false),
+                InventoryConstants.Requests.Update(false),
                 TelegramEvents.GroupAction,
-                Constants.LogColors.Request);
+                LoggerConstants.Colors.Request);
 
             return result;
         }
@@ -141,18 +145,18 @@ namespace DoggetTelegramBot.Application.Users.Commands.Delete
             CancellationToken cancellationToken)
         {
             logger.LogCommon(
-                Constants.Marriage.Messages.DeleteRequest(),
+                MarriageConstants.Requests.Delete(),
                 TelegramEvents.GroupAction,
-                Constants.LogColors.Request);
+                LoggerConstants.Colors.Request);
 
             DeleteMarriageCommand command = new(userId);
 
             var result = await mediator.Send(command, cancellationToken);
 
             logger.LogCommon(
-                Constants.Marriage.Messages.DeleteRequest(false),
+                MarriageConstants.Requests.Delete(false),
                 TelegramEvents.GroupAction,
-                Constants.LogColors.Request);
+                LoggerConstants.Colors.Request);
 
             return result;
         }
@@ -162,18 +166,18 @@ namespace DoggetTelegramBot.Application.Users.Commands.Delete
             CancellationToken cancellationToken)
         {
             logger.LogCommon(
-                Constants.Family.Messages.DeleteMemberFromAllFamiliesRequest(),
+                FamilyConstants.Requests.DeleteMemberFromAllFamilies(),
                 TelegramEvents.GroupAction,
-                Constants.LogColors.Request);
+                LoggerConstants.Colors.Request);
 
             DeleteMemberFromAllFamiliesCommand command = new(userId);
 
             var result = await mediator.Send(command, cancellationToken);
 
             logger.LogCommon(
-                Constants.Family.Messages.DeleteMemberFromAllFamiliesRequest(false),
+                FamilyConstants.Requests.DeleteMemberFromAllFamilies(false),
                 TelegramEvents.GroupAction,
-                Constants.LogColors.Request);
+                LoggerConstants.Colors.Request);
 
             return result;
         }

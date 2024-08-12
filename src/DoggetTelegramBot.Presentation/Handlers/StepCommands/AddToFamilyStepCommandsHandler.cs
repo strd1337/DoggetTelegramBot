@@ -9,7 +9,7 @@ using Telegram.Bot;
 using Telegram.Bot.Types;
 using DoggetTelegramBot.Domain.Models.FamilyEntity.Enums;
 using DoggetTelegramBot.Presentation.Helpers.Common;
-using DoggetTelegramBot.Domain.Common.Constants;
+using FamilyConstants = DoggetTelegramBot.Domain.Common.Constants.Family.Constants.Family;
 
 namespace DoggetTelegramBot.Presentation.Handlers.StepCommands
 {
@@ -18,6 +18,11 @@ namespace DoggetTelegramBot.Presentation.Handlers.StepCommands
         [InlineCallbackHandler<AddToFamilyStepCommands>(AddToFamilyStepCommands.SelectFamilyRole)]
         public static async Task SelectFamilyRole(ITelegramBotClient botClient, Update update)
         {
+            if (!await CallbackQueryHelper.IsUserAllowedAsync(botClient, update))
+            {
+                return;
+            }
+
             InlineCallback<EntityTCommand<FamilyRole>>? command = InlineCallback<EntityTCommand<FamilyRole>>
                  .GetCommandByCallbackOrNull(update.CallbackQuery!.Data!);
 
@@ -40,7 +45,7 @@ namespace DoggetTelegramBot.Presentation.Handlers.StepCommands
             await PRTelegramBot.Helpers.Message.Edit(
                 botClient,
                 update,
-                Constants.Family.Messages.AddToFamily.SuccessfulConfirmation(cache.FamilyRole));
+                FamilyConstants.AddTo.Messages.SuccessfulConfirmation(cache.FamilyRole));
 
             ConfirmationState<AddToFamilyStepCache>.SetUserResponse(update.CallbackQuery!.From!.Id, cache);
 

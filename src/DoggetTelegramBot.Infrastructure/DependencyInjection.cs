@@ -13,6 +13,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using PRTelegramBot.Extensions;
+using TelegramBotConfigConstants = DoggetTelegramBot.Domain.Common.Constants.Common.Constants.TelegramBotConfig;
 
 namespace DoggetTelegramBot.Infrastructure
 {
@@ -46,7 +47,7 @@ namespace DoggetTelegramBot.Infrastructure
             services.AddBotHandlers();
 
             services.AddOptions();
-            services.Configure<TelegramBotConfig>(configuration.GetSection(Constants.TelegramBotConfig.OptionKey));
+            services.Configure<TelegramBotConfig>(configuration.GetSection(TelegramBotConfigConstants.OptionKey));
 
             services.AddSingleton<BotInitializer>();
             services.AddSingleton<IBotLogger, BotLogger>();

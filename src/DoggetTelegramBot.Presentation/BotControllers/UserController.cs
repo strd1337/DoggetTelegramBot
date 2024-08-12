@@ -1,8 +1,8 @@
 using DoggetTelegramBot.Application.Common.Services;
 using DoggetTelegramBot.Application.Users.Commands.Update.Nickname;
 using DoggetTelegramBot.Application.Users.Queries.Get.Information;
-using DoggetTelegramBot.Domain.Common.Constants;
 using DoggetTelegramBot.Domain.Common.Enums;
+using DoggetTelegramBot.Presentation.BotCommands;
 using DoggetTelegramBot.Presentation.BotControllers.Common;
 using DoggetTelegramBot.Presentation.Common.Mapping;
 using DoggetTelegramBot.Presentation.Common.Services;
@@ -11,6 +11,8 @@ using PRTelegramBot.Attributes;
 using PRTelegramBot.Models.Enums;
 using Telegram.Bot;
 using Telegram.Bot.Types;
+using LoggerConstants = DoggetTelegramBot.Domain.Common.Constants.Logger.Constants.Logger;
+using UserConstants = DoggetTelegramBot.Domain.Common.Constants.User.Constants.User;
 
 namespace DoggetTelegramBot.Presentation.BotControllers
 {
@@ -21,15 +23,15 @@ namespace DoggetTelegramBot.Presentation.BotControllers
         IMapper mapper,
         ITelegramBotService botService) : BaseController(botService)
     {
-        [ReplyMenuHandler(CommandComparison.Equals, StringComparison.OrdinalIgnoreCase, Constants.User.ReplyKeys.GetMyInfo)]
+        [ReplyMenuHandler(CommandComparison.Equals, StringComparison.OrdinalIgnoreCase, Commands.User.GetMyInfo)]
         public async Task GetInfoAsync(ITelegramBotClient botClient, Update update)
         {
             logger.LogCommon(update);
 
             logger.LogCommon(
-                Constants.User.Messages.GetInformationRequest(),
+                UserConstants.Requests.GetInformation(),
                 TelegramEvents.Message,
-                Constants.LogColors.Request);
+                LoggerConstants.Colors.Request);
 
             GetUserInfoByTelegramIdQuery query = new(update.Message!.From!.Id);
             var result = await service.Send(query);
@@ -39,23 +41,23 @@ namespace DoggetTelegramBot.Presentation.BotControllers
             await SendReplyMessage(botClient, update, response.Message);
 
             logger.LogCommon(
-                Constants.User.Messages.GetInformationRequest(false),
+                UserConstants.Requests.GetInformation(false),
                 TelegramEvents.Message,
-                Constants.LogColors.Request);
+                LoggerConstants.Colors.Request);
         }
 
-        [ReplyMenuHandler(CommandComparison.Contains, StringComparison.OrdinalIgnoreCase, Constants.User.ReplyKeys.UpdateNickname)]
+        [ReplyMenuHandler(CommandComparison.Contains, StringComparison.OrdinalIgnoreCase, Commands.User.UpdateNickname)]
         public async Task UpdateNicknameAsync(ITelegramBotClient botClient, Update update)
         {
             logger.LogCommon(update);
 
             logger.LogCommon(
-                Constants.User.Messages.UpdateNicknameRequest(),
+                UserConstants.Requests.UpdateNickname(),
                 TelegramEvents.Message,
-                Constants.LogColors.Request);
+                LoggerConstants.Colors.Request);
 
             string nickname = update.Message!.Text!
-                [Constants.User.ReplyKeys.UpdateNickname.Length..]
+                [Commands.User.UpdateNickname.Length..]
                 .Trim();
 
             UpdateNicknameByTelegramIdCommand command = new(
@@ -69,20 +71,20 @@ namespace DoggetTelegramBot.Presentation.BotControllers
             await SendReplyMessage(botClient, update, response.Message);
 
             logger.LogCommon(
-               Constants.User.Messages.UpdateNicknameRequest(false),
+               UserConstants.Requests.UpdateNickname(false),
                TelegramEvents.Message,
-               Constants.LogColors.Request);
+               LoggerConstants.Colors.Request);
         }
 
-        [ReplyMenuHandler(CommandComparison.Equals, StringComparison.OrdinalIgnoreCase, Constants.User.ReplyKeys.DeleteNickname)]
+        [ReplyMenuHandler(CommandComparison.Equals, StringComparison.OrdinalIgnoreCase, Commands.User.DeleteNickname)]
         public async Task DeleteNicknameAsync(ITelegramBotClient botClient, Update update)
         {
             logger.LogCommon(update);
 
             logger.LogCommon(
-                Constants.User.Messages.UpdateNicknameRequest(),
+                UserConstants.Requests.UpdateNickname(),
                 TelegramEvents.Message,
-                Constants.LogColors.Request);
+                LoggerConstants.Colors.Request);
 
             UpdateNicknameByTelegramIdCommand command = new(
                 update.Message!.From!.Id,
@@ -95,9 +97,9 @@ namespace DoggetTelegramBot.Presentation.BotControllers
             await SendReplyMessage(botClient, update, response.Message);
 
             logger.LogCommon(
-                Constants.User.Messages.UpdateNicknameRequest(false),
+                UserConstants.Requests.UpdateNickname(false),
                 TelegramEvents.Message,
-                Constants.LogColors.Request);
+                LoggerConstants.Colors.Request);
         }
     }
 }
