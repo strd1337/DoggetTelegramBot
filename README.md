@@ -12,3 +12,4 @@ Technologies:
 7) ErrorOr - standardizes error handling and result types across commands and queries.
 8) NLog - provides flexible and powerful logging capabilities for monitoring bot behavior and troubleshooting.
 9) AspNetCoreRateLimit - implements rate limiting to ensure that the bot adheres to API limits and prevents abuse of its functionality.
+10) Caching - implemented caching strategies using memory cache to optimize the performance of the Telegram bot, reducing the load on the database by storing frequently accessed data like user sessions, command results, and chat interactions.
